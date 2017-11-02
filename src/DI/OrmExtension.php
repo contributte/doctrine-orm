@@ -84,7 +84,7 @@ final class OrmExtension extends CompilerExtension
 			$configuration->addSetup('setMetadataDriverImpl', [$config['metadataDriverImpl']]);
 		} else {
 			if ($builder->getByType(AnnotationReader::class) === NULL) {
-				throw new \Exception('AnnotationReader missing in DIC, please use Nettrine/Annotatitions 
+				throw new \Exception('AnnotationReader missing in DIC, please use Nettrine/Annotations 
 				or implement own MetadataProvider.');
 			}
 			$annotationDriver = $builder->addDefinition($this->prefix('annotationDriver'))
