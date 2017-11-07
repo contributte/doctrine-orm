@@ -15,7 +15,7 @@ class EntityManager extends DoctrineEntityManager
 	 * @param Configuration $configuration
 	 * @param EventManager $eventManager
 	 */
-	public function __construct(Connection $connection, Configuration $configuration, EventManager $eventManager = NULL)
+	public function __construct(Connection $connection, Configuration $configuration, EventManager $eventManager)
 	{
 		parent::__construct($connection, $configuration, $eventManager);
 	}

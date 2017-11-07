@@ -1,0 +1,28 @@
+<?php
+
+/**
+ * Test: DI\OrmExtension
+ */
+
+use Nette\DI\Compiler;
+use Nette\DI\Container;
+use Nette\DI\ContainerLoader;
+use Nettrine\ORM\DI\OrmExtension;
+use Nettrine\ORM\EntityManager;
+use Tester\Assert;
+
+require_once __DIR__ . '/../../bootstrap.php';
+
+test(function () {
+	$loader = new ContainerLoader(TEMP_DIR, TRUE);
+	$class = $loader->load(function (Compiler $compiler) {
+		$compiler->addExtension('orm', new OrmExtension());
+	}, '1a');
+
+	/** @var Container $container */
+	$container = new $class;
+
+	/** @var EntityManager $em */
+	$em = $container->getByType(EntityManager::class);
+	Assert::type(EntityManager::class, $em);
+});

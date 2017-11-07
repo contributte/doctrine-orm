@@ -35,7 +35,7 @@ final class OrmExtension extends CompilerExtension
 			'proxyDir' => '%tempDir%/cache/proxies',
 			'autoGenerateProxyClasses' => NULL,
 			'proxyNamespace' => 'Nettrine\Proxy',
-			'metadataDriverImpl' => ArrayCache::class,
+			'metadataDriverImpl' => NULL,
 			'entityNamespaces' => [],
 			'queryCacheImpl' => ArrayCache::class,
 			'hydrationCacheImpl' => ArrayCache::class,
@@ -98,13 +98,13 @@ final class OrmExtension extends CompilerExtension
 
 		// Cache configuration
 		if ($config['queryCacheImpl'] !== NULL) {
-			$configuration->addSetup('setQueryCacheImpl', [$config['queryCacheImpl']]);
+			$configuration->addSetup('setQueryCacheImpl', [new $config['queryCacheImpl']]);
 		}
 		if ($config['hydrationCacheImpl'] !== NULL) {
-			$configuration->addSetup('setHydrationCacheImpl', [$config['hydrationCacheImpl']]);
+			$configuration->addSetup('setHydrationCacheImpl', [new $config['hydrationCacheImpl']]);
 		}
 		if ($config['metadataCacheImpl'] !== NULL) {
-			$configuration->addSetup('setMetadataCacheImpl', [$config['metadataCacheImpl']]);
+			$configuration->addSetup('setMetadataCacheImpl', [new $config['metadataCacheImpl']]);
 		}
 
 		// Custom functions
@@ -122,7 +122,7 @@ final class OrmExtension extends CompilerExtension
 		}
 
 		if ($config['namingStrategy'] !== NULL) {
-			$configuration->addSetup('setNamingStrategy', [$config['namingStrategy']]);
+			$configuration->addSetup('setNamingStrategy', [new $config['namingStrategy']]);
 		}
 		if ($config['quoteStrategy'] !== NULL) {
 			$configuration->addSetup('setQuoteStrategy', [$config['quoteStrategy']]);
@@ -144,7 +144,7 @@ final class OrmExtension extends CompilerExtension
 
 		// Entity Manager
 		$builder->addDefinition($this->prefix('entityManager'))
-			->setFactory(EntityManagerFactory::class . '::create', [1 => $configuration,]);
+			->setFactory(EntityManagerFactory::class . '::create', [1 => $configuration]);
 
 		// Skip if it's not CLI mode
 		if (PHP_SAPI !== 'cli')
