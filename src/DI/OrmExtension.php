@@ -98,13 +98,13 @@ final class OrmExtension extends CompilerExtension
 
 		// Cache configuration
 		if ($config['queryCacheImpl'] !== NULL) {
-			$configuration->addSetup('setQueryCacheImpl', [new $config['queryCacheImpl']]);
+			$configuration->addSetup('setQueryCacheImpl', [new Statement( $config['queryCacheImpl'])]);
 		}
 		if ($config['hydrationCacheImpl'] !== NULL) {
-			$configuration->addSetup('setHydrationCacheImpl', [new $config['hydrationCacheImpl']]);
+			$configuration->addSetup('setHydrationCacheImpl', [new Statement( $config['hydrationCacheImpl'])]);
 		}
 		if ($config['metadataCacheImpl'] !== NULL) {
-			$configuration->addSetup('setMetadataCacheImpl', [new $config['metadataCacheImpl']]);
+			$configuration->addSetup('setMetadataCacheImpl', [new Statement($config['metadataCacheImpl'])]);
 		}
 
 		// Custom functions
@@ -122,7 +122,7 @@ final class OrmExtension extends CompilerExtension
 		}
 
 		if ($config['namingStrategy'] !== NULL) {
-			$configuration->addSetup('setNamingStrategy', [new $config['namingStrategy']]);
+			$configuration->addSetup('setNamingStrategy', [new Statement( $config['namingStrategy'])]);
 		}
 		if ($config['quoteStrategy'] !== NULL) {
 			$configuration->addSetup('setQuoteStrategy', [$config['quoteStrategy']]);
