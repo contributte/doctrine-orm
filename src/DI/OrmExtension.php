@@ -3,7 +3,9 @@
 namespace Nettrine\ORM\DI;
 
 use Doctrine\Common\Annotations\AnnotationReader;
+use Doctrine\Common\Cache\ArrayCache;
 use Doctrine\ORM\Configuration;
+use Doctrine\ORM\Mapping\UnderscoreNamingStrategy;
 use Doctrine\ORM\Tools\Console\Command\ConvertMappingCommand;
 use Doctrine\ORM\Tools\Console\Command\EnsureProductionSettingsCommand;
 use Doctrine\ORM\Tools\Console\Command\GenerateEntitiesCommand;
@@ -22,6 +24,7 @@ use Nette\DI\Helpers;
 use Nette\DI\Statement;
 use Nettrine\ORM\EntityManagerFactory;
 use Nettrine\ORM\Mapping\AnnotationDriver;
+use Symfony\Component\Console\Application;
 
 final class OrmExtension extends CompilerExtension
 {
@@ -29,14 +32,14 @@ final class OrmExtension extends CompilerExtension
 	/** @var mixed[] */
 	private $defaults = [
 		'configuration' => [
-			'proxyDir' => '%tempDir%/proxies',
+			'proxyDir' => '%tempDir%/cache/proxies',
 			'autoGenerateProxyClasses' => NULL,
-			'proxyNamespace' => 'Doctrine\Proxy',
-			'metadataDriverImpl' => NULL,
+			'proxyNamespace' => 'Nettrine\Proxy',
+			'metadataDriverImpl' => ArrayCache::class,
 			'entityNamespaces' => [],
-			'queryCacheImpl' => NULL,
-			'hydrationCacheImpl' => NULL,
-			'metadataCacheImpl' => NULL,
+			'queryCacheImpl' => ArrayCache::class,
+			'hydrationCacheImpl' => ArrayCache::class,
+			'metadataCacheImpl' => ArrayCache::class,
 			//TODO named query
 			//TODO named native query
 			'customStringFunctions' => [],
@@ -46,7 +49,7 @@ final class OrmExtension extends CompilerExtension
 			'classMetadataFactoryName' => NULL,
 			//TODO filters
 			'defaultRepositoryClassName' => NULL,
-			'namingStrategy' => NULL,
+			'namingStrategy' => UnderscoreNamingStrategy::class,
 			'quoteStrategy' => NULL,
 			'entityListenerResolver' => NULL,
 			'repositoryFactory' => NULL,
@@ -203,7 +206,7 @@ final class OrmExtension extends CompilerExtension
 			return;
 
 		$builder = $this->getContainerBuilder();
-		$application = $builder->getDefinition('console.application'); //TODO contributte/console
+		$application = $builder->getDefinitionByType(Application::class);
 
 		// Register helpers
 		$entityManagerHelper = '@' . $this->prefix('entityManagerHelper');
