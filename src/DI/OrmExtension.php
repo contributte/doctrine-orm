@@ -3,7 +3,7 @@
 namespace Nettrine\ORM\DI;
 
 use Doctrine\Common\Annotations\AnnotationReader;
-use Doctrine\Common\Cache\ArrayCache;
+use Doctrine\Common\Cache\FilesystemCache;
 use Doctrine\ORM\Configuration;
 use Doctrine\ORM\Mapping\UnderscoreNamingStrategy;
 use Doctrine\ORM\Tools\Console\Command\ConvertMappingCommand;
@@ -22,6 +22,7 @@ use Doctrine\ORM\Tools\Console\Helper\EntityManagerHelper;
 use Nette\DI\CompilerExtension;
 use Nette\DI\Helpers;
 use Nette\DI\Statement;
+use Nettrine\ORM\EntityManager;
 use Nettrine\ORM\EntityManagerFactory;
 use Nettrine\ORM\Mapping\AnnotationDriver;
 use Symfony\Component\Console\Application;
@@ -32,14 +33,14 @@ final class OrmExtension extends CompilerExtension
 	/** @var mixed[] */
 	private $defaults = [
 		'configuration' => [
-			'proxyDir' => '%tempDir%/cache/proxies',
+			'proxyDir' => '%tempDir%/proxies',
 			'autoGenerateProxyClasses' => NULL,
 			'proxyNamespace' => 'Nettrine\Proxy',
 			'metadataDriverImpl' => NULL,
 			'entityNamespaces' => [],
-			'queryCacheImpl' => ArrayCache::class,
-			'hydrationCacheImpl' => ArrayCache::class,
-			'metadataCacheImpl' => ArrayCache::class,
+			'queryCacheImpl' => FilesystemCache::class,
+			'hydrationCacheImpl' => FilesystemCache::class,
+			'metadataCacheImpl' => FilesystemCache::class,
 			//TODO named query
 			//TODO named native query
 			'customStringFunctions' => [],
@@ -56,6 +57,7 @@ final class OrmExtension extends CompilerExtension
 			'isSecondLevelCacheEnabled' => FALSE,
 			'secondLevelCacheConfiguration' => NULL,
 			'defaultQueryHints' => [],
+			'entityManagerClass' => EntityManager::class,
 		],
 	];
 
@@ -87,8 +89,7 @@ final class OrmExtension extends CompilerExtension
 			$configuration->addSetup('setMetadataDriverImpl', [$config['metadataDriverImpl']]);
 		} else {
 			if ($builder->getByType(AnnotationReader::class) === NULL) {
-				throw new \Exception('AnnotationReader missing in DIC, please use Nettrine/Annotations 
-				or implement own MetadataProvider.');
+				throw new \Exception('AnnotationReader missing in DIC, please use Nettrine/Annotations or implement own MetadataProvider.');
 			}
 			$annotationDriver = $builder->addDefinition($this->prefix('annotationDriver'))
 				->setClass(AnnotationDriver::class, [1 => [$builder->expand('%appDir%')]]);
@@ -98,13 +99,22 @@ final class OrmExtension extends CompilerExtension
 
 		// Cache configuration
 		if ($config['queryCacheImpl'] !== NULL) {
-			$configuration->addSetup('setQueryCacheImpl', [new Statement( $config['queryCacheImpl'])]);
+			$path = $builder->expand('%tempDir%/cache/Doctrine.QueryCache');
+			$builder->addDefinition($this->prefix('queryCache'))
+				->setFactory($config['queryCacheImpl'], [$path]);
+			$configuration->addSetup('setQueryCacheImpl', [new Statement('@' . $this->prefix('queryCache'))]);
 		}
 		if ($config['hydrationCacheImpl'] !== NULL) {
-			$configuration->addSetup('setHydrationCacheImpl', [new Statement( $config['hydrationCacheImpl'])]);
+			$path = $builder->expand('%tempDir%/cache/Doctrine.HydrationCache');
+			$builder->addDefinition($this->prefix('hydrationCache'))
+				->setFactory($config['hydrationCacheImpl'], [$path]);
+			$configuration->addSetup('setHydrationCacheImpl', [new Statement('@' . $this->prefix('hydrationCache'))]);
 		}
 		if ($config['metadataCacheImpl'] !== NULL) {
-			$configuration->addSetup('setMetadataCacheImpl', [new Statement($config['metadataCacheImpl'])]);
+			$path = $builder->expand('%tempDir%/cache/Doctrine.MetadataCache');
+			$builder->addDefinition($this->prefix('metadataCache'))
+				->setFactory($config['metadataCacheImpl'], [$path]);
+			$configuration->addSetup('setMetadataCacheImpl', [new Statement('@' . $this->prefix('metadataCache'))]);
 		}
 
 		// Custom functions
@@ -122,7 +132,7 @@ final class OrmExtension extends CompilerExtension
 		}
 
 		if ($config['namingStrategy'] !== NULL) {
-			$configuration->addSetup('setNamingStrategy', [new Statement( $config['namingStrategy'])]);
+			$configuration->addSetup('setNamingStrategy', [new Statement($config['namingStrategy'])]);
 		}
 		if ($config['quoteStrategy'] !== NULL) {
 			$configuration->addSetup('setQuoteStrategy', [$config['quoteStrategy']]);
@@ -144,7 +154,11 @@ final class OrmExtension extends CompilerExtension
 
 		// Entity Manager
 		$builder->addDefinition($this->prefix('entityManager'))
-			->setFactory(EntityManagerFactory::class . '::create', [1 => $configuration]);
+			->setClass($config['entityManagerClass'])
+			->setFactory(EntityManagerFactory::class . '::create', [
+				1 => $configuration,
+				3 => $config['entityManagerClass'],
+			]);
 
 		// Skip if it's not CLI mode
 		if (PHP_SAPI !== 'cli')

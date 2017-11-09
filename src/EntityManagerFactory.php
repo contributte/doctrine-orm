@@ -10,16 +10,20 @@ use Doctrine\ORM\ORMException;
 class EntityManagerFactory
 {
 
-	const EM_CLASS = EntityManager::class;
-
 	/**
 	 * @param Connection $connection
 	 * @param Configuration $configuration
 	 * @param EventManager|NULL $eventManager
+	 * @param string $class
 	 * @return EntityManager
 	 * @throws ORMException
 	 */
-	public static function create(Connection $connection, Configuration $configuration, EventManager $eventManager = NULL)
+	public static function create(
+		Connection $connection,
+		Configuration $configuration,
+		EventManager $eventManager = NULL,
+		$class
+	)
 	{
 		if (!$configuration->getMetadataDriverImpl()) {
 			throw ORMException::missingMappingDriverImpl();
@@ -28,7 +32,6 @@ class EntityManagerFactory
 			throw ORMException::mismatchedEventManager();
 		}
 
-		$class = self::EM_CLASS;
 		return new $class($connection, $configuration, $connection->getEventManager());
 	}
 
