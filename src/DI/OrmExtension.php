@@ -220,10 +220,13 @@ final class OrmExtension extends CompilerExtension
 			return;
 
 		$builder = $this->getContainerBuilder();
-		$application = $builder->getDefinitionByType(Application::class);
+		$application = $builder->getByType(Application::class, FALSE);
+		if (!$application)
+			return;
+		$application = $builder->getDefinition($application);
 
 		// Register helpers
-		$entityManagerHelper = '@' . $this->prefix('entityManagerHelper');
+		$entityManagerHelper = $this->prefix('@entityManagerHelper');
 		$application->addSetup(new Statement('$service->getHelperSet()->set(?,?)', [$entityManagerHelper, 'em']));
 	}
 
