@@ -21,6 +21,23 @@
 ```sh
 composer require nettrine/orm
 ```
+## Versions
+
+| State       | Version       | Branch   | PHP      |
+|-------------|---------------|----------|----------|
+| dev         | `dev-master`  | `master` | `>= 5.6` |
+
+## Overview
+
+@todo
+
+## Other
+
+This repository is inspired by these packages:
+
+- https://gitlab.com/Kdyby/Doctrine
+- https://gitlab.com/etten/doctrine
+- https://github.com/DTForce/nette-doctrine
 
 ## Maintainers
 
