@@ -19,6 +19,7 @@ use Doctrine\ORM\Tools\Console\Command\SchemaTool\DropCommand;
 use Doctrine\ORM\Tools\Console\Command\SchemaTool\UpdateCommand;
 use Doctrine\ORM\Tools\Console\Command\ValidateSchemaCommand;
 use Doctrine\ORM\Tools\Console\Helper\EntityManagerHelper;
+use Exception;
 use Nette\DI\CompilerExtension;
 use Nette\DI\Helpers;
 use Nette\DI\Statement;
@@ -63,7 +64,7 @@ final class OrmExtension extends CompilerExtension
 
 	/**
 	 * @return void
-	 * @throws \Exception
+	 * @throws Exception
 	 */
 	public function loadConfiguration()
 	{
@@ -89,7 +90,7 @@ final class OrmExtension extends CompilerExtension
 			$configuration->addSetup('setMetadataDriverImpl', [$config['metadataDriverImpl']]);
 		} else {
 			if ($builder->getByType(AnnotationReader::class) === NULL) {
-				throw new \Exception('AnnotationReader missing in DIC, please use Nettrine/Annotations or implement own MetadataProvider.');
+				throw new Exception('AnnotationReader missing in DIC, please use Nettrine/Annotations or implement own MetadataProvider.');
 			}
 			$annotationDriver = $builder->addDefinition($this->prefix('annotationDriver'))
 				->setClass(AnnotationDriver::class, [1 => [$builder->expand('%appDir%')]]);
