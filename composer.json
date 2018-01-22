@@ -17,14 +17,12 @@
     "symfony/console": "^3.3.6",
     "nettrine/dbal": "dev-master",
     "doctrine/orm": "^2.5",
-    "doctrine/cache": "~1.6.2 || ~1.7.0"
+    "doctrine/cache": "~1.6.2 || ~1.7.0",
+    "doctrine/annotations": "^1.6"
   },
   "require-dev": {
     "ninjify/qa": "~0.4.0",
     "ninjify/nunjuck": "~0.2.0"
-  },
-  "suggest": {
-    "nettrine/annotations": "If you haven't own MetadataProvider in your project."
   },
   "autoload": {
     "psr-4": {
