@@ -25,7 +25,7 @@ composer require nettrine/orm
 
 | State       | Version       | Branch   | PHP      |
 |-------------|---------------|----------|----------|
-| dev         | `dev-master`  | `master` | `>= 5.6` |
+| dev         | `dev-master`  | `master` | `>= 7.1` |
 
 ## Overview
 

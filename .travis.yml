@@ -1,7 +1,5 @@
 language: php
 php:
-    - 5.6
-    - 7.0
     - 7.1
     - 7.2
 
@@ -19,13 +17,6 @@ script:
 
 jobs:
   include:
-    - env: title="Lowest Dependencies 5.6"
-      php: 5.6
-      install:
-        - travis_retry composer update --no-progress --prefer-dist --prefer-lowest
-      script:
-        - composer run-script tester
-
     - env: title="Lowest Dependencies 7.1"
       php: 7.1
       install:

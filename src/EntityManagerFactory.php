@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 
 namespace Nettrine\ORM;
 
@@ -21,9 +21,9 @@ class EntityManagerFactory
 	public static function create(
 		Connection $connection,
 		Configuration $configuration,
-		EventManager $eventManager = NULL,
-		$class
-	)
+		?EventManager $eventManager = NULL,
+		string $class
+	): EntityManager
 	{
 		if (!$configuration->getMetadataDriverImpl()) {
 			throw ORMException::missingMappingDriverImpl();

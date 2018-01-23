@@ -9,19 +9,23 @@
     {
       "name": "Milan Felix Sulc",
       "homepage": "https://f3l1x.io"
+    },
+    {
+      "name": "Josef Benjac",
+      "homepage": "http://josefbenjac.com"
     }
   ],
   "require": {
-    "php": ">=5.6",
+    "php": ">=7.1",
     "nette/di": "^2.4.9",
-    "symfony/console": "^3.3.6",
+    "symfony/console": "^4.0.3",
     "nettrine/dbal": "dev-master",
     "doctrine/orm": "^2.5",
-    "doctrine/cache": "~1.6.2 || ~1.7.0",
+    "doctrine/cache": "~1.7.0",
     "doctrine/annotations": "^1.6"
   },
   "require-dev": {
-    "ninjify/qa": "~0.4.0",
+    "ninjify/qa": "~0.7.0",
     "ninjify/nunjuck": "~0.2.0"
   },
   "autoload": {

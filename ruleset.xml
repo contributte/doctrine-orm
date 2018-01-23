@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<ruleset name="Contributte">
+    <rule ref="vendor/ninjify/coding-standard/ruleset.xml"/>
+    <rule ref="SlevomatCodingStandard.Namespaces.FullyQualifiedGlobalFunctions">
+        <exclude name="SlevomatCodingStandard.Namespaces.FullyQualifiedGlobalFunctions"/>
+    </rule>
+    <rule ref="SlevomatCodingStandard.Namespaces.FullyQualifiedGlobalConstants.NonFullyQualified">
+        <exclude name="SlevomatCodingStandard.Namespaces.FullyQualifiedGlobalConstants.NonFullyQualified"/>
+    </rule>
+    <!--Exclude folders -->
+    <exclude-pattern>/tests/tmp</exclude-pattern>
+</ruleset>

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 
 namespace Nettrine\ORM\DI;
 
@@ -31,7 +31,7 @@ class OrmAnnotationsExtension extends CompilerExtension
 	 *
 	 * @return void
 	 */
-	public function loadConfiguration()
+	public function loadConfiguration(): void
 	{
 		if (!$this->compiler->getExtensions(OrmExtension::class)) {
 			throw new InvalidStateException(
@@ -66,7 +66,7 @@ class OrmAnnotationsExtension extends CompilerExtension
 			]);
 
 		$builder->addDefinition($this->prefix('annotationDriver'))
-			->setClass(AnnotationDriver::class, [$this->prefix('@reader') , [$builder->expand($config['paths'])]]);
+			->setClass(AnnotationDriver::class, [$this->prefix('@reader'), [$builder->expand($config['paths'])]]);
 
 		$builder->getDefinitionByType(Configuration::class)
 			->addSetup('setMetadataDriverImpl', [$this->prefix('@annotationDriver')]);
@@ -78,7 +78,7 @@ class OrmAnnotationsExtension extends CompilerExtension
 	 * @param ClassType $classType
 	 * @return void
 	 */
-	public function afterCompile(ClassType $classType)
+	public function afterCompile(ClassType $classType): void
 	{
 		$initialize = $classType->getMethod('initialize');
 		$original = (string) $initialize->getBody();

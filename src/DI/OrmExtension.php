@@ -2,7 +2,6 @@
 
 namespace Nettrine\ORM\DI;
 
-use Doctrine\Common\Cache\FilesystemCache;
 use Doctrine\Common\EventManager;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\Configuration;
@@ -124,8 +123,10 @@ final class OrmExtension extends CompilerExtension
 		$config = $this->getConfig();
 
 		if (!class_exists($config['entityManagerClass']))
-			throw new InvalidStateException(sprintf('EntityManager class "%s" not found',
-				[$config['entityManagerClass']]));
+			throw new InvalidStateException(sprintf(
+				'EntityManager class "%s" not found',
+				[$config['entityManagerClass']]
+			));
 
 		// Entity Manager
 		$builder->addDefinition($this->prefix('entityManager'))

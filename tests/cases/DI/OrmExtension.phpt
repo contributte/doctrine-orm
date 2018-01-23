@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 
 /**
  * Test: DI\OrmExtension
@@ -15,15 +15,17 @@ use Tester\Assert;
 
 require_once __DIR__ . '/../../bootstrap.php';
 
-test(function () {
+test(function (): void {
 	$loader = new ContainerLoader(TEMP_DIR, TRUE);
-	$class = $loader->load(function (Compiler $compiler) {
+	$class = $loader->load(function (Compiler $compiler): void {
 		$compiler->addExtension('dbal', new DbalExtension());
 		$compiler->addExtension('orm', new OrmExtension());
-		$compiler->addConfig(['parameters' => [
-			'tempDir' => TEMP_DIR,
-			'appDir' => __DIR__,
-		]]);
+		$compiler->addConfig([
+			'parameters' => [
+				'tempDir' => TEMP_DIR,
+				'appDir' => __DIR__,
+			],
+		]);
 
 		$compiler->getContainerBuilder()
 			->addDefinition('reader')

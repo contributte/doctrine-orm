@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 
 namespace Nettrine\ORM\Mapping;
 
@@ -12,7 +12,7 @@ class AnnotationDriver extends DoctrineAnnotationDriver
 	 * @param AnnotationReader $reader
 	 * @param string[] $paths
 	 */
-	public function __construct(AnnotationReader $reader, $paths = [])
+	public function __construct(AnnotationReader $reader, array $paths = [])
 	{
 		parent::__construct($reader, $paths);
 		$this->reader = $reader;
