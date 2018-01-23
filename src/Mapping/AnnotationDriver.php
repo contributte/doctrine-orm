@@ -2,17 +2,17 @@
 
 namespace Nettrine\ORM\Mapping;
 
-use Doctrine\Common\Annotations\AnnotationReader;
+use Doctrine\Common\Annotations\Reader;
 use Doctrine\ORM\Mapping\Driver\AnnotationDriver as DoctrineAnnotationDriver;
 
 class AnnotationDriver extends DoctrineAnnotationDriver
 {
 
 	/**
-	 * @param AnnotationReader $reader
+	 * @param Reader $reader
 	 * @param string[] $paths
 	 */
-	public function __construct(AnnotationReader $reader, array $paths = [])
+	public function __construct(Reader $reader, array $paths = [])
 	{
 		parent::__construct($reader, $paths);
 		$this->reader = $reader;

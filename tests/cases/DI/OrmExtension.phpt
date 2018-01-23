@@ -4,11 +4,11 @@
  * Test: DI\OrmExtension
  */
 
-use Doctrine\Common\Annotations\AnnotationReader;
 use Nette\DI\Compiler;
 use Nette\DI\Container;
 use Nette\DI\ContainerLoader;
 use Nettrine\DBAL\DI\DbalExtension;
+use Nettrine\ORM\DI\OrmAnnotationsExtension;
 use Nettrine\ORM\DI\OrmExtension;
 use Nettrine\ORM\EntityManager;
 use Tester\Assert;
@@ -20,16 +20,13 @@ test(function (): void {
 	$class = $loader->load(function (Compiler $compiler): void {
 		$compiler->addExtension('dbal', new DbalExtension());
 		$compiler->addExtension('orm', new OrmExtension());
+		$compiler->addExtension('orm.annotations', new OrmAnnotationsExtension());
 		$compiler->addConfig([
 			'parameters' => [
 				'tempDir' => TEMP_DIR,
 				'appDir' => __DIR__,
 			],
 		]);
-
-		$compiler->getContainerBuilder()
-			->addDefinition('reader')
-			->setClass(AnnotationReader::class);
 	}, '1a');
 
 	/** @var Container $container */
