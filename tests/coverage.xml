@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<phpunit>
+    <filter>
+        <whitelist addUncoveredFilesFromWhitelist="true">
+            <directory suffix=".php">./../src</directory>
+        </whitelist>
+    </filter>
+    <logging>
+        <log type="coverage-clover" target="./../coverage.xml"/>
+    </logging>
+</phpunit>

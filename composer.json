@@ -26,11 +26,17 @@
   },
   "require-dev": {
     "ninjify/qa": "~0.7.0",
-    "ninjify/nunjuck": "~0.2.0"
+    "mockery/mockery": "^1.0",
+    "phpunit/phpunit": "^5.7.25"
   },
   "autoload": {
     "psr-4": {
       "Nettrine\\ORM\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Tests\\Nettrine\\ORM\\": "tests/"
     }
   },
   "scripts": {
@@ -38,11 +44,16 @@
       "linter src tests",
       "codesniffer src tests"
     ],
-    "tester": [
-      "tester -s -p php --colors 1 -C tests/cases"
+    "ci": [
+      "@qa",
+      "@phpstan",
+      "@phpunit"
+    ],
+    "phpunit": [
+      "phpunit tests --colors=always"
     ],
     "coverage": [
-      "tester -s -p php --colors 1 -C -d extension=xdebug.so --coverage ./coverage.xml --coverage-src ./src tests/cases"
+      "phpunit tests --colors=always -c tests/coverage.xml"
     ],
     "phpstan-install": [
       "mkdir -p temp/phpstan",

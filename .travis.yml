@@ -3,17 +3,13 @@ php:
     - 7.1
     - 7.2
 
-before_install:
-  # turn off XDebug
-  - phpenv config-rm xdebug.ini || return 0
-
 install:
   # Composer
   - travis_retry composer install --no-progress --prefer-dist
 
 script:
-  # Nette/Tester
-  - composer run-script tester
+  # PhpUnit
+  - composer run-script phpunit
 
 jobs:
   include:
@@ -22,7 +18,7 @@ jobs:
       install:
         - travis_retry composer update --no-progress --prefer-dist --prefer-lowest
       script:
-        - composer run-script tester
+        - composer run-script phpunit
 
     - stage: Quality Assurance
       php: 7.1
@@ -45,6 +41,7 @@ jobs:
 
   allow_failures:
     - stage: Test Coverage
+    - stage: Phpstan
 
 after_failure:
   # Print *.actual content
