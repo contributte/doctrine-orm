@@ -18,6 +18,7 @@
   "require": {
     "php": ">=7.1",
     "nette/di": "^2.4.9",
+    "nette/utils": "^2.4.4",
     "symfony/console": "^4.0.3",
     "nettrine/dbal": "dev-master",
     "doctrine/orm": "^2.5",
