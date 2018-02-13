@@ -34,12 +34,14 @@ class OrmConsoleExtension extends CompilerExtension
 			);
 		}
 
-		if (!class_exists('Symfony\Component\Console\Application'))
+		if (!class_exists('Symfony\Component\Console\Application')) {
 			throw new ServiceCreationException('Missing Symfony\Component\Console\Application service');
+		}
 
 		// Skip if it's not CLI mode
-		if (PHP_SAPI !== 'cli')
+		if (PHP_SAPI !== 'cli') {
 			return;
+		}
 
 		$builder = $this->getContainerBuilder();
 		// Helpers
@@ -94,8 +96,9 @@ class OrmConsoleExtension extends CompilerExtension
 	public function beforeCompile(): void
 	{
 		// Skip if it's not CLI mode
-		if (PHP_SAPI !== 'cli')
+		if (PHP_SAPI !== 'cli') {
 			return;
+		}
 
 		$builder = $this->getContainerBuilder();
 

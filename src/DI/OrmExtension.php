@@ -121,20 +121,19 @@ final class OrmExtension extends CompilerExtension
 		$builder = $this->getContainerBuilder();
 		$config = $this->getConfig();
 
-		if (!class_exists($config['entityManagerClass']))
-			throw new InvalidStateException(sprintf(
-				'EntityManager class "%s" not found',
-				[$config['entityManagerClass']]
-			));
+		$entityManagerClass = $config['entityManagerClass'];
+		if (!class_exists($entityManagerClass)) {
+			throw new InvalidStateException(sprintf('EntityManager class "%s" not found', $entityManagerClass));
+		}
 
 		// Entity Manager
 		$builder->addDefinition($this->prefix('entityManager'))
-			->setClass($config['entityManagerClass'])
+			->setClass($entityManagerClass)
 			->setFactory(EntityManagerFactory::class . '::create', [
 				$builder->getDefinitionByType(Connection::class), // Nettrine/DBAL
 				$this->prefix('@configuration'),
 				$builder->getDefinitionByType(EventManager::class), // Nettrine/DBAL
-				$config['entityManagerClass'],
+				$entityManagerClass,
 			]);
 	}
 
