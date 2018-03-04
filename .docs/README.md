@@ -69,23 +69,23 @@ Full configuration options:
 
 ```yaml
 orm:
-	configuration:
-		proxyDir: '%tempDir%/proxies'
-		autoGenerateProxyClasses: NULL
-		proxyNamespace: 'Nettrine\Proxy'
-		metadataDriverImpl: NULL
-		entityNamespaces: []
-		customStringFunctions: []
-		customNumericFuctions: []
-		customDatetimeFunctions: []
-		customHydrationModes: []
-		classMetadataFactoryName: NULL
-		defaultRepositoryClassName: NULL
-		namingStrategy: Doctrine\ORM\Mapping\UnderscoreNamingStrategy
-		quoteStrategy: NULL
-		entityListenerResolver: NULL
-		repositoryFactory: NULL
-		defaultQueryHints: []
+    configuration:
+        proxyDir: '%tempDir%/proxies'
+        autoGenerateProxyClasses: NULL
+        proxyNamespace: 'Nettrine\Proxy'
+        metadataDriverImpl: NULL
+        entityNamespaces: []
+        customStringFunctions: []
+        customNumericFuctions: []
+        customDatetimeFunctions: []
+        customHydrationModes: []
+        classMetadataFactoryName: NULL
+        defaultRepositoryClassName: NULL
+        namingStrategy: Doctrine\ORM\Mapping\UnderscoreNamingStrategy
+        quoteStrategy: NULL
+        entityListenerResolver: NULL
+        repositoryFactory: NULL
+        defaultQueryHints: []
 ```
 
 ## Bridges
