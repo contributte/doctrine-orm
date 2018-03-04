@@ -76,7 +76,7 @@ orm:
         metadataDriverImpl: NULL
         entityNamespaces: []
         customStringFunctions: []
-        customNumericFuctions: []
+        customNumericFunctions: []
         customDatetimeFunctions: []
         customHydrationModes: []
         classMetadataFactoryName: NULL
