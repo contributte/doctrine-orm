@@ -6,7 +6,7 @@
 	- [Configuration](#configuration)
 - [Annotations](#ormannotationsextension)
 - [Cache](#ormcacheextension)
-- [Console](#ormconsoleextension)
+- [Console](#console)
 - [Other features](#other-features)
 	- [ID attribute](#id-attribute)
 
@@ -14,14 +14,14 @@
 
 Enable DBAL extension
 
-```
+```yaml
 extensions:
 	dbal: Nettrine\DBAL\DI\DbalExtension
 ```
 
 Set-up DBAL connection
 
-```
+```yaml
 dbal:
 	connection:
 		host: 127.0.0.1
@@ -33,14 +33,14 @@ dbal:
 
 Enable ORM extension
 
-```
+```yaml
 extensions:
 	orm: Nettrine\ORM\DI\OrmExtension
 ```
 
 Define metadata provider - Annotations in this case 
 
-```
+```yaml
 extensions:
 	orm.annotations: Nettrine\ORM\DI\OrmAnnotationsExtension
 
@@ -55,7 +55,10 @@ orm.annotations:
 
 ### Own EntityManager
 
-@todo
+```yaml
+orm:
+	entityManagerClass: App\Model\Database\EntityManager
+```
 
 ### Configuration
 
@@ -69,9 +72,19 @@ orm.annotations:
 
 @todo
 
-## OrmConsoleExtension
+## Console
 
-@todo
+Adds console commands
+
+![Commands](commands.png)
+
+This extension required `Symfony\Console`, you can use [Contributte/Console](https://github.com/contributte/console) for example.
+
+```yaml
+extensions:
+	console: Contributte\Console\DI\ConsoleExtension
+	orm.console: Nettrine\ORM\DI\OrmConsoleExtension
+```
 
 ## Other features 
 
