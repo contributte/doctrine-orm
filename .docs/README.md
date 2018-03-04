@@ -99,4 +99,19 @@ extensions:
 
 ### Id attribute
 
-@todo
+You can use predefined `Id` trait in your Entities
+
+```php
+
+use Nettrine\ORM\Entity\Attributes\Id;
+
+/**
+ * @ORM\Entity
+ */
+class Category
+{
+
+    use Id;
+
+}
+```
