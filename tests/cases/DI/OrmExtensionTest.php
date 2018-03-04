@@ -9,7 +9,7 @@ use Nettrine\DBAL\DI\DbalExtension;
 use Nettrine\ORM\DI\OrmAnnotationsExtension;
 use Nettrine\ORM\DI\OrmExtension;
 use Nettrine\ORM\EntityManager;
-use Tests\Nettrine\Migrations\TestCase;
+use Tests\Nettrine\ORM\Cases\TestCase;
 use Tests\Nettrine\ORM\Fixtures\DummyEntityManager;
 
 final class OrmExtensionTest extends TestCase
