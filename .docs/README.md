@@ -12,7 +12,7 @@
 
 ## Minimal configuration
 
-Enable DBAL extension
+Enable DBAL extension. Take a look at [nettrine/dbal](https://github.com/nettrine/dbal).
 
 ```yaml
 extensions:
@@ -49,9 +49,9 @@ orm.annotations:
         - App/Model/Database/Entity
 ```
 
-## OrmExtension
+You can found full example in [playground](https://github.com/nettrine/playground).
 
-Base OrmExtension
+## OrmExtension
 
 ### Own EntityManager
 
