@@ -22,7 +22,7 @@ extensions:
     dbal: Nettrine\DBAL\DI\DbalExtension
 ```
 
-Set-up DBAL connection
+Set-up DBAL connection.
 
 ```yaml
 dbal:
@@ -34,14 +34,14 @@ dbal:
         #driver: pdo_pgsql
 ```
 
-Enable ORM extension
+Enable ORM extension.
 
 ```yaml
 extensions:
     orm: Nettrine\ORM\DI\OrmExtension
 ```
 
-Define metadata provider - Annotations in this case 
+Define metadata provider - Annotations in this case.
 
 ```yaml
 extensions:
@@ -65,7 +65,28 @@ orm:
 
 ### Configuration
 
-@todo
+Full configuration options:
+
+```yaml
+orm:
+	configuration:
+		proxyDir: '%tempDir%/proxies'
+		autoGenerateProxyClasses: NULL
+		proxyNamespace: 'Nettrine\Proxy'
+		metadataDriverImpl: NULL
+		entityNamespaces: []
+		customStringFunctions: []
+		customNumericFuctions: []
+		customDatetimeFunctions: []
+		customHydrationModes: []
+		classMetadataFactoryName: NULL
+		defaultRepositoryClassName: NULL
+		namingStrategy: Doctrine\ORM\Mapping\UnderscoreNamingStrategy
+		quoteStrategy: NULL
+		entityListenerResolver: NULL
+		repositoryFactory: NULL
+		defaultQueryHints: []
+```
 
 ## Bridges
 
@@ -111,7 +132,7 @@ From this moment when you type `bin/console`, there'll be registered commands fr
 
 ### Id attribute
 
-You can use predefined `Id` trait in your Entities
+You can use predefined `Id` trait in your Entities.
 
 ```php
 
