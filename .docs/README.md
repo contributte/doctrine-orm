@@ -1,12 +1,15 @@
-# ORM
+# Nettrine / ORM
+
+## Content
 
 - [Minimal configuration](#minimal-configuration)
-- [ORM base extension](#ormextension)
+- [ORM extension](#ormextension)
 	- [Own entity manager](#own-entitymanager)
 	- [Configuration](#configuration)
-- [Annotations Bridge](#annotations-bridge)
-- [Cache Bridge](#cache-bridge)
-- [Console Bridge](#console-bridge)
+- [Bridges](#bridges)
+	- [Annotations Bridge](#annotations-bridge)
+	- [Cache Bridge](#cache-bridge)
+	- [Console Bridge](#console-bridge)
 - [Other features](#other-features)
 	- [ID attribute](#id-attribute)
 
@@ -64,7 +67,9 @@ orm:
 
 @todo
 
-## Annotations Bridge
+## Bridges
+
+### Annotations Bridge
 
 ```yaml
 extensions:
@@ -78,11 +83,11 @@ orm.annotations:
     cacheDir: '%tempDir%/cache/Doctrine.Annotations'
 ```
 
-## Cache Bridge
+### Cache Bridge
 
 @todo
 
-## Console Bridge
+### Console Bridge
 
 This package works pretty well with [Symfony/Console](https://symfony.com/doc/current/components/console.html). Take a look at [Contributte/Console](https://github.com/contributte/console)
 tiny integration for Nette Framework.
