@@ -37,7 +37,8 @@
   },
   "autoload-dev": {
     "psr-4": {
-      "Tests\\Nettrine\\ORM\\": "tests/"
+      "Tests\\Nettrine\\ORM\\Cases\\": "tests/cases",
+      "Tests\\Nettrine\\ORM\\Fixtures\\": "tests/fixtures"
     }
   },
   "scripts": {

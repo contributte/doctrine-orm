@@ -10,6 +10,12 @@
     <rule ref="SlevomatCodingStandard.ControlStructures.EarlyExit.EarlyExitNotUsed">
         <exclude name="SlevomatCodingStandard.ControlStructures.EarlyExit.EarlyExitNotUsed"/>
     </rule>
+    <rule ref="SlevomatCodingStandard.ControlStructures.EarlyExit.EarlyExitNotUsed">
+        <exclude name="SlevomatCodingStandard.ControlStructures.EarlyExit.EarlyExitNotUsed"/>
+    </rule>
+    <rule ref="SlevomatCodingStandard.Commenting.DisallowOneLinePropertyDocComment.OneLinePropertyComment">
+        <exclude name="SlevomatCodingStandard.Commenting.DisallowOneLinePropertyDocComment.OneLinePropertyComment"/>
+    </rule>
     <!--Exclude folders -->
     <exclude-pattern>/tests/tmp</exclude-pattern>
 </ruleset>

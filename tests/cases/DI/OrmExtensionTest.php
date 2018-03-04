@@ -1,6 +1,6 @@
 <?php declare(strict_types = 1);
 
-namespace Tests\Nettrine\ORM\DI;
+namespace Tests\Nettrine\ORM\Cases\DI;
 
 use Nette\DI\Compiler;
 use Nette\DI\Container;
@@ -9,8 +9,8 @@ use Nettrine\DBAL\DI\DbalExtension;
 use Nettrine\ORM\DI\OrmAnnotationsExtension;
 use Nettrine\ORM\DI\OrmExtension;
 use Nettrine\ORM\EntityManager;
-use PHPUnit\Framework\TestCase;
-use Tests\Nettrine\ORM\DummyEntityManager;
+use Tests\Nettrine\Migrations\TestCase;
+use Tests\Nettrine\ORM\Fixtures\DummyEntityManager;
 
 final class OrmExtensionTest extends TestCase
 {
@@ -20,7 +20,7 @@ final class OrmExtensionTest extends TestCase
 	 */
 	public function testRegisterAnnotations(): void
 	{
-		$loader = new ContainerLoader(__DIR__ . '/../tmp', TRUE);
+		$loader = new ContainerLoader(TEMP_PATH, TRUE);
 		$class = $loader->load(function (Compiler $compiler): void {
 			self::setUpCompiler($compiler);
 		}, 'a');
@@ -36,7 +36,7 @@ final class OrmExtensionTest extends TestCase
 	 */
 	public function testOwnEntityManager(): void
 	{
-		$loader = new ContainerLoader(__DIR__ . '/../tmp', TRUE);
+		$loader = new ContainerLoader(TEMP_PATH, TRUE);
 		$class = $loader->load(function (Compiler $compiler): void {
 			self::setUpCompiler($compiler);
 			$compiler->addConfig([
@@ -62,7 +62,7 @@ final class OrmExtensionTest extends TestCase
 		$compiler->addExtension('orm.annotations', new OrmAnnotationsExtension());
 		$compiler->addConfig([
 			'parameters' => [
-				'tempDir' => __DIR__ . '/../tmp',
+				'tempDir' => TEMP_PATH,
 				'appDir' => __DIR__,
 			],
 		]);
