@@ -1,16 +1,16 @@
 # ORM
 
 - [Minimal configuration](#minimal-configuration)
-- [ORM](#ormextension)
+- [ORM base extension](#ormextension)
 	- [Own entity manager](#own-entitymanager)
 	- [Configuration](#configuration)
-- [Annotations](#annotations)
-- [Cache](#ormcacheextension)
-- [Console](#console)
+- [Annotations Bridge](#annotations-bridge)
+- [Cache Bridge](#cache-bridge)
+- [Console Bridge](#console-bridge)
 - [Other features](#other-features)
 	- [ID attribute](#id-attribute)
 
-## Minimal Configuration
+## Minimal configuration
 
 Enable DBAL extension
 
@@ -64,10 +64,11 @@ orm:
 
 @todo
 
-## Annotations
+## Annotations Bridge
 
 ```yaml
 extensions:
+    orm: Nettrine\ORM\DI\OrmExtension
     orm.annotations: Nettrine\ORM\DI\OrmAnnotationsExtension
 
 orm.annotations:
@@ -77,23 +78,29 @@ orm.annotations:
     cacheDir: '%tempDir%/cache/Doctrine.Annotations'
 ```
 
-## OrmCacheExtension
+## Cache Bridge
 
 @todo
 
-## Console
+## Console Bridge
 
-Adds console commands
-
-![Commands](commands.png)
-
-This extension require `Symfony\Console`, you can use [Contributte/Console](https://github.com/contributte/console) for example.
+This package works pretty well with [Symfony/Console](https://symfony.com/doc/current/components/console.html). Take a look at [Contributte/Console](https://github.com/contributte/console)
+tiny integration for Nette Framework.
 
 ```yaml
 extensions:
+
+    # Console
     console: Contributte\Console\DI\ConsoleExtension
+
+    # Orm
+    orm: Nettrine\ORM\DI\OrmExtension
     orm.console: Nettrine\ORM\DI\OrmConsoleExtension
 ```
+
+From this moment when you type `bin/console`, there'll be registered commands from Doctrine ORM.
+
+![Commands](commands.png)
 
 ## Other features 
 
