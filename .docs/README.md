@@ -12,7 +12,7 @@
 
 ## Minimal configuration
 
-Enable DBAL extension. Take a look at [nettrine/dbal](https://github.com/nettrine/dbal).
+Enable DBAL extension. Take a look at [Nettrine DBAL](https://github.com/nettrine/dbal).
 
 ```yaml
 extensions:
@@ -100,7 +100,7 @@ extensions:
 
 From this moment when you type `bin/console`, there'll be registered commands from Doctrine ORM.
 
-![Commands](commands.png)
+![Commands](assets/commands.png)
 
 ## Other features 
 
