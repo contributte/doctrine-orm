@@ -17,18 +17,18 @@
   ],
   "require": {
     "php": ">=7.1",
-    "nette/di": "^2.4.9",
-    "nette/utils": "^2.4.4",
-    "symfony/console": "^4.0.3",
+    "nette/di": "~2.4.10",
+    "nette/utils": "~2.4.9",
+    "symfony/console": "~4.0.6",
     "nettrine/dbal": "dev-master",
-    "doctrine/orm": "^2.5",
+    "doctrine/orm": "~2.6.0",
     "doctrine/cache": "~1.7.0",
-    "doctrine/annotations": "^1.6"
+    "doctrine/annotations": "~1.6.0"
   },
   "require-dev": {
-    "ninjify/qa": "~0.7.0",
-    "mockery/mockery": "^1.0",
-    "phpunit/phpunit": "^5.7.25"
+    "ninjify/qa": "^0.7.0",
+    "mockery/mockery": "~1.0.0",
+    "phpunit/phpunit": "~5.7.25"
   },
   "autoload": {
     "psr-4": {
