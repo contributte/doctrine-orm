@@ -4,7 +4,7 @@
 
 - [Minimal configuration](#minimal-configuration)
 - [ORM extension](#ormextension)
-	- [Own entity manager](#own-entitymanager)
+	- [EntityManager](#entitymanager)
 	- [Configuration](#configuration)
 - [Bridges](#bridges)
 	- [Annotations Bridge](#annotations-bridge)
@@ -15,14 +15,20 @@
 
 ## Minimal configuration
 
-Enable DBAL extension. Take a look at [Nettrine DBAL](https://github.com/nettrine/dbal).
+At first you gonna needed Doctrine DBAL extension. Take a look at [Nettrine DBAL](https://github.com/nettrine/dbal) in this organization. Install nettrine/dbal over composer.
+
+```
+composer install nettrine/dbal
+```
+
+Place `DbalExtension` into your config neon.
 
 ```yaml
 extensions:
     dbal: Nettrine\DBAL\DI\DbalExtension
 ```
 
-Set-up DBAL connection.
+And set-up DBAL connection.
 
 ```yaml
 dbal:
@@ -34,14 +40,14 @@ dbal:
         #driver: pdo_pgsql
 ```
 
-Enable ORM extension.
+Secondly, enable Doctrine ORM extension. It's provided by this package. 
 
 ```yaml
 extensions:
     orm: Nettrine\ORM\DI\OrmExtension
 ```
 
-Define metadata provider - Annotations in this case.
+Pick any metadata provider, for example widely used are **annotations**.
 
 ```yaml
 extensions:
@@ -52,11 +58,15 @@ orm.annotations:
         - App/Model/Database/Entity
 ```
 
-You can found full example in [playground](https://github.com/nettrine/playground).
+You can find full example and more examples in our [playground](https://github.com/nettrine/playground) repository.
 
 ## OrmExtension
 
-### Own EntityManager
+OrmExtension has a few options you can configure. Let's take a look at them.
+
+### EntityManager
+
+Define own EntityManager is useful for addind or overriding methods you needed.
 
 ```yaml
 orm:
@@ -65,7 +75,7 @@ orm:
 
 ### Configuration
 
-Full configuration options:
+List of all configuration options:
 
 ```yaml
 orm:
@@ -90,7 +100,21 @@ orm:
 
 ## Bridges
 
+The compiler extensions would be so big that we decided to split them into more single files / compiler extensions. 
+
 ### Annotations Bridge
+
+Are you using annotations in your entities?
+
+```php
+/**
+ * @ORM\Entity
+ */
+class Category
+{
+```
+
+You gonna needed `OrmAnnotationsExtension`.
 
 ```yaml
 extensions:
@@ -115,7 +139,6 @@ tiny integration for Nette Framework.
 
 ```yaml
 extensions:
-
     # Console
     console: Contributte\Console\DI\ConsoleExtension
 
@@ -124,7 +147,7 @@ extensions:
     orm.console: Nettrine\ORM\DI\OrmConsoleExtension
 ```
 
-From this moment when you type `bin/console`, there'll be registered commands from Doctrine ORM.
+Since this moment when you type `bin/console`, there'll be registered commands from Doctrine ORM.
 
 ![Commands](assets/commands.png)
 
