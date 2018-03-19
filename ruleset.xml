@@ -16,6 +16,9 @@
     <rule ref="SlevomatCodingStandard.Commenting.DisallowOneLinePropertyDocComment.OneLinePropertyComment">
         <exclude name="SlevomatCodingStandard.Commenting.DisallowOneLinePropertyDocComment.OneLinePropertyComment"/>
     </rule>
+    <rule ref="SlevomatCodingStandard.ControlStructures.AssignmentInCondition.AssignmentInCondition">
+        <exclude name="SlevomatCodingStandard.ControlStructures.AssignmentInCondition.AssignmentInCondition"/>
+    </rule>
     <!--Exclude folders -->
     <exclude-pattern>/tests/tmp</exclude-pattern>
 </ruleset>
