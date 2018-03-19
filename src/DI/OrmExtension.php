@@ -13,6 +13,7 @@ use Nette\DI\Statement;
 use Nette\InvalidStateException;
 use Nettrine\ORM\EntityManager;
 use Nettrine\ORM\EntityManagerFactory;
+use Nettrine\ORM\Mapping\ContainerEntityListenerResolver;
 
 final class OrmExtension extends CompilerExtension
 {
@@ -104,6 +105,10 @@ final class OrmExtension extends CompilerExtension
 		}
 		if ($config['entityListenerResolver'] !== NULL) {
 			$configuration->addSetup('setEntityListenerResolver', [$config['entityListenerResolver']]);
+		} else {
+			$builder->addDefinition($this->prefix('entityListenerResolver'))
+				->setClass(ContainerEntityListenerResolver::class);
+			$configuration->addSetup('setEntityListenerResolver', [$this->prefix('@entityListenerResolver')]);
 		}
 		if ($config['repositoryFactory'] !== NULL) {
 			$configuration->addSetup('setRepositoryFactory', [$config['repositoryFactory']]);
