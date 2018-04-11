@@ -15,13 +15,13 @@
 
 ## Minimal configuration
 
-At first you gonna needed Doctrine DBAL extension. Take a look at [Nettrine DBAL](https://github.com/nettrine/dbal) in this organization. Install nettrine/dbal over composer.
+At first, you will needed Doctrine DBAL extension. Take a look at [Nettrine DBAL](https://github.com/nettrine/dbal) in this organization. Install package `nettrine/dbal` using composer.
 
 ```
 composer install nettrine/dbal
 ```
 
-Place `DbalExtension` into your config neon.
+Place `DbalExtension` in your neon config file.
 
 ```yaml
 extensions:
@@ -40,14 +40,14 @@ dbal:
         #driver: pdo_pgsql
 ```
 
-Secondly, enable Doctrine ORM extension. It's provided by this package. 
+Secondly, enable the Doctrine ORM extension. It's provided by this package. 
 
 ```yaml
 extensions:
     orm: Nettrine\ORM\DI\OrmExtension
 ```
 
-Pick any metadata provider, for example widely used are **annotations**.
+Pick any metadata provider, for example **annotations** (they are widely used).
 
 ```yaml
 extensions:
@@ -58,7 +58,7 @@ orm.annotations:
         - App/Model/Database/Entity
 ```
 
-You can find full example and more examples in our [playground](https://github.com/nettrine/playground) repository.
+You can find more examples in our [playground](https://github.com/nettrine/playground) repository.
 
 ## OrmExtension
 
@@ -66,7 +66,7 @@ OrmExtension has a few options you can configure. Let's take a look at them.
 
 ### EntityManager
 
-Define own EntityManager is useful for addind or overriding methods you needed.
+Defining your own EntityManager is useful for addind or overriding methods you needed.
 
 ```yaml
 orm:
@@ -114,7 +114,7 @@ class Category
 {
 ```
 
-You gonna needed `OrmAnnotationsExtension`.
+You will needed `OrmAnnotationsExtension`.
 
 ```yaml
 extensions:
@@ -134,7 +134,7 @@ orm.annotations:
 
 ### Console Bridge
 
-This package works pretty well with [Symfony/Console](https://symfony.com/doc/current/components/console.html). Take a look at [Contributte/Console](https://github.com/contributte/console)
+This package works well with [Symfony/Console](https://symfony.com/doc/current/components/console.html). Take a look at [contributte/console](https://github.com/contributte/console)
 tiny integration for Nette Framework.
 
 ```yaml
@@ -147,7 +147,7 @@ extensions:
     orm.console: Nettrine\ORM\DI\OrmConsoleExtension
 ```
 
-Since this moment when you type `bin/console`, there'll be registered commands from Doctrine ORM.
+Since this moment you can use all registered Doctrine ORM commands using  `bin/console`.
 
 ![Commands](assets/commands.png)
 
