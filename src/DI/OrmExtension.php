@@ -13,6 +13,7 @@ use Nette\DI\Statement;
 use Nette\InvalidStateException;
 use Nettrine\ORM\EntityManager;
 use Nettrine\ORM\EntityManagerFactory;
+use Nettrine\ORM\ManagerRegistry;
 use Nettrine\ORM\Mapping\ContainerEntityListenerResolver;
 
 final class OrmExtension extends CompilerExtension
@@ -139,6 +140,14 @@ final class OrmExtension extends CompilerExtension
 				$this->prefix('@configuration'),
 				$builder->getDefinitionByType(EventManager::class), // Nettrine/DBAL
 				$entityManagerClass,
+			]);
+
+		// ManagerRegistry
+		$builder->addDefinition($this->prefix('managerRegistry'))
+			->setClass(ManagerRegistry::class)
+			->setArguments([
+				$builder->getDefinitionByType(Connection::class),
+				$this->prefix('@entityManager'),
 			]);
 	}
 
