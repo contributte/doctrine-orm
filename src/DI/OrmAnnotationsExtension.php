@@ -9,6 +9,7 @@ use Doctrine\Common\Annotations\Reader;
 use Doctrine\Common\Cache\FilesystemCache;
 use Doctrine\ORM\Configuration;
 use Nette\DI\CompilerExtension;
+use Nette\DI\Helpers;
 use Nette\InvalidStateException;
 use Nette\PhpGenerator\ClassType;
 use Nette\PhpGenerator\PhpLiteral;
@@ -54,7 +55,7 @@ class OrmAnnotationsExtension extends CompilerExtension
 
 		// Cache
 		$builder->addDefinition($this->prefix('annotationsCache'))
-			->setFactory($config['cache'], [$builder->expand($config['cacheDir'])]);
+			->setFactory($config['cache'], [Helpers::expand($config['cacheDir'], $builder->parameters)]);
 
 		//TODO otestovat predani @...
 
@@ -66,7 +67,7 @@ class OrmAnnotationsExtension extends CompilerExtension
 			]);
 
 		$builder->addDefinition($this->prefix('annotationDriver'))
-			->setClass(AnnotationDriver::class, [$this->prefix('@reader'), $builder->expand($config['paths'])]);
+			->setClass(AnnotationDriver::class, [$this->prefix('@reader'), Helpers::expand($config['paths'], $builder->parameters)]);
 
 		$builder->getDefinitionByType(Configuration::class)
 			->addSetup('setMetadataDriverImpl', [$this->prefix('@annotationDriver')]);
