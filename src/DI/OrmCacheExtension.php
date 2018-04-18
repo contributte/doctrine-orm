@@ -119,7 +119,7 @@ class OrmCacheExtension extends CompilerExtension
 			->setFactory($config['driver']);
 
 		if (is_subclass_of($config['driver'], FilesystemCache::class)) {
-			$driverCache->setArguments([$builder->expand('%tempDir%/cache/Doctrine.' . ucfirst($service))]);
+			$driverCache->setArguments([$builder->parameters['tempDir'] . '/cache/Doctrine.' . ucfirst($service)]);
 		}
 		return $driverCache;
 	}
