@@ -40,14 +40,14 @@ dbal:
         #driver: pdo_pgsql
 ```
 
-Secondly, enable the Doctrine ORM extension. It's provided by this package. 
+Secondly, enable the Doctrine ORM extension. It's provided by this package.
 
 ```yaml
 extensions:
     orm: Nettrine\ORM\DI\OrmExtension
 ```
 
-Pick any metadata provider, for example **annotations** (they are widely used).
+Pick any metadata provider, for example **annotations** (they are widely used). We have a special extension for annotations (`Nettrine\ORM\DI\OrmAnnotationsExtension`).
 
 ```yaml
 extensions:
@@ -97,6 +97,8 @@ orm:
         repositoryFactory: NULL
         defaultQueryHints: []
 ```
+
+At this time we support only 1 connection, its **default** connection. If you need more connections (more databases?), please open issue or send PR. Thanks. 
 
 ## Bridges
 
