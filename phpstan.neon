@@ -3,3 +3,6 @@ includes:
 	- temp/phpstan/vendor/phpstan/phpstan-nette/rules.neon
 
 parameters:
+    ignoreErrors:
+        - '#Parameter \#1 \$reader of method Doctrine\\Common\\Persistence\\Mapping\\Driver\\AnnotationDriver::__construct\(\) expects Doctrine\\Common\\Annotations\\AnnotationReader, Doctrine\\Common\\Annotations\\Reader given.#'
+        - '#Property Doctrine\\Common\\Persistence\\Mapping\\Driver\\AnnotationDriver::\$reader \(Doctrine\\Common\\Annotations\\AnnotationReader\) does not accept Doctrine\\Common\\Annotations\\Reader.#'

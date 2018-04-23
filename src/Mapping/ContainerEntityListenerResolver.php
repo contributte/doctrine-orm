@@ -59,7 +59,7 @@ class ContainerEntityListenerResolver implements EntityListenerResolver
 	 * @param string $className
 	 * @return object
 	 */
-	public function resolve($className): mixed
+	public function resolve($className)
 	{
 		if (isset($this->instances[$className = trim($className, '\\')])) {
 			return $this->instances[$className];
