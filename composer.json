@@ -1,13 +1,13 @@
 {
   "name": "nettrine/orm",
-  "description": "ORM",
-  "keywords": ["nette", "doctrine", "orm"],
+  "description": "Well-integrated Doctrine2 ORM for Nette Framework",
+  "keywords": ["nette", "doctrine", "orm", "database"],
   "type": "library",
   "license": ["MIT"],
   "homepage": "https://github.com/nettrine/orm",
   "authors": [
     {
-      "name": "Milan Felix Sulc",
+      "name": "Milan Felix Šulc",
       "homepage": "https://f3l1x.io"
     },
     {
@@ -17,13 +17,13 @@
   ],
   "require": {
     "php": ">=7.1",
-    "nette/di": "~2.4.10",
-    "nette/utils": "~2.4.9",
-    "symfony/console": "~4.0.6",
-    "nettrine/dbal": "dev-master",
-    "doctrine/orm": "~2.6.0",
-    "doctrine/cache": "~1.7.0",
-    "doctrine/annotations": "~1.6.0"
+    "nette/di": "~2.4.11",
+    "nette/utils": "~2.5.1",
+    "symfony/console": "^4.0.8",
+    "nettrine/dbal": "^0.2.0",
+    "doctrine/orm": "^2.6.1",
+    "doctrine/cache": "^1.7.0",
+    "doctrine/annotations": "^1.6.0"
   },
   "require-dev": {
     "ninjify/qa": "^0.7.0",
@@ -59,8 +59,8 @@
     ],
     "phpstan-install": [
       "mkdir -p temp/phpstan",
-      "composer require -d temp/phpstan phpstan/phpstan:0.8.5",
-      "composer require -d temp/phpstan phpstan/phpstan-nette:0.8.3"
+      "composer require -d temp/phpstan phpstan/phpstan:0.9",
+      "composer require -d temp/phpstan phpstan/phpstan-nette:0.9"
     ],
     "phpstan": [
       "temp/phpstan/vendor/bin/phpstan analyse -l 7 -c phpstan.neon src"
