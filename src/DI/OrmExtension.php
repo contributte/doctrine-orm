@@ -2,7 +2,6 @@
 
 namespace Nettrine\ORM\DI;
 
-use Doctrine\Common\EventManager;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\Configuration;
 use Doctrine\ORM\Mapping\UnderscoreNamingStrategy;
@@ -138,7 +137,6 @@ final class OrmExtension extends CompilerExtension
 			->setFactory(EntityManagerFactory::class . '::create', [
 				$builder->getDefinitionByType(Connection::class), // Nettrine/DBAL
 				$this->prefix('@configuration'),
-				$builder->getDefinitionByType(EventManager::class), // Nettrine/DBAL
 				$entityManagerClass,
 			]);
 
