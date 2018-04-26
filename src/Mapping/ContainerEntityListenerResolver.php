@@ -15,9 +15,6 @@ class ContainerEntityListenerResolver implements EntityListenerResolver
 	/** @var object[] */
 	protected $instances = [];
 
-	/**
-	 * @param Container $container
-	 */
 	public function __construct(Container $container)
 	{
 		$this->container = $container;
@@ -26,11 +23,10 @@ class ContainerEntityListenerResolver implements EntityListenerResolver
 	/**
 	 * @phpcsSuppress SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingParameterTypeHint
 	 * @param string|NULL $className
-	 * @return void
 	 */
-	public function clear($className = NULL): void
+	public function clear($className = null): void
 	{
-		if ($className === NULL) {
+		if ($className === null) {
 			$this->instances = [];
 
 			return;
@@ -43,7 +39,6 @@ class ContainerEntityListenerResolver implements EntityListenerResolver
 
 	/**
 	 * @param object $object
-	 * @return void
 	 */
 	public function register($object): void
 	{
@@ -65,7 +60,7 @@ class ContainerEntityListenerResolver implements EntityListenerResolver
 			return $this->instances[$className];
 		}
 
-		if (($service = $this->container->getByType($className, FALSE))) {
+		if (($service = $this->container->getByType($className, false))) {
 			$this->instances[$className] = $this->container->getByType($className);
 		} else {
 			$this->instances[$className] = new $className();

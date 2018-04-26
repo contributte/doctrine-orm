@@ -13,9 +13,6 @@ trait Id
 	 */
 	private $id;
 
-	/**
-	 * @return int
-	 */
 	public function getId(): int
 	{
 		return $this->id;
@@ -26,7 +23,7 @@ trait Id
 	 */
 	public function __clone()
 	{
-		$this->id = NULL;
+		$this->id = null;
 	}
 
 }

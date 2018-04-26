@@ -23,9 +23,6 @@ use Nette\InvalidStateException;
 class OrmConsoleExtension extends CompilerExtension
 {
 
-	/**
-	 * @return void
-	 */
 	public function loadConfiguration(): void
 	{
 		if (!$this->compiler->getExtensions(OrmExtension::class)) {
@@ -47,51 +44,49 @@ class OrmConsoleExtension extends CompilerExtension
 		// Helpers
 		$builder->addDefinition($this->prefix('entityManagerHelper'))
 			->setClass(EntityManagerHelper::class)
-			->setAutowired(FALSE);
+			->setAutowired(false);
 
 		// Commands
 		$builder->addDefinition($this->prefix('schemaToolCreateCommand'))
 			->setClass(CreateCommand::class)
-			->setAutowired(FALSE);
+			->setAutowired(false);
 		$builder->addDefinition($this->prefix('schemaToolUpdateCommand'))
 			->setClass(UpdateCommand::class)
-			->setAutowired(FALSE);
+			->setAutowired(false);
 		$builder->addDefinition($this->prefix('schemaToolDropCommand'))
 			->setClass(DropCommand::class)
-			->setAutowired(FALSE);
+			->setAutowired(false);
 		$builder->addDefinition($this->prefix('convertMappingCommand'))
 			->setClass(ConvertMappingCommand::class)
-			->setAutowired(FALSE);
+			->setAutowired(false);
 		$builder->addDefinition($this->prefix('ensureProductionSettingsCommand'))
 			->setClass(EnsureProductionSettingsCommand::class)
-			->setAutowired(FALSE);
+			->setAutowired(false);
 		$builder->addDefinition($this->prefix('generateEntitiesCommand'))
 			->setClass(GenerateEntitiesCommand::class)
-			->setAutowired(FALSE);
+			->setAutowired(false);
 		$builder->addDefinition($this->prefix('generateProxiesCommand'))
 			->setClass(GenerateProxiesCommand::class)
-			->setAutowired(FALSE);
+			->setAutowired(false);
 		$builder->addDefinition($this->prefix('generateRepositoriesCommand'))
 			->setClass(GenerateRepositoriesCommand::class)
-			->setAutowired(FALSE);
+			->setAutowired(false);
 		$builder->addDefinition($this->prefix('infoCommand'))
 			->setClass(InfoCommand::class)
-			->setAutowired(FALSE);
+			->setAutowired(false);
 		$builder->addDefinition($this->prefix('mappingDescribeCommand'))
 			->setClass(MappingDescribeCommand::class)
-			->setAutowired(FALSE);
+			->setAutowired(false);
 		$builder->addDefinition($this->prefix('runDqlCommand'))
 			->setClass(RunDqlCommand::class)
-			->setAutowired(FALSE);
+			->setAutowired(false);
 		$builder->addDefinition($this->prefix('validateSchemaCommand'))
 			->setClass(ValidateSchemaCommand::class)
-			->setAutowired(FALSE);
+			->setAutowired(false);
 	}
 
 	/**
 	 * Decorate services
-	 *
-	 * @return void
 	 */
 	public function beforeCompile(): void
 	{

@@ -8,9 +8,6 @@ use PHPUnit\Framework\TestCase as PHPUnitTestCase;
 abstract class TestCase extends PHPUnitTestCase
 {
 
-	/**
-	 * @return void
-	 */
 	protected function setUp(): void
 	{
 		parent::setUp();
@@ -22,9 +19,6 @@ abstract class TestCase extends PHPUnitTestCase
 		}
 	}
 
-	/**
-	 * @return void
-	 */
 	protected function tearDown(): void
 	{
 		Mockery::close();

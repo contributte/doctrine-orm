@@ -14,15 +14,12 @@ class OrmCacheExtension extends CompilerExtension
 	/** @var mixed[] */
 	private $defaults = [
 		'driver' => FilesystemCache::class,
-		'queryCache' => NULL,
-		'hydrationCache' => NULL,
-		'metadataCache' => NULL,
-		'secondLevelCache' => NULL,
+		'queryCache' => null,
+		'hydrationCache' => null,
+		'metadataCache' => null,
+		'secondLevelCache' => null,
 	];
 
-	/**
-	 * @return void
-	 */
 	public function loadConfiguration(): void
 	{
 		if (!$this->compiler->getExtensions(OrmExtension::class)) {
@@ -37,79 +34,63 @@ class OrmCacheExtension extends CompilerExtension
 		$this->loadMetadataCacheConfiguration();
 	}
 
-	/**
-	 * @return void
-	 */
 	public function loadQueryCacheConfiguration(): void
 	{
 		$config = $this->getConfig();
 		$builder = $this->getContainerBuilder();
 		$configuration = $builder->getDefinitionByType(Configuration::class);
 
-		if ($config['queryCache'] === NULL && $config['driver']) {
+		if ($config['queryCache'] === null && $config['driver']) {
 			$configuration->addSetup('setQueryCacheImpl', [$this->getDriverCache('queryCache')]);
-		} elseif ($config['queryCache'] !== NULL) {
+		} elseif ($config['queryCache'] !== null) {
 			$builder->addDefinition($this->prefix('queryCache'))
 				->setFactory($config['queryCache']);
 			$configuration->addSetup('setQueryCacheImpl', [$this->prefix('@queryCache')]);
 		}
 	}
 
-	/**
-	 * @return void
-	 */
 	public function loadHydrationCacheConfiguration(): void
 	{
 		$config = $this->getConfig();
 		$builder = $this->getContainerBuilder();
 		$configuration = $builder->getDefinitionByType(Configuration::class);
 
-		if ($config['hydrationCache'] === NULL && $config['driver']) {
+		if ($config['hydrationCache'] === null && $config['driver']) {
 			$configuration->addSetup('setHydrationCacheImpl', [$this->getDriverCache('hydrationCache')]);
-		} elseif ($config['hydrationCache'] !== NULL) {
+		} elseif ($config['hydrationCache'] !== null) {
 			$builder->addDefinition($this->prefix('hydrationCache'))
 				->setFactory($config['hydrationCache']);
 			$configuration->addSetup('setHydrationCacheImpl', [$this->prefix('@hydrationCache')]);
 		}
 	}
 
-	/**
-	 * @return void
-	 */
 	public function loadMetadataCacheConfiguration(): void
 	{
 		$config = $this->getConfig();
 		$builder = $this->getContainerBuilder();
 		$configuration = $builder->getDefinitionByType(Configuration::class);
 
-		if ($config['metadataCache'] === NULL && $config['driver']) {
+		if ($config['metadataCache'] === null && $config['driver']) {
 			$configuration->addSetup('setMetadataCacheImpl', [$this->getDriverCache('metadataCache')]);
-		} elseif ($config['metadataCache'] !== NULL) {
+		} elseif ($config['metadataCache'] !== null) {
 			$builder->addDefinition($this->prefix('metadataCache'))
 				->setFactory($config['metadataCache']);
 			$configuration->addSetup('setMetadataCacheImpl', [$this->prefix('@metadataCache')]);
 		}
 	}
 
-	/**
-	 * @return void
-	 */
 	public function loadSecondLevelCacheConfiguration(): void
 	{
 		$config = $this->getConfig();
 		$builder = $this->getContainerBuilder();
 		$configuration = $builder->getDefinitionByType(Configuration::class);
 
-		if ($config['secondLevelCache'] !== NULL) {
-			$configuration->addSetup('setSecondLevelCacheEnabled', [TRUE]);
+		if ($config['secondLevelCache'] !== null) {
+			$configuration->addSetup('setSecondLevelCacheEnabled', [true]);
 			$configuration->addSetup('setSecondLevelCacheConfiguration', [$config['secondLevelCache']]);
 		}
 	}
 
-	/**
-	 * @param string $service
-	 * @return ServiceDefinition
-	 */
 	protected function getDriverCache(string $service): ServiceDefinition
 	{
 		$config = $this->getConfig();

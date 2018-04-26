@@ -9,13 +9,6 @@ use Doctrine\ORM\ORMException;
 class EntityManagerFactory
 {
 
-	/**
-	 * @param Connection $connection
-	 * @param Configuration $configuration
-	 * @param string $class
-	 * @return EntityManager
-	 * @throws ORMException
-	 */
 	public static function create(
 		Connection $connection,
 		Configuration $configuration,

@@ -15,12 +15,9 @@ use Tests\Nettrine\ORM\Fixtures\DummyEntityManager;
 final class OrmExtensionTest extends TestCase
 {
 
-	/**
-	 * @return void
-	 */
 	public function testRegisterAnnotations(): void
 	{
-		$loader = new ContainerLoader(TEMP_PATH, TRUE);
+		$loader = new ContainerLoader(TEMP_PATH, true);
 		$class = $loader->load(function (Compiler $compiler): void {
 			self::setUpCompiler($compiler);
 		}, 'a');
@@ -30,13 +27,9 @@ final class OrmExtensionTest extends TestCase
 		self::assertInstanceOf(EntityManager::class, $container->getByType(EntityManager::class));
 	}
 
-	/**
-	 * @depends testRegisterAnnotations
-	 * @return void
-	 */
 	public function testOwnEntityManager(): void
 	{
-		$loader = new ContainerLoader(TEMP_PATH, TRUE);
+		$loader = new ContainerLoader(TEMP_PATH, true);
 		$class = $loader->load(function (Compiler $compiler): void {
 			self::setUpCompiler($compiler);
 			$compiler->addConfig([
@@ -51,10 +44,6 @@ final class OrmExtensionTest extends TestCase
 		self::assertInstanceOf(DummyEntityManager::class, $container->getByType(DummyEntityManager::class));
 	}
 
-	/**
-	 * @param Compiler $compiler
-	 * @return void
-	 */
 	private static function setUpCompiler(Compiler $compiler): void
 	{
 		$compiler->addExtension('dbal', new DbalExtension());

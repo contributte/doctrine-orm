@@ -29,8 +29,6 @@ class OrmAnnotationsExtension extends CompilerExtension
 
 	/**
 	 * Register services
-	 *
-	 * @return void
 	 */
 	public function loadConfiguration(): void
 	{
@@ -45,7 +43,7 @@ class OrmAnnotationsExtension extends CompilerExtension
 
 		$reader = $builder->addDefinition($this->prefix('annotationReader'))
 			->setClass(AnnotationReader::class)
-			->setAutowired(FALSE);
+			->setAutowired(false);
 
 		Validators::assertField($config, 'ignore', 'array');
 		foreach ($config['ignore'] as $annotationName) {
@@ -75,10 +73,6 @@ class OrmAnnotationsExtension extends CompilerExtension
 		AnnotationRegistry::registerLoader('class_exists');
 	}
 
-	/**
-	 * @param ClassType $classType
-	 * @return void
-	 */
 	public function afterCompile(ClassType $classType): void
 	{
 		$initialize = $classType->getMethod('initialize');

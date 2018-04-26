@@ -9,7 +9,6 @@ class AnnotationDriver extends DoctrineAnnotationDriver
 {
 
 	/**
-	 * @param Reader $reader
 	 * @param string[] $paths
 	 */
 	public function __construct(Reader $reader, array $paths = [])

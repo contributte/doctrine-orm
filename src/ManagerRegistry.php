@@ -15,11 +15,6 @@ class ManagerRegistry extends AbstractManagerRegistry
 	/** @var Container */
 	private $container;
 
-	/**
-	 * @param Connection $connection
-	 * @param EntityManager $em
-	 * @param Container $container
-	 */
 	public function __construct(Connection $connection, EntityManager $em, Container $container)
 	{
 		$defaultConnection = $container->findByType(get_class($connection))[0];
@@ -34,7 +29,6 @@ class ManagerRegistry extends AbstractManagerRegistry
 
 	/**
 	 * @param string $name
-	 * @return object
 	 * @phpcsSuppress SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingParameterTypeHint
 	 */
 	protected function getService($name): object
@@ -44,7 +38,6 @@ class ManagerRegistry extends AbstractManagerRegistry
 
 	/**
 	 * @param string $name
-	 * @return void
 	 * @phpcsSuppress SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingParameterTypeHint
 	 */
 	protected function resetService($name): void
@@ -54,7 +47,6 @@ class ManagerRegistry extends AbstractManagerRegistry
 
 	/**
 	 * @param string $alias
-	 * @return string
 	 * @throws ORMException
 	 * @phpcsSuppress SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingParameterTypeHint
 	 */
