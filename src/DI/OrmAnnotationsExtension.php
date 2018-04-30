@@ -25,6 +25,7 @@ class OrmAnnotationsExtension extends CompilerExtension
 		'ignore' => [],
 		'cache' => FilesystemCache::class,
 		'cacheDir' => '%tempDir%/cache/Doctrine.Annotations',
+		'debug' => false,
 	];
 
 	/**
@@ -62,6 +63,7 @@ class OrmAnnotationsExtension extends CompilerExtension
 			->setFactory(CachedReader::class, [
 				$this->prefix('@annotationReader'),
 				$this->prefix('@annotationsCache'),
+				$config['debug'],
 			]);
 
 		$builder->addDefinition($this->prefix('annotationDriver'))
