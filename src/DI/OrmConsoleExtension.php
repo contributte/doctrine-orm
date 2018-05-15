@@ -49,39 +49,51 @@ class OrmConsoleExtension extends CompilerExtension
 		// Commands
 		$builder->addDefinition($this->prefix('schemaToolCreateCommand'))
 			->setClass(CreateCommand::class)
+			->addTag('console.command', 'orm:schema-tool:create')
 			->setAutowired(false);
 		$builder->addDefinition($this->prefix('schemaToolUpdateCommand'))
 			->setClass(UpdateCommand::class)
+			->addTag('console.command', 'orm:schema-tool:update')
 			->setAutowired(false);
 		$builder->addDefinition($this->prefix('schemaToolDropCommand'))
 			->setClass(DropCommand::class)
+			->addTag('console.command', 'orm:schema-tool:drop')
 			->setAutowired(false);
 		$builder->addDefinition($this->prefix('convertMappingCommand'))
 			->setClass(ConvertMappingCommand::class)
+			->addTag('console.command', 'orm:convert-mapping')
 			->setAutowired(false);
 		$builder->addDefinition($this->prefix('ensureProductionSettingsCommand'))
 			->setClass(EnsureProductionSettingsCommand::class)
+			->addTag('console.command', 'orm:ensure-production-settings')
 			->setAutowired(false);
 		$builder->addDefinition($this->prefix('generateEntitiesCommand'))
 			->setClass(GenerateEntitiesCommand::class)
+			->addTag('console.command', 'orm:generate-entities')
 			->setAutowired(false);
 		$builder->addDefinition($this->prefix('generateProxiesCommand'))
 			->setClass(GenerateProxiesCommand::class)
+			->addTag('console.command', 'orm:generate-proxies')
 			->setAutowired(false);
 		$builder->addDefinition($this->prefix('generateRepositoriesCommand'))
 			->setClass(GenerateRepositoriesCommand::class)
+			->addTag('console.command', 'orm:generate-repositories')
 			->setAutowired(false);
 		$builder->addDefinition($this->prefix('infoCommand'))
 			->setClass(InfoCommand::class)
+			->addTag('console.command', 'orm:info')
 			->setAutowired(false);
 		$builder->addDefinition($this->prefix('mappingDescribeCommand'))
 			->setClass(MappingDescribeCommand::class)
+			->addTag('console.command', 'orm:mapping:describe')
 			->setAutowired(false);
 		$builder->addDefinition($this->prefix('runDqlCommand'))
 			->setClass(RunDqlCommand::class)
+			->addTag('console.command', 'orm:run-dql')
 			->setAutowired(false);
 		$builder->addDefinition($this->prefix('validateSchemaCommand'))
 			->setClass(ValidateSchemaCommand::class)
+			->addTag('console.command', 'orm:validate-schema')
 			->setAutowired(false);
 	}
 
