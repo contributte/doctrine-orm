@@ -132,7 +132,41 @@ orm.annotations:
 
 ### Cache Bridge
 
-@todo
+This extension setup cache for all important parts: `queryCache`, `resultCache`, `hydrationCache`, `metadataCache`, `secondLevelCache`.
+
+This is default configuration, it use `filesystem` driver.
+
+```yaml
+extensions:
+    orm: Nettrine\ORM\DI\OrmExtension
+    orm.cache: Nettrine\ORM\DI\OrmCacheExtension
+
+orm.annotations:
+    defaultDriver: filesystem
+```
+
+Available drivers: 
+
+- `apc` - `ApcCache`
+- `apcu` - `ApcuCache`
+- `array` - `ArrayCache`
+- `filesystem` - `FilesystemCache`
+- `memcache` - `MemcacheCache`
+- `memcached` - `MemcachedCache`
+- `redis` - `RedisCache`
+- `void` - `VoidCache`
+- `xcache` - `XcacheCache`
+
+You can also specify single driver.
+
+```yaml
+orm.cache:
+    queryCache: App\SpecialDriver
+    resultCache: App\SpecialOtherDriver
+    hydrationCache: App\SpecialDriver('foo')
+    metadataCache: @cacheDriver
+    secondLevelCache: @cacheDriverFactory::create('bar')
+```
 
 ### Console Bridge
 
