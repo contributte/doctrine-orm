@@ -20,7 +20,7 @@
     "nette/di": "~2.4.11",
     "nette/utils": "~2.5.1",
     "symfony/console": "^4.0.8",
-    "nettrine/dbal": "^0.2.0",
+    "nettrine/dbal": "^0.2.0 || ^0.3.0",
     "doctrine/orm": "^2.6.1",
     "doctrine/cache": "^1.7.0",
     "doctrine/annotations": "^1.6.0"
