@@ -40,7 +40,7 @@ class OrmAnnotationsExtension extends CompilerExtension
 		}
 
 		$builder = $this->getContainerBuilder();
-		$config = $this->getConfig($this->defaults);
+		$config = $this->validateConfig($this->defaults);
 
 		$reader = $builder->addDefinition($this->prefix('annotationReader'))
 			->setClass(AnnotationReader::class)
