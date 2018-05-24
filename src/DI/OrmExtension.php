@@ -144,7 +144,7 @@ final class OrmExtension extends CompilerExtension
 		foreach ($builder->findByType(\Doctrine\DBAL\Connection::class) as $k => $connection) {
 			$match = \Nette\Utils\Strings::match($k, '#([a-zA-Z]+\.([a-zA-Z]+))\.connection#');
 
-			if ($connection->getTag(\Nettrine\DBAL\DI\DbalExtension::TAG_CONNECTION) !== null && array_key_exists(1, $match) && is_string($match[1])) {
+			if ($connection->getTag(\Nettrine\DBAL\DI\DbalExtension::TAG_CONNECTION) !== null && array_key_exists(1, $match) && array_key_exists(2, $match)) {
 				$nameWithPrefix = $match[1];
 				$name = $match[2];
 
