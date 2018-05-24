@@ -1,4 +1,6 @@
-<?php declare(strict_types = 1);
+<?php
+
+declare(strict_types = 1);
 
 namespace Nettrine\ORM\DI;
 
@@ -16,6 +18,7 @@ use Nettrine\ORM\EntityManagerFactory;
 use Nettrine\ORM\ManagerRegistry;
 use Nettrine\ORM\Mapping\ContainerEntityListenerResolver;
 
+
 final class OrmExtension extends CompilerExtension
 {
 
@@ -24,9 +27,9 @@ final class OrmExtension extends CompilerExtension
 		'entityManagerClass' => EntityManager::class,
 		'configuration' => [
 			'proxyDir' => '%tempDir%/proxies',
-			'autoGenerateProxyClasses' => NULL,
+			'autoGenerateProxyClasses' => null,
 			'proxyNamespace' => 'Nettrine\Proxy',
-			'metadataDriverImpl' => NULL,
+			'metadataDriverImpl' => null,
 			'entityNamespaces' => [],
 			//TODO named query
 			//TODO named native query
@@ -34,13 +37,13 @@ final class OrmExtension extends CompilerExtension
 			'customNumericFunctions' => [],
 			'customDatetimeFunctions' => [],
 			'customHydrationModes' => [],
-			'classMetadataFactoryName' => NULL,
+			'classMetadataFactoryName' => null,
 			//TODO filters
-			'defaultRepositoryClassName' => NULL,
+			'defaultRepositoryClassName' => null,
 			'namingStrategy' => UnderscoreNamingStrategy::class,
-			'quoteStrategy' => NULL,
-			'entityListenerResolver' => NULL,
-			'repositoryFactory' => NULL,
+			'quoteStrategy' => null,
+			'entityListenerResolver' => null,
+			'repositoryFactory' => null,
 			'defaultQueryHints' => [],
 		],
 	];
@@ -68,16 +71,16 @@ final class OrmExtension extends CompilerExtension
 		$configuration = $builder->addDefinition($this->prefix('configuration'))
 			->setClass(Configuration::class);
 
-		if ($config['proxyDir'] !== NULL) {
+		if ($config['proxyDir'] !== null) {
 			$configuration->addSetup('setProxyDir', [$config['proxyDir']]);
 		}
-		if ($config['autoGenerateProxyClasses'] !== NULL) {
+		if ($config['autoGenerateProxyClasses'] !== null) {
 			$configuration->addSetup('setAutoGenerateProxyClasses', [$config['autoGenerateProxyClasses']]);
 		}
-		if ($config['proxyNamespace'] !== NULL) {
+		if ($config['proxyNamespace'] !== null) {
 			$configuration->addSetup('setProxyNamespace', [$config['proxyNamespace']]);
 		}
-		if ($config['metadataDriverImpl'] !== NULL) {
+		if ($config['metadataDriverImpl'] !== null) {
 			$configuration->addSetup('setMetadataDriverImpl', [$config['metadataDriverImpl']]);
 		}
 		if ($config['entityNamespaces']) {
@@ -91,27 +94,28 @@ final class OrmExtension extends CompilerExtension
 			->addSetup('setCustomDatetimeFunctions', [$config['customDatetimeFunctions']])
 			->addSetup('setCustomHydrationModes', [$config['customHydrationModes']]);
 
-		if ($config['classMetadataFactoryName'] !== NULL) {
+		if ($config['classMetadataFactoryName'] !== null) {
 			$configuration->addSetup('setClassMetadataFactoryName', [$config['classMetadataFactoryName']]);
 		}
-		if ($config['defaultRepositoryClassName'] !== NULL) {
+		if ($config['defaultRepositoryClassName'] !== null) {
 			$configuration->addSetup('setDefaultRepositoryClassName', [$config['defaultRepositoryClassName']]);
 		}
 
-		if ($config['namingStrategy'] !== NULL) {
+		if ($config['namingStrategy'] !== null) {
 			$configuration->addSetup('setNamingStrategy', [new Statement($config['namingStrategy'])]);
 		}
-		if ($config['quoteStrategy'] !== NULL) {
+		if ($config['quoteStrategy'] !== null) {
 			$configuration->addSetup('setQuoteStrategy', [$config['quoteStrategy']]);
 		}
-		if ($config['entityListenerResolver'] !== NULL) {
+		if ($config['entityListenerResolver'] !== null) {
 			$configuration->addSetup('setEntityListenerResolver', [$config['entityListenerResolver']]);
 		} else {
 			$builder->addDefinition($this->prefix('entityListenerResolver'))
 				->setClass(ContainerEntityListenerResolver::class);
+
 			$configuration->addSetup('setEntityListenerResolver', [$this->prefix('@entityListenerResolver')]);
 		}
-		if ($config['repositoryFactory'] !== NULL) {
+		if ($config['repositoryFactory'] !== null) {
 			$configuration->addSetup('setRepositoryFactory', [$config['repositoryFactory']]);
 		}
 		if ($config['defaultQueryHints']) {
@@ -138,10 +142,11 @@ final class OrmExtension extends CompilerExtension
 		$connections = [];
 
 		foreach ($builder->findByType(\Doctrine\DBAL\Connection::class) as $k => $connection) {
-			$match = \Nette\Utils\Strings::match($k, '#dbal\.([a-zA-Z]+)\.connection#');
+			$match = \Nette\Utils\Strings::match($k, '#([a-zA-Z]+\.([a-zA-Z]+))\.connection#');
 
-			if (array_key_exists(1, $match) && is_string($match[1])) {
-				$name = $match[1];
+			if ($connection->getTag(\Nettrine\DBAL\DI\DbalExtension::TAG_CONNECTION) !== null && array_key_exists(1, $match) && is_string($match[1])) {
+				$nameWithPrefix = $match[1];
+				$name = $match[2];
 
 			} else {
 				continue;
@@ -153,9 +158,9 @@ final class OrmExtension extends CompilerExtension
 			$builder->addDefinition($this->prefix($name . '.entityManager'))
 				->setClass($entityManagerClass)
 				->setFactory(EntityManagerFactory::class . '::create', [
-					$builder->getDefinition('dbal.' . $name . '.connection'), // Nettrine/DBAL
+					$builder->getDefinition($nameWithPrefix . '.connection'), // Nettrine/DBAL
 					$this->prefix('@configuration'),
-					$builder->getDefinition('dbal.' . $name . '.eventManager'), // Nettrine/DBAL
+					$builder->getDefinition($nameWithPrefix . '.eventManager'), // Nettrine/DBAL
 					$entityManagerClass,
 				])
 				->setAutowired($autowired);
@@ -164,7 +169,7 @@ final class OrmExtension extends CompilerExtension
 			$builder->addDefinition($this->prefix($name . '.managerRegistry'))
 				->setClass(ManagerRegistry::class)
 				->setArguments([
-					$builder->getDefinition('dbal.' . $name . '.connection'),
+					$builder->getDefinition($nameWithPrefix . '.connection'),
 					$this->prefix('@' . $name . '.entityManager'),
 				])
 				->setAutowired($autowired);
