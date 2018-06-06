@@ -125,6 +125,7 @@ extensions:
 
 orm.annotations:
     paths: [] # define paths for Entities 
+    excludePaths: [] # these paths will be excluded 
     ignore: [] # ignored annotations
     cache: Doctrine\Common\Cache\FilesystemCache
     cacheDir: '%tempDir%/cache/Doctrine.Annotations'
