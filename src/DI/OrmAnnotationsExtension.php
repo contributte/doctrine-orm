@@ -22,6 +22,7 @@ class OrmAnnotationsExtension extends CompilerExtension
 	/** @var mixed[] */
 	public $defaults = [
 		'paths' => [], //'%appDir%'
+		'excludePaths' => [],
 		'ignore' => [],
 		'cache' => FilesystemCache::class,
 		'cacheDir' => '%tempDir%/cache/Doctrine.Annotations',
@@ -67,7 +68,8 @@ class OrmAnnotationsExtension extends CompilerExtension
 			]);
 
 		$builder->addDefinition($this->prefix('annotationDriver'))
-			->setClass(AnnotationDriver::class, [$this->prefix('@reader'), Helpers::expand($config['paths'], $builder->parameters)]);
+			->setClass(AnnotationDriver::class, [$this->prefix('@reader'), Helpers::expand($config['paths'], $builder->parameters)])
+			->addSetup('addExcludePaths', [Helpers::expand($config['excludePaths'], $builder->parameters)]);
 
 		$builder->getDefinitionByType(Configuration::class)
 			->addSetup('setMetadataDriverImpl', [$this->prefix('@annotationDriver')]);
