@@ -18,9 +18,6 @@ trait Id
 		return $this->id;
 	}
 
-	/**
-	 * @return void
-	 */
 	public function __clone()
 	{
 		$this->id = null;
