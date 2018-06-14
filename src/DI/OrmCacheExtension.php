@@ -138,7 +138,8 @@ class OrmCacheExtension extends CompilerExtension
 		}
 
 		$driverCache = $builder->addDefinition($this->prefix($service))
-			->setFactory(self::DRIVERS[$config['defaultDriver']]);
+			->setFactory(self::DRIVERS[$config['defaultDriver']])
+			->setAutowired(false);
 
 		if ($config['defaultDriver'] === 'filesystem') {
 			$driverCache->setArguments([$builder->parameters['tempDir'] . '/cache/Doctrine.' . ucfirst($service)]);
