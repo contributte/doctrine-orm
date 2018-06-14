@@ -4,17 +4,15 @@ namespace Nettrine\ORM\DI;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\Configuration;
+use Doctrine\ORM\EntityManager as DoctrineEntityManager;
 use Doctrine\ORM\Mapping\UnderscoreNamingStrategy;
 use Nette\DI\CompilerExtension;
 use Nette\DI\Helpers;
 use Nette\DI\Statement;
 use Nettrine\ORM\EntityManager;
-use Nettrine\ORM\EntityManagerFactory;
 use Nettrine\ORM\Exception\Logical\InvalidStateException;
 use Nettrine\ORM\ManagerRegistry;
 use Nettrine\ORM\Mapping\ContainerEntityListenerResolver;
-use Nettrine\ORM\IEntityManager;
-use Doctrine\ORM\EntityManager as DoctrineEntityManager;
 
 final class OrmExtension extends CompilerExtension
 {
@@ -127,7 +125,7 @@ final class OrmExtension extends CompilerExtension
 			->setType(DoctrineEntityManager::class)
 			->setFactory(DoctrineEntityManager::class . '::create', [
 				$builder->getDefinitionByType(Connection::class), // Nettrine/DBAL
-				$this->prefix('@configuration')
+				$this->prefix('@configuration'),
 			])
 			->setAutowired(false);
 
