@@ -2,17 +2,9 @@
 
 namespace Nettrine\ORM;
 
-use Doctrine\Common\EventManager;
-use Doctrine\DBAL\Connection;
-use Doctrine\ORM\Configuration;
-use Doctrine\ORM\EntityManager as DoctrineEntityManager;
+use Doctrine\ORM\Decorator\EntityManagerDecorator;
 
-class EntityManager extends DoctrineEntityManager
+class EntityManager extends EntityManagerDecorator implements IEntityManager
 {
-
-	public function __construct(Connection $connection, Configuration $configuration, EventManager $eventManager)
-	{
-		parent::__construct($connection, $configuration, $eventManager);
-	}
 
 }

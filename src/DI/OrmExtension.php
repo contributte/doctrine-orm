@@ -13,6 +13,8 @@ use Nettrine\ORM\EntityManagerFactory;
 use Nettrine\ORM\Exception\Logical\InvalidStateException;
 use Nettrine\ORM\ManagerRegistry;
 use Nettrine\ORM\Mapping\ContainerEntityListenerResolver;
+use Nettrine\ORM\IEntityManager;
+use Doctrine\ORM\EntityManager as DoctrineEntityManager;
 
 final class OrmExtension extends CompilerExtension
 {
@@ -120,14 +122,18 @@ final class OrmExtension extends CompilerExtension
 			throw new InvalidStateException(sprintf('EntityManager class "%s" not found', $entityManagerClass));
 		}
 
+		// Original Entity Manager
+		$original = $builder->addDefinition($this->prefix('originalEntityManager'))
+			->setType(DoctrineEntityManager::class)
+			->setFactory(DoctrineEntityManager::class . '::create', [
+				$builder->getDefinitionByType(Connection::class), // Nettrine/DBAL
+				$this->prefix('@configuration')
+			])
+			->setAutowired(false);
+
 		// Entity Manager
 		$builder->addDefinition($this->prefix('entityManager'))
-			->setType($entityManagerClass)
-			->setFactory(EntityManagerFactory::class . '::create', [
-				$builder->getDefinitionByType(Connection::class), // Nettrine/DBAL
-				$this->prefix('@configuration'),
-				$entityManagerClass,
-			]);
+			->setFactory($entityManagerClass, [$original]);
 
 		// ManagerRegistry
 		$builder->addDefinition($this->prefix('managerRegistry'))
