@@ -44,7 +44,7 @@ class OrmAnnotationsExtension extends CompilerExtension
 		$config = $this->validateConfig($this->defaults);
 
 		$reader = $builder->addDefinition($this->prefix('annotationReader'))
-			->setClass(AnnotationReader::class)
+			->setType(AnnotationReader::class)
 			->setAutowired(false);
 
 		Validators::assertField($config, 'ignore', 'array');
@@ -60,7 +60,7 @@ class OrmAnnotationsExtension extends CompilerExtension
 		//TODO otestovat predani @...
 
 		$builder->addDefinition($this->prefix('reader'))
-			->setClass(Reader::class)
+			->setType(Reader::class)
 			->setFactory(CachedReader::class, [
 				$this->prefix('@annotationReader'),
 				$this->prefix('@annotationsCache'),
@@ -68,7 +68,7 @@ class OrmAnnotationsExtension extends CompilerExtension
 			]);
 
 		$builder->addDefinition($this->prefix('annotationDriver'))
-			->setClass(AnnotationDriver::class, [$this->prefix('@reader'), Helpers::expand($config['paths'], $builder->parameters)])
+			->setFactory(AnnotationDriver::class, [$this->prefix('@reader'), Helpers::expand($config['paths'], $builder->parameters)])
 			->addSetup('addExcludePaths', [Helpers::expand($config['excludePaths'], $builder->parameters)]);
 
 		$builder->getDefinitionByType(Configuration::class)

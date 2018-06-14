@@ -57,7 +57,7 @@ final class OrmExtension extends CompilerExtension
 		$config = Helpers::expand($config, $builder->parameters);
 
 		$configuration = $builder->addDefinition($this->prefix('configuration'))
-			->setClass(Configuration::class);
+			->setType(Configuration::class);
 
 		if ($config['proxyDir'] !== null) {
 			$configuration->addSetup('setProxyDir', [$config['proxyDir']]);
@@ -99,7 +99,7 @@ final class OrmExtension extends CompilerExtension
 			$configuration->addSetup('setEntityListenerResolver', [$config['entityListenerResolver']]);
 		} else {
 			$builder->addDefinition($this->prefix('entityListenerResolver'))
-				->setClass(ContainerEntityListenerResolver::class);
+				->setType(ContainerEntityListenerResolver::class);
 			$configuration->addSetup('setEntityListenerResolver', [$this->prefix('@entityListenerResolver')]);
 		}
 		if ($config['repositoryFactory'] !== null) {
@@ -122,7 +122,7 @@ final class OrmExtension extends CompilerExtension
 
 		// Entity Manager
 		$builder->addDefinition($this->prefix('entityManager'))
-			->setClass($entityManagerClass)
+			->setType($entityManagerClass)
 			->setFactory(EntityManagerFactory::class . '::create', [
 				$builder->getDefinitionByType(Connection::class), // Nettrine/DBAL
 				$this->prefix('@configuration'),
@@ -131,8 +131,7 @@ final class OrmExtension extends CompilerExtension
 
 		// ManagerRegistry
 		$builder->addDefinition($this->prefix('managerRegistry'))
-			->setClass(ManagerRegistry::class)
-			->setArguments([
+			->setFactory(ManagerRegistry::class, [
 				$builder->getDefinitionByType(Connection::class),
 				$this->prefix('@entityManager'),
 			]);
