@@ -131,7 +131,8 @@ final class OrmExtension extends CompilerExtension
 
 		// ManagerRegistry
 		$builder->addDefinition($this->prefix('managerRegistry'))
-			->setFactory(ManagerRegistry::class, [
+			->setType(ManagerRegistry::class)
+			->setArguments([
 				$builder->getDefinitionByType(Connection::class),
 				$this->prefix('@entityManager'),
 			]);
