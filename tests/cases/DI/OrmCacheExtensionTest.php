@@ -10,7 +10,7 @@ use Nettrine\DBAL\DI\DbalExtension;
 use Nettrine\ORM\DI\OrmAnnotationsExtension;
 use Nettrine\ORM\DI\OrmCacheExtension;
 use Nettrine\ORM\DI\OrmExtension;
-use Nettrine\ORM\EntityManager;
+use Nettrine\ORM\EntityManagerDecorator;
 use Tests\Nettrine\ORM\Cases\TestCase;
 
 final class OrmCacheExtensionTest extends TestCase
@@ -34,8 +34,8 @@ final class OrmCacheExtensionTest extends TestCase
 
 		/** @var Container $container */
 		$container = new $class();
-		/** @var EntityManager $em */
-		$em = $container->getByType(EntityManager::class);
+		/** @var EntityManagerDecorator $em */
+		$em = $container->getByType(EntityManagerDecorator::class);
 
 		self::assertInstanceOf(FilesystemCache::class, $em->getConfiguration()->getHydrationCacheImpl());
 		self::assertInstanceOf(FilesystemCache::class, $em->getConfiguration()->getMetadataCacheImpl());

@@ -9,7 +9,7 @@ use Doctrine\ORM\Mapping\UnderscoreNamingStrategy;
 use Nette\DI\CompilerExtension;
 use Nette\DI\Helpers;
 use Nette\DI\Statement;
-use Nettrine\ORM\EntityManager;
+use Nettrine\ORM\EntityManagerDecorator;
 use Nettrine\ORM\Exception\Logical\InvalidStateException;
 use Nettrine\ORM\ManagerRegistry;
 use Nettrine\ORM\Mapping\ContainerEntityListenerResolver;
@@ -19,7 +19,7 @@ final class OrmExtension extends CompilerExtension
 
 	/** @var mixed[] */
 	private $defaults = [
-		'entityManagerClass' => EntityManager::class,
+		'entityManagerClass' => EntityManagerDecorator::class,
 		'configuration' => [
 			'proxyDir' => '%tempDir%/proxies',
 			'autoGenerateProxyClasses' => null,

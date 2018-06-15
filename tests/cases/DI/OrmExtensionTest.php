@@ -8,7 +8,7 @@ use Nette\DI\ContainerLoader;
 use Nettrine\DBAL\DI\DbalExtension;
 use Nettrine\ORM\DI\OrmAnnotationsExtension;
 use Nettrine\ORM\DI\OrmExtension;
-use Nettrine\ORM\EntityManager;
+use Nettrine\ORM\EntityManagerDecorator;
 use Tests\Nettrine\ORM\Cases\TestCase;
 use Tests\Nettrine\ORM\Fixtures\DummyEntityManager;
 
@@ -24,7 +24,7 @@ final class OrmExtensionTest extends TestCase
 
 		/** @var Container $container */
 		$container = new $class();
-		self::assertInstanceOf(EntityManager::class, $container->getByType(EntityManager::class));
+		self::assertInstanceOf(EntityManagerDecorator::class, $container->getByType(EntityManagerDecorator::class));
 	}
 
 	public function testOwnEntityManager(): void
