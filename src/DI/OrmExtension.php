@@ -19,7 +19,7 @@ final class OrmExtension extends CompilerExtension
 
 	/** @var mixed[] */
 	private $defaults = [
-		'entityManagerClass' => EntityManagerDecorator::class,
+		'entityManagerDecoratorClass' => EntityManagerDecorator::class,
 		'configuration' => [
 			'proxyDir' => '%tempDir%/proxies',
 			'autoGenerateProxyClasses' => null,
@@ -115,12 +115,12 @@ final class OrmExtension extends CompilerExtension
 		$builder = $this->getContainerBuilder();
 		$config = $this->getConfig();
 
-		$entityManagerClass = $config['entityManagerClass'];
-		if (!class_exists($entityManagerClass)) {
-			throw new InvalidStateException(sprintf('EntityManager class "%s" not found', $entityManagerClass));
+		$entityManagerDecoratorClass = $config['entityManagerDecoratorClass'];
+		if (!class_exists($entityManagerDecoratorClass)) {
+			throw new InvalidStateException(sprintf('EntityManagerDecorator class "%s" not found', $entityManagerDecoratorClass));
 		}
 
-		// Original Entity Manager
+		// Entity Manager
 		$original = $builder->addDefinition($this->prefix('originalEntityManager'))
 			->setType(DoctrineEntityManager::class)
 			->setFactory(DoctrineEntityManager::class . '::create', [
@@ -129,9 +129,9 @@ final class OrmExtension extends CompilerExtension
 			])
 			->setAutowired(false);
 
-		// Entity Manager
+		// Entity Manager Decorator
 		$builder->addDefinition($this->prefix('entityManager'))
-			->setFactory($entityManagerClass, [$original]);
+			->setFactory($entityManagerDecoratorClass, [$original]);
 
 		// ManagerRegistry
 		$builder->addDefinition($this->prefix('managerRegistry'))

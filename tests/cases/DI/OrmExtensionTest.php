@@ -34,7 +34,7 @@ final class OrmExtensionTest extends TestCase
 			self::setUpCompiler($compiler);
 			$compiler->addConfig([
 				'orm' => [
-					'entityManagerClass' => DummyEntityManager::class,
+					'entityManagerDecoratorClass' => DummyEntityManager::class,
 				],
 			]);
 		}, 'b');
