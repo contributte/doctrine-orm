@@ -121,7 +121,7 @@ final class OrmExtension extends CompilerExtension
 		}
 
 		// Entity Manager
-		$original = $builder->addDefinition($this->prefix('originalEntityManager'))
+		$original = $builder->addDefinition($this->prefix('entityManager'))
 			->setType(DoctrineEntityManager::class)
 			->setFactory(DoctrineEntityManager::class . '::create', [
 				$builder->getDefinitionByType(Connection::class), // Nettrine/DBAL
@@ -130,7 +130,7 @@ final class OrmExtension extends CompilerExtension
 			->setAutowired(false);
 
 		// Entity Manager Decorator
-		$builder->addDefinition($this->prefix('entityManager'))
+		$builder->addDefinition($this->prefix('entityManagerDecorator'))
 			->setFactory($entityManagerDecoratorClass, [$original]);
 
 		// ManagerRegistry
@@ -138,7 +138,7 @@ final class OrmExtension extends CompilerExtension
 			->setType(ManagerRegistry::class)
 			->setArguments([
 				$builder->getDefinitionByType(Connection::class),
-				$this->prefix('@entityManager'),
+				$this->prefix('@entityManagerDecorator'),
 			]);
 	}
 
