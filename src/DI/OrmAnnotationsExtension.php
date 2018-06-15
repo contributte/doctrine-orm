@@ -54,8 +54,13 @@ class OrmAnnotationsExtension extends CompilerExtension
 		}
 
 		// Cache
-		$builder->addDefinition($this->prefix('annotationsCache'))
-			->setFactory($config['cache'], [Helpers::expand($config['cacheDir'], $builder->parameters)]);
+		$cache = $builder->addDefinition($this->prefix('annotationsCache'))
+			->setFactory($config['cache'])
+			->setAutowired(false);
+
+		if ($config['cache'] === FilesystemCache::class) {
+			$cache->setArguments([Helpers::expand($config['cacheDir'], $builder->parameters)]);
+		}
 
 		//TODO otestovat predani @...
 
