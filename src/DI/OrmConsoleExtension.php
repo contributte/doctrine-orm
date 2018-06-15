@@ -23,6 +23,14 @@ use Nette\InvalidStateException;
 class OrmConsoleExtension extends CompilerExtension
 {
 
+	/** @var bool */
+	private $cliMode;
+
+	public function __construct(?bool $cliMode = null)
+	{
+		$this->cliMode = $cliMode ?? PHP_SAPI === 'cli';
+	}
+
 	public function loadConfiguration(): void
 	{
 		if (!$this->compiler->getExtensions(OrmExtension::class)) {
@@ -36,7 +44,7 @@ class OrmConsoleExtension extends CompilerExtension
 		}
 
 		// Skip if it's not CLI mode
-		if (PHP_SAPI !== 'cli') {
+		if (!$this->cliMode) {
 			return;
 		}
 
@@ -103,7 +111,7 @@ class OrmConsoleExtension extends CompilerExtension
 	public function beforeCompile(): void
 	{
 		// Skip if it's not CLI mode
-		if (PHP_SAPI !== 'cli') {
+		if (!$this->cliMode) {
 			return;
 		}
 
