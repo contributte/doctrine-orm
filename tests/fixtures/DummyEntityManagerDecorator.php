@@ -4,7 +4,7 @@ namespace Tests\Nettrine\ORM\Fixtures;
 
 use Nettrine\ORM\EntityManagerDecorator;
 
-class DummyEntityManager extends EntityManagerDecorator
+class DummyEntityManagerDecorator extends EntityManagerDecorator
 {
 
 }

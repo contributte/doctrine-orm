@@ -10,7 +10,7 @@ use Nettrine\ORM\DI\OrmAnnotationsExtension;
 use Nettrine\ORM\DI\OrmExtension;
 use Nettrine\ORM\EntityManagerDecorator;
 use Tests\Nettrine\ORM\Cases\TestCase;
-use Tests\Nettrine\ORM\Fixtures\DummyEntityManager;
+use Tests\Nettrine\ORM\Fixtures\DummyEntityManagerDecorator;
 
 final class OrmExtensionTest extends TestCase
 {
@@ -34,14 +34,14 @@ final class OrmExtensionTest extends TestCase
 			self::setUpCompiler($compiler);
 			$compiler->addConfig([
 				'orm' => [
-					'entityManagerDecoratorClass' => DummyEntityManager::class,
+					'entityManagerDecoratorClass' => DummyEntityManagerDecorator::class,
 				],
 			]);
 		}, 'b');
 
 		/** @var Container $container */
 		$container = new $class();
-		self::assertInstanceOf(DummyEntityManager::class, $container->getByType(DummyEntityManager::class));
+		self::assertInstanceOf(DummyEntityManagerDecorator::class, $container->getByType(DummyEntityManagerDecorator::class));
 	}
 
 	private static function setUpCompiler(Compiler $compiler): void
