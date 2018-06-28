@@ -14,6 +14,11 @@
         </properties>
     </rule>
 
+    <!-- Tests specific -->
+    <rule ref="SlevomatCodingStandard.TypeHints.TypeHintDeclaration.UselessDocComment">
+        <exclude-pattern>/tests/cases</exclude-pattern>
+    </rule>
+
     <!--Exclude folders -->
     <exclude-pattern>/tests/tmp</exclude-pattern>
 </ruleset>

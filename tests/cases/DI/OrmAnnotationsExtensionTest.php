@@ -2,20 +2,19 @@
 
 namespace Tests\Nettrine\ORM\Cases\DI;
 
+use Doctrine\Common\Cache\FilesystemCache;
 use Nette\DI\Compiler;
 use Nette\DI\Container;
 use Nette\DI\ContainerLoader;
 use Nettrine\DBAL\DI\DbalExtension;
 use Nettrine\ORM\DI\OrmAnnotationsExtension;
 use Nettrine\ORM\DI\OrmExtension;
-use Nettrine\ORM\EntityManager;
 use Tests\Nettrine\ORM\Cases\TestCase;
-use Tests\Nettrine\ORM\Fixtures\DummyEntityManager;
 
-final class OrmExtensionTest extends TestCase
+final class OrmAnnotationsExtensionTest extends TestCase
 {
 
-	public function testRegisterAnnotations(): void
+	public function testDefaultCache(): void
 	{
 		$loader = new ContainerLoader(TEMP_PATH, true);
 		$class = $loader->load(function (Compiler $compiler): void {
@@ -32,10 +31,15 @@ final class OrmExtensionTest extends TestCase
 
 		/** @var Container $container */
 		$container = new $class();
-		self::assertInstanceOf(EntityManager::class, $container->getByType(EntityManager::class));
+
+		self::assertInstanceOf(FilesystemCache::class, $container->getService('orm.annotations.annotationsCache'));
 	}
 
-	public function testOwnEntityManager(): void
+	/**
+	 * @expectedException \Nettrine\ORM\Exception\Logical\InvalidStateException
+	 * @expectedExceptionMessage Cache or defaultCache must be provided
+	 */
+	public function testNoCache(): void
 	{
 		$loader = new ContainerLoader(TEMP_PATH, true);
 		$class = $loader->load(function (Compiler $compiler): void {
@@ -47,17 +51,15 @@ final class OrmExtensionTest extends TestCase
 					'tempDir' => TEMP_PATH,
 					'appDir' => __DIR__,
 				],
-			]);
-			$compiler->addConfig([
-				'orm' => [
-					'entityManagerClass' => DummyEntityManager::class,
+				'orm.annotations' => [
+					'cache' => null,
+					'defaultCache' => null,
 				],
 			]);
 		}, __CLASS__ . __METHOD__);
 
 		/** @var Container $container */
 		$container = new $class();
-		self::assertInstanceOf(DummyEntityManager::class, $container->getByType(DummyEntityManager::class));
 	}
 
 }

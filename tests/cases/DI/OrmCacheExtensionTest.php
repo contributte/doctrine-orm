@@ -30,7 +30,7 @@ final class OrmCacheExtensionTest extends TestCase
 					'appDir' => __DIR__,
 				],
 			]);
-		}, getmypid() . 'a');
+		}, __CLASS__ . __METHOD__);
 
 		/** @var Container $container */
 		$container = new $class();
