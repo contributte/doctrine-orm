@@ -68,6 +68,8 @@ class OrmCacheExtension extends CompilerExtension
 			$builder->addDefinition($this->prefix('queryCache'))
 				->setFactory($config['queryCache']);
 			$configuration->addSetup('setQueryCacheImpl', [$this->prefix('@queryCache')]);
+		} else {
+			throw new InvalidStateException('QueryCache or defaultDriver must be provided');
 		}
 	}
 
@@ -83,6 +85,8 @@ class OrmCacheExtension extends CompilerExtension
 			$builder->addDefinition($this->prefix('resultCache'))
 				->setFactory($config['resultCache']);
 			$configuration->addSetup('setResultCacheImpl', [$this->prefix('@hydrationCache')]);
+		} else {
+			throw new InvalidStateException('ResultCache or defaultDriver must be provided');
 		}
 	}
 
@@ -98,6 +102,8 @@ class OrmCacheExtension extends CompilerExtension
 			$builder->addDefinition($this->prefix('hydrationCache'))
 				->setFactory($config['hydrationCache']);
 			$configuration->addSetup('setHydrationCacheImpl', [$this->prefix('@hydrationCache')]);
+		} else {
+			throw new InvalidStateException('HydrationCache or defaultDriver must be provided');
 		}
 	}
 
@@ -113,6 +119,8 @@ class OrmCacheExtension extends CompilerExtension
 			$builder->addDefinition($this->prefix('metadataCache'))
 				->setFactory($config['metadataCache']);
 			$configuration->addSetup('setMetadataCacheImpl', [$this->prefix('@metadataCache')]);
+		} else {
+			throw new InvalidStateException('MetadataCache or defaultDriver must be provided');
 		}
 	}
 
@@ -142,7 +150,7 @@ class OrmCacheExtension extends CompilerExtension
 			->setAutowired(false);
 
 		if ($config['defaultDriver'] === 'filesystem') {
-			$driverCache->setArguments([$builder->parameters['tempDir'] . '/cache/Doctrine.' . ucfirst($service)]);
+			$driverCache->setArguments([$builder->parameters['tempDir'] . '/cache/Doctrine.Cache.' . ucfirst($service)]);
 		}
 
 		return $driverCache;
