@@ -70,7 +70,19 @@ Defining your own EntityManager is useful for addind or overriding methods you n
 
 ```yaml
 orm:
-    entityManagerClass: App\Model\Database\EntityManager
+    entityManagerDecoratorClass: App\Model\Database\EntityManagerDecorator
+```
+
+```php
+namespace App\Model\Database;
+
+use Nettrine\ORM\EntityManagerDecorator as NettrineEntityManagerDecorator;
+
+class EntityManagerDecorator extends NettrineEntityManagerDecorator
+{
+
+}
+
 ```
 
 ### Configuration
