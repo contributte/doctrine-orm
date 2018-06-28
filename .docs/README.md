@@ -4,7 +4,7 @@
 
 - [Minimal configuration](#minimal-configuration)
 - [ORM extension](#ormextension)
-	- [EntityManager](#entitymanager)
+	- [EntityManagerDecorator](#entitymanagerdecorator)
 	- [Configuration](#configuration)
 - [Bridges](#bridges)
 	- [Annotations Bridge](#annotations-bridge)
@@ -64,9 +64,9 @@ You can find more examples in our [playground](https://github.com/nettrine/playg
 
 OrmExtension has a few options you can configure. Let's take a look at them.
 
-### EntityManager
+### EntityManagerDecorator
 
-Defining your own EntityManager is useful for addind or overriding methods you needed.
+Defining your own EntityManagerDecorator is useful for addind or overriding methods you needed.
 
 ```yaml
 orm:
