@@ -116,7 +116,7 @@ class Category
 {
 ```
 
-You will needed `OrmAnnotationsExtension`.
+You will needed `OrmAnnotationsExtension`. This is default configuration, it use `filesystem` cache driver.
 
 ```yaml
 extensions:
@@ -124,11 +124,32 @@ extensions:
     orm.annotations: Nettrine\ORM\DI\OrmAnnotationsExtension
 
 orm.annotations:
-    paths: [] # define paths for Entities 
-    excludePaths: [] # these paths will be excluded 
-    ignore: [] # ignored annotations
-    cache: Doctrine\Common\Cache\FilesystemCache
-    cacheDir: '%tempDir%/cache/Doctrine.Annotations'
+    paths: []
+    excludePaths: []
+    ignore: []
+    defaultCache: filesystem
+```
+
+Available drivers: 
+
+- `apc` - `ApcCache`
+- `apcu` - `ApcuCache`
+- `array` - `ArrayCache`
+- `filesystem` - `FilesystemCache`
+- `memcache` - `MemcacheCache`
+- `memcached` - `MemcachedCache`
+- `redis` - `RedisCache`
+- `void` - `VoidCache`
+- `xcache` - `XcacheCache`
+
+You can change cache for the annotation reader.
+
+```yaml
+orm.annotations: 
+    defaultCache: apcu
+
+    # or directly
+    cache: @cacheReader
 ```
 
 ### Cache Bridge
@@ -142,7 +163,7 @@ extensions:
     orm: Nettrine\ORM\DI\OrmExtension
     orm.cache: Nettrine\ORM\DI\OrmCacheExtension
 
-orm.annotations:
+orm.cache:
     defaultDriver: filesystem
 ```
 
@@ -158,7 +179,7 @@ Available drivers:
 - `void` - `VoidCache`
 - `xcache` - `XcacheCache`
 
-You can also specify single driver.
+You can also specify single driver. Or change the `orm.cache.defaultDriver` for all.
 
 ```yaml
 orm.cache:
