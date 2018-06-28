@@ -38,7 +38,7 @@ class ContainerEntityListenerResolver implements EntityListenerResolver
 	}
 
 	/**
-	 * @param object $object
+	 * @param object|mixed $object
 	 */
 	public function register($object): void
 	{
@@ -52,7 +52,7 @@ class ContainerEntityListenerResolver implements EntityListenerResolver
 	/**
 	 * @phpcsSuppress SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingParameterTypeHint
 	 * @param string $className
-	 * @return object
+	 * @return object|mixed
 	 */
 	public function resolve($className)
 	{
