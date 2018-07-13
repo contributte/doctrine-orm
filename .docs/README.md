@@ -18,7 +18,7 @@
 At first, you will needed Doctrine DBAL extension. Take a look at [Nettrine DBAL](https://github.com/nettrine/dbal) in this organization. Install package `nettrine/dbal` using composer.
 
 ```
-composer install nettrine/dbal
+composer require nettrine/dbal
 ```
 
 Place `DbalExtension` in your neon config file.
