@@ -2,6 +2,7 @@
 
 namespace Nettrine\ORM\DI;
 
+use Doctrine\ORM\Tools\Console\Command\ClearCache\MetadataCommand;
 use Doctrine\ORM\Tools\Console\Command\ConvertMappingCommand;
 use Doctrine\ORM\Tools\Console\Command\EnsureProductionSettingsCommand;
 use Doctrine\ORM\Tools\Console\Command\GenerateEntitiesCommand;
@@ -102,6 +103,10 @@ class OrmConsoleExtension extends CompilerExtension
 		$builder->addDefinition($this->prefix('validateSchemaCommand'))
 			->setType(ValidateSchemaCommand::class)
 			->addTag('console.command', 'orm:validate-schema')
+			->setAutowired(false);
+		$builder->addDefinition($this->prefix('clearMetadataCacheCommand'))
+			->setType(MetadataCommand::class)
+			->addTag('console.command', 'orm:clear-cache:metadata')
 			->setAutowired(false);
 	}
 
