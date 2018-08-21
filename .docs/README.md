@@ -229,3 +229,26 @@ class Category
 
 }
 ```
+
+### Entity Mapping
+
+You can use predefined `TEntityMapping` trait in your extension.
+
+```php
+
+use Nette\DI\CompilerExtension;
+use Nettrine\ORM\DI\TEntityMapping;
+
+class CategoryExtension extends CompilerExtension
+{
+
+    use TEntityMapping;
+
+    public function loadConfiguration(): void
+    {
+        $this->setEntityMappings([
+            'Forum' => __DIR__ . '/../Entity',
+        ]);
+    }
+}
+```
