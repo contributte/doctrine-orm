@@ -54,6 +54,7 @@ class OrmCacheExtension extends CompilerExtension
 		$this->loadHydrationCacheConfiguration();
 		$this->loadResultCacheConfiguration();
 		$this->loadMetadataCacheConfiguration();
+		$this->loadSecondLevelCacheConfiguration();
 	}
 
 	public function loadQueryCacheConfiguration(): void
