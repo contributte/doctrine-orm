@@ -11,6 +11,9 @@ use Doctrine\Common\Cache\MemcachedCache;
 use Doctrine\Common\Cache\RedisCache;
 use Doctrine\Common\Cache\VoidCache;
 use Doctrine\Common\Cache\XcacheCache;
+use Doctrine\ORM\Cache\CacheConfiguration;
+use Doctrine\ORM\Cache\DefaultCacheFactory;
+use Doctrine\ORM\Cache\RegionsConfiguration;
 use Doctrine\ORM\Configuration;
 use Nette\DI\CompilerExtension;
 use Nette\DI\ServiceDefinition;
@@ -131,7 +134,21 @@ class OrmCacheExtension extends CompilerExtension
 		$builder = $this->getContainerBuilder();
 		$configuration = $builder->getDefinitionByType(Configuration::class);
 
-		if ($config['secondLevelCache'] !== null) {
+		if ($config['secondLevelCache'] === null && $config['defaultDriver']) {
+			$regions = $builder->addDefinition($this->prefix('regions'))
+				->setFactory(RegionsConfiguration::class)
+				->setAutowired(false);
+			$cacheFactory = $builder->addDefinition($this->prefix('cacheFactory'))
+				->setFactory(DefaultCacheFactory::class)
+				->setArguments([$regions, $this->getDefaultDriverCache('secondLevelCache')])
+				->setAutowired(false);
+			$cacheConfiguration = $builder->addDefinition($this->prefix('cacheConfiguration'))
+				->setFactory(CacheConfiguration::class)
+				->addSetup('setCacheFactory', [$cacheFactory])
+				->setAutowired(false);
+			$configuration->addSetup('setSecondLevelCacheEnabled', [true]);
+			$configuration->addSetup('setSecondLevelCacheConfiguration', [$cacheConfiguration]);
+		} elseif ($config['secondLevelCache'] !== null) {
 			$configuration->addSetup('setSecondLevelCacheEnabled', [true]);
 			$configuration->addSetup('setSecondLevelCacheConfiguration', [$config['secondLevelCache']]);
 		}
