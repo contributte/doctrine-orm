@@ -4,7 +4,7 @@ namespace Nettrine\ORM;
 
 use Doctrine\Common\Persistence\AbstractManagerRegistry;
 use Doctrine\DBAL\Connection;
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\ORMException;
 use Doctrine\ORM\Proxy\Proxy;
 use Nette\DI\Container;
@@ -15,7 +15,7 @@ class ManagerRegistry extends AbstractManagerRegistry
 	/** @var Container */
 	private $container;
 
-	public function __construct(Connection $connection, EntityManager $em, Container $container)
+	public function __construct(Connection $connection, EntityManagerInterface $em, Container $container)
 	{
 		$defaultConnection = $container->findByType(get_class($connection))[0];
 		$defaultManager = $container->findByType(get_class($em))[0];
@@ -55,7 +55,7 @@ class ManagerRegistry extends AbstractManagerRegistry
 	{
 		foreach (array_keys($this->getManagers()) as $name) {
 			try {
-				/** @var EntityManager $entityManager */
+				/** @var EntityManagerInterface $entityManager */
 				$entityManager = $this->getManager($name);
 				return $entityManager->getConfiguration()->getEntityNamespace($alias);
 			} catch (ORMException $e) {

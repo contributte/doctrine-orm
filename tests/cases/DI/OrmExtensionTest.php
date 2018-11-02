@@ -8,9 +8,9 @@ use Nette\DI\ContainerLoader;
 use Nettrine\DBAL\DI\DbalExtension;
 use Nettrine\ORM\DI\OrmAnnotationsExtension;
 use Nettrine\ORM\DI\OrmExtension;
-use Nettrine\ORM\EntityManager;
+use Nettrine\ORM\EntityManagerDecorator;
 use Tests\Nettrine\ORM\Cases\TestCase;
-use Tests\Nettrine\ORM\Fixtures\DummyEntityManager;
+use Tests\Nettrine\ORM\Fixtures\DummyEntityManagerDecorator;
 
 final class OrmExtensionTest extends TestCase
 {
@@ -32,7 +32,7 @@ final class OrmExtensionTest extends TestCase
 
 		/** @var Container $container */
 		$container = new $class();
-		self::assertInstanceOf(EntityManager::class, $container->getByType(EntityManager::class));
+		self::assertInstanceOf(EntityManagerDecorator::class, $container->getByType(EntityManagerDecorator::class));
 	}
 
 	public function testOwnEntityManager(): void
@@ -50,14 +50,14 @@ final class OrmExtensionTest extends TestCase
 			]);
 			$compiler->addConfig([
 				'orm' => [
-					'entityManagerClass' => DummyEntityManager::class,
+					'entityManagerDecoratorClass' => DummyEntityManagerDecorator::class,
 				],
 			]);
 		}, __CLASS__ . __METHOD__);
 
 		/** @var Container $container */
 		$container = new $class();
-		self::assertInstanceOf(DummyEntityManager::class, $container->getByType(DummyEntityManager::class));
+		self::assertInstanceOf(DummyEntityManagerDecorator::class, $container->getByType(DummyEntityManagerDecorator::class));
 	}
 
 }

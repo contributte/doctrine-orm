@@ -4,12 +4,12 @@ namespace Nettrine\ORM\DI;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\Configuration;
+use Doctrine\ORM\EntityManager as DoctrineEntityManager;
 use Doctrine\ORM\Mapping\UnderscoreNamingStrategy;
 use Nette\DI\CompilerExtension;
 use Nette\DI\Helpers;
 use Nette\DI\Statement;
-use Nettrine\ORM\EntityManager;
-use Nettrine\ORM\EntityManagerFactory;
+use Nettrine\ORM\EntityManagerDecorator;
 use Nettrine\ORM\Exception\Logical\InvalidStateException;
 use Nettrine\ORM\ManagerRegistry;
 use Nettrine\ORM\Mapping\ContainerEntityListenerResolver;
@@ -19,7 +19,7 @@ final class OrmExtension extends CompilerExtension
 
 	/** @var mixed[] */
 	private $defaults = [
-		'entityManagerClass' => EntityManager::class,
+		'entityManagerDecoratorClass' => EntityManagerDecorator::class,
 		'configuration' => [
 			'proxyDir' => '%tempDir%/proxies',
 			'autoGenerateProxyClasses' => null,
@@ -115,26 +115,30 @@ final class OrmExtension extends CompilerExtension
 		$builder = $this->getContainerBuilder();
 		$config = $this->getConfig();
 
-		$entityManagerClass = $config['entityManagerClass'];
-		if (!class_exists($entityManagerClass)) {
-			throw new InvalidStateException(sprintf('EntityManager class "%s" not found', $entityManagerClass));
+		$entityManagerDecoratorClass = $config['entityManagerDecoratorClass'];
+		if (!class_exists($entityManagerDecoratorClass)) {
+			throw new InvalidStateException(sprintf('EntityManagerDecorator class "%s" not found', $entityManagerDecoratorClass));
 		}
 
 		// Entity Manager
-		$builder->addDefinition($this->prefix('entityManager'))
-			->setType($entityManagerClass)
-			->setFactory(EntityManagerFactory::class . '::create', [
+		$original = $builder->addDefinition($this->prefix('entityManager'))
+			->setType(DoctrineEntityManager::class)
+			->setFactory(DoctrineEntityManager::class . '::create', [
 				$builder->getDefinitionByType(Connection::class), // Nettrine/DBAL
 				$this->prefix('@configuration'),
-				$entityManagerClass,
-			]);
+			])
+			->setAutowired(false);
+
+		// Entity Manager Decorator
+		$builder->addDefinition($this->prefix('entityManagerDecorator'))
+			->setFactory($entityManagerDecoratorClass, [$original]);
 
 		// ManagerRegistry
 		$builder->addDefinition($this->prefix('managerRegistry'))
 			->setType(ManagerRegistry::class)
 			->setArguments([
 				$builder->getDefinitionByType(Connection::class),
-				$this->prefix('@entityManager'),
+				$this->prefix('@entityManagerDecorator'),
 			]);
 	}
 
