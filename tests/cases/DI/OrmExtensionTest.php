@@ -28,7 +28,7 @@ final class OrmExtensionTest extends TestCase
 					'appDir' => __DIR__,
 				],
 			]);
-		}, __CLASS__ . __METHOD__);
+		}, self::class . __METHOD__);
 
 		/** @var Container $container */
 		$container = new $class();
@@ -53,7 +53,7 @@ final class OrmExtensionTest extends TestCase
 					'entityManagerDecoratorClass' => DummyEntityManagerDecorator::class,
 				],
 			]);
-		}, __CLASS__ . __METHOD__);
+		}, self::class . __METHOD__);
 
 		/** @var Container $container */
 		$container = new $class();

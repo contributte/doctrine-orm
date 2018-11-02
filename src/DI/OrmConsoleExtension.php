@@ -36,7 +36,7 @@ class OrmConsoleExtension extends CompilerExtension
 	{
 		if (!$this->compiler->getExtensions(OrmExtension::class)) {
 			throw new InvalidStateException(
-				sprintf('You should register %s before %s.', OrmExtension::class, get_class($this))
+				sprintf('You should register %s before %s.', self::class, static::class)
 			);
 		}
 

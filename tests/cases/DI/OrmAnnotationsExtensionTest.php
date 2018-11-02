@@ -27,7 +27,7 @@ final class OrmAnnotationsExtensionTest extends TestCase
 					'appDir' => __DIR__,
 				],
 			]);
-		}, __CLASS__ . __METHOD__);
+		}, self::class . __METHOD__);
 
 		/** @var Container $container */
 		$container = new $class();
@@ -56,7 +56,7 @@ final class OrmAnnotationsExtensionTest extends TestCase
 					'defaultCache' => null,
 				],
 			]);
-		}, __CLASS__ . __METHOD__);
+		}, self::class . __METHOD__);
 
 		/** @var Container $container */
 		$container = new $class();
