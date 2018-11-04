@@ -6,6 +6,7 @@
 - [ORM extension](#ormextension)
 	- [EntityManagerDecorator](#entitymanagerdecorator)
 	- [Configuration](#configuration)
+		- [DoctrineExtensions](#doctrineextensions)
 - [Bridges](#bridges)
 	- [Annotations Bridge](#annotations-bridge)
 	- [Cache Bridge](#cache-bridge)
@@ -109,6 +110,18 @@ orm:
         repositoryFactory: NULL
         defaultQueryHints: []
 ```
+
+#### DoctrineExtensions
+
+```yaml
+orm:
+    configuration:
+        customDatetimeFunctions:
+            ...
+            year: DoctrineExtensions\Query\Mysql\Year
+            ...
+```
+
 
 At this time we support only 1 connection, its **default** connection. If you need more connections (more databases?), please open issue or send PR. Thanks. 
 
