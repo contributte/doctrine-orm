@@ -16,7 +16,7 @@
 
 ## Minimal configuration
 
-At first, you will needed Doctrine DBAL extension. Take a look at [Nettrine DBAL](https://github.com/nettrine/dbal) in this organization. Install package `nettrine/dbal` using composer.
+At first, you will need the Doctrine DBAL extension. Take a look at [Nettrine DBAL](https://github.com/nettrine/dbal) in this organization. Install `nettrine/dbal` package using composer.
 
 ```
 composer require nettrine/dbal
@@ -67,7 +67,7 @@ OrmExtension has a few options you can configure. Let's take a look at them.
 
 ### EntityManagerDecorator
 
-Defining your own EntityManagerDecorator is useful for addind or overriding methods you needed.
+Defining your own EntityManagerDecorator is useful for adding or overriding methods you need.
 
 ```yaml
 orm:
@@ -123,11 +123,11 @@ orm:
 ```
 
 
-At this time we support only 1 connection, its **default** connection. If you need more connections (more databases?), please open issue or send PR. Thanks. 
+At this time we support only 1 connection, the **default** connection. If you need more connections (more databases?), please open an issue or send a PR. Thanks. 
 
 ## Bridges
 
-The compiler extensions would be so big that we decided to split them into more single files / compiler extensions. 
+The compiler extensions would be so big that we decided to split them into more separate files / compiler extensions. 
 
 ### Annotations Bridge
 
@@ -141,7 +141,7 @@ class Category
 {
 ```
 
-You will needed `OrmAnnotationsExtension`. This is default configuration, it use `filesystem` cache driver.
+You will need the `OrmAnnotationsExtension`. This is the default configuration, it uses the `filesystem` cache driver.
 
 ```yaml
 extensions:
@@ -167,7 +167,7 @@ Available drivers:
 - `void` - `VoidCache`
 - `xcache` - `XcacheCache`
 
-You can change cache for the annotation reader.
+You can change cache settings for the annotation reader.
 
 ```yaml
 orm.annotations: 
@@ -179,9 +179,9 @@ orm.annotations:
 
 ### Cache Bridge
 
-This extension setup cache for all important parts: `queryCache`, `resultCache`, `hydrationCache`, `metadataCache`, `secondLevelCache`.
+This extension sets up cache for all important parts: `queryCache`, `resultCache`, `hydrationCache`, `metadataCache` and `secondLevelCache`.
 
-This is default configuration, it use `filesystem` driver.
+This is the default configuration, it uses the `filesystem` driver.
 
 ```yaml
 extensions:
@@ -204,7 +204,7 @@ Available drivers:
 - `void` - `VoidCache`
 - `xcache` - `XcacheCache`
 
-You can also specify single driver. Or change the `orm.cache.defaultDriver` for all.
+You can also specify a single driver. Or change the `orm.cache.defaultDriver` for all of them.
 
 ```yaml
 orm.cache:
@@ -217,8 +217,7 @@ orm.cache:
 
 ### Console Bridge
 
-This package works well with [Symfony/Console](https://symfony.com/doc/current/components/console.html). Take a look at [contributte/console](https://github.com/contributte/console)
-tiny integration for Nette Framework.
+This package works well with [Symfony/Console](https://symfony.com/doc/current/components/console.html). Take a look at [contributte/console](https://github.com/contributte/console) tiny integration for Nette Framework.
 
 ```yaml
 extensions:
@@ -230,7 +229,7 @@ extensions:
     orm.console: Nettrine\ORM\DI\OrmConsoleExtension
 ```
 
-Since this moment you can use all registered Doctrine ORM commands using  `bin/console`.
+Since this moment you can use all registered Doctrine ORM commands using `bin/console`.
 
 ![Commands](assets/commands.png)
 
@@ -238,7 +237,7 @@ Since this moment you can use all registered Doctrine ORM commands using  `bin/c
 
 ### Id attribute
 
-You can use predefined `Id` trait in your Entities.
+You can use the predefined `Id` trait in your Entities.
 
 ```php
 
@@ -257,7 +256,7 @@ class Category
 
 ### Entity Mapping
 
-You can use predefined `TEntityMapping` trait in your extension.
+You can use the predefined `TEntityMapping` trait in your extensions.
 
 ```php
 
