@@ -70,7 +70,7 @@ Defining your own EntityManagerDecorator is useful for adding or overriding meth
 
 ```yaml
 orm:
-    entityManagerDecoratorClass: App\Model\Database\EntityManagerDecorator
+    entityManagerClass: App\Model\Database\EntityManagerDecorator
 ```
 
 ```php
