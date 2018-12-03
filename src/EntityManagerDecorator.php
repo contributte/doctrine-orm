@@ -11,7 +11,7 @@ class EntityManagerDecorator extends DoctrineEntityManagerDecorator
 
 	/** @var RepositoryFactory */
 	private $repositoryFactory;
-	
+
 	public function __construct(EntityManagerInterface $wrapped)
 	{
 		parent::__construct($wrapped);
