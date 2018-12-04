@@ -34,7 +34,7 @@ class OrmXmlExtension extends CompilerExtension
 		$builder->addDefinition($this->prefix('xmlDriver'))
 			->setFactory(XmlDriver::class, [
 				Helpers::expand($config['paths'], $builder->parameters),
-				$config['fileExtension']
+				$config['fileExtension'],
 			]);
 
 		$builder->getDefinitionByType(Configuration::class)
