@@ -2,7 +2,6 @@
 
 namespace Tests\Nettrine\ORM\Cases\DI;
 
-use Doctrine\Common\Cache\FilesystemCache;
 use Doctrine\ORM\Mapping\Driver\XmlDriver;
 use Nette\DI\Compiler;
 use Nette\DI\Container;
