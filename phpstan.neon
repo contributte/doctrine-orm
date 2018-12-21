@@ -1,6 +1,12 @@
 includes:
-	- temp/phpstan/vendor/phpstan/phpstan-nette/extension.neon
-	- temp/phpstan/vendor/phpstan/phpstan-nette/rules.neon
+	- vendor/phpstan/phpstan-deprecation-rules/rules.neon
+	- vendor/phpstan/phpstan-nette/extension.neon
+	- vendor/phpstan/phpstan-nette/rules.neon
+	- vendor/phpstan/phpstan-strict-rules/rules.neon
 
 parameters:
-    ignoreErrors:
+	ignoreErrors:
+		# Will be removed same time as from Doctrine
+		- '#^Fetching class constant class of deprecated class Doctrine\\Common\\Cache\\(ApcCache|MemcacheCache|XcacheCache)\.$#'
+		# No replacement available yet
+		- '#^Call to deprecated method registerUniqueLoader\(\) of class Doctrine\\Common\\Annotations\\AnnotationRegistry\.$#'

@@ -7,10 +7,10 @@ Integration of [Doctrine\ORM](http://docs.doctrine-project.org/projects/doctrine
 [![Build Status](https://img.shields.io/travis/nettrine/orm.svg?style=flat-square)](https://travis-ci.org/nettrine/orm)
 [![Code coverage](https://img.shields.io/coveralls/nettrine/orm.svg?style=flat-square)](https://coveralls.io/r/nettrine/orm)
 [![Licence](https://img.shields.io/packagist/l/nettrine/orm.svg?style=flat-square)](https://packagist.org/packages/nettrine/orm)
-
 [![Downloads this Month](https://img.shields.io/packagist/dm/nettrine/orm.svg?style=flat-square)](https://packagist.org/packages/nettrine/orm)
 [![Downloads total](https://img.shields.io/packagist/dt/nettrine/orm.svg?style=flat-square)](https://packagist.org/packages/nettrine/orm)
 [![Latest stable](https://img.shields.io/packagist/v/nettrine/orm.svg?style=flat-square)](https://packagist.org/packages/nettrine/orm)
+[![PHPStan](https://img.shields.io/badge/PHPStan-enabled-brightgreen.svg?style=flat-square)](https://github.com/phpstan/phpstan)
 
 ## Discussion / Help
 
@@ -69,7 +69,7 @@ This repository is inspired by these packages:
         <a href="https://github.com/benijo">Josef Benjač</a>
       </td>
     </tr>
-  <tbody>
+  </tbody>
 </table>
 
 -----

@@ -20,6 +20,7 @@ use Nette\DI\CompilerExtension;
 use Nette\DI\ServiceCreationException;
 use Nette\DI\Statement;
 use Nette\InvalidStateException;
+use Symfony\Component\Console\Application;
 
 class OrmConsoleExtension extends CompilerExtension
 {
@@ -34,14 +35,14 @@ class OrmConsoleExtension extends CompilerExtension
 
 	public function loadConfiguration(): void
 	{
-		if (!$this->compiler->getExtensions(OrmExtension::class)) {
+		if ($this->compiler->getExtensions(OrmExtension::class) === []) {
 			throw new InvalidStateException(
 				sprintf('You should register %s before %s.', self::class, static::class)
 			);
 		}
 
-		if (!class_exists('Symfony\Component\Console\Application')) {
-			throw new ServiceCreationException('Missing Symfony\Component\Console\Application service');
+		if (!class_exists(Application::class)) {
+			throw new ServiceCreationException(sprintf('Missing %s service', Application::class));
 		}
 
 		// Skip if it's not CLI mode
@@ -123,7 +124,7 @@ class OrmConsoleExtension extends CompilerExtension
 		$builder = $this->getContainerBuilder();
 
 		// Lookup for Symfony Console Application
-		$application = $builder->getDefinitionByType('Symfony\Component\Console\Application');
+		$application = $builder->getDefinitionByType(Application::class);
 
 		// Register helpers
 		$entityManagerHelper = $this->prefix('@entityManagerHelper');
