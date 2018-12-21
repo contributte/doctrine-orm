@@ -55,7 +55,7 @@ class OrmAnnotationsExtension extends CompilerExtension
 	 */
 	public function loadConfiguration(): void
 	{
-		if (!$this->compiler->getExtensions(OrmExtension::class)) {
+		if ($this->compiler->getExtensions(OrmExtension::class) === []) {
 			throw new InvalidStateException(
 				sprintf('You should register %s before %s.', self::class, static::class)
 			);
@@ -74,7 +74,7 @@ class OrmAnnotationsExtension extends CompilerExtension
 			AnnotationReader::addGlobalIgnoredName($annotationName);
 		}
 
-		if ($config['cache'] === null && $config['defaultCache']) {
+		if ($config['cache'] === null && $config['defaultCache'] !== null) {
 			$this->getDefaultCache()
 				->setAutowired(false);
 		} elseif ($config['cache'] !== null) {
@@ -117,7 +117,7 @@ class OrmAnnotationsExtension extends CompilerExtension
 		$builder = $this->getContainerBuilder();
 
 		if (!isset(self::DRIVERS[$config['defaultCache']])) {
-			throw new InvalidStateException(sprintf('Unsupported default cachge driver "%s"', $config['defaultCache']));
+			throw new InvalidStateException(sprintf('Unsupported default cache driver "%s"', $config['defaultCache']));
 		}
 
 		$driverCache = $builder->addDefinition($this->prefix('annotationsCache'))

@@ -3,7 +3,7 @@
   "description": "Well-integrated Doctrine2 ORM for Nette Framework",
   "keywords": ["nette", "doctrine", "orm", "database"],
   "type": "library",
-  "license": ["MIT"],
+  "license": "MIT",
   "homepage": "https://github.com/nettrine/orm",
   "authors": [
     {
@@ -28,7 +28,11 @@
   "require-dev": {
     "ninjify/qa": "^0.8.0",
     "mockery/mockery": "^1.2.0",
-    "phpunit/phpunit": "^7.4.3"
+    "phpunit/phpunit": "^7.4.3",
+    "phpstan/phpstan-shim": "^0.10.6",
+    "phpstan/phpstan-deprecation-rules": "^0.10.2",
+    "phpstan/phpstan-nette": "^0.10.1",
+    "phpstan/phpstan-strict-rules": "^0.10.1"
   },
   "autoload": {
     "psr-4": {
@@ -48,24 +52,14 @@
       "linter src tests",
       "codesniffer src tests"
     ],
-    "ci": [
-      "@qa",
-      "@phpstan",
-      "@phpunit"
-    ],
-    "phpunit": [
+    "tests": [
       "phpunit tests --colors=always"
     ],
     "coverage": [
-      "phpunit tests --colors=always -c tests/coverage.xml"
-    ],
-    "phpstan-install": [
-      "mkdir -p temp/phpstan",
-      "composer require -d temp/phpstan phpstan/phpstan:0.10",
-      "composer require -d temp/phpstan phpstan/phpstan-nette:0.10"
+      "phpdbg -qrr vendor/bin/phpunit tests --colors=always -c tests/coverage.xml"
     ],
     "phpstan": [
-      "temp/phpstan/vendor/bin/phpstan analyse -l max -c phpstan.neon src"
+      "vendor/bin/phpstan analyse -l max -c phpstan.neon src"
     ]
   },
   "extra": {

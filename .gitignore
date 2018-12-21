@@ -5,5 +5,5 @@
 /vendor
 /composer.lock
 
-# Temp
-/temp
+# Tests
+/coverage.xml

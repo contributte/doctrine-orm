@@ -46,7 +46,7 @@ class OrmCacheExtension extends CompilerExtension
 
 	public function loadConfiguration(): void
 	{
-		if (!$this->compiler->getExtensions(OrmExtension::class)) {
+		if ($this->compiler->getExtensions(OrmExtension::class) === []) {
 			throw new InvalidStateException(
 				sprintf('You should register %s before %s.', self::class, static::class)
 			);
@@ -66,7 +66,7 @@ class OrmCacheExtension extends CompilerExtension
 		$builder = $this->getContainerBuilder();
 		$configuration = $builder->getDefinitionByType(Configuration::class);
 
-		if ($config['queryCache'] === null && $config['defaultDriver']) {
+		if ($config['queryCache'] === null && $config['defaultDriver'] !== null) {
 			$configuration->addSetup('setQueryCacheImpl', [$this->getDefaultDriverCache('queryCache')]);
 		} elseif ($config['queryCache'] !== null) {
 			$builder->addDefinition($this->prefix('queryCache'))
@@ -83,7 +83,7 @@ class OrmCacheExtension extends CompilerExtension
 		$builder = $this->getContainerBuilder();
 		$configuration = $builder->getDefinitionByType(Configuration::class);
 
-		if ($config['resultCache'] === null && $config['defaultDriver']) {
+		if ($config['resultCache'] === null && $config['defaultDriver'] !== null) {
 			$configuration->addSetup('setResultCacheImpl', [$this->getDefaultDriverCache('resultCache')]);
 		} elseif ($config['resultCache'] !== null) {
 			$builder->addDefinition($this->prefix('resultCache'))
@@ -100,7 +100,7 @@ class OrmCacheExtension extends CompilerExtension
 		$builder = $this->getContainerBuilder();
 		$configuration = $builder->getDefinitionByType(Configuration::class);
 
-		if ($config['hydrationCache'] === null && $config['defaultDriver']) {
+		if ($config['hydrationCache'] === null && $config['defaultDriver'] !== null) {
 			$configuration->addSetup('setHydrationCacheImpl', [$this->getDefaultDriverCache('hydrationCache')]);
 		} elseif ($config['hydrationCache'] !== null) {
 			$builder->addDefinition($this->prefix('hydrationCache'))
@@ -117,7 +117,7 @@ class OrmCacheExtension extends CompilerExtension
 		$builder = $this->getContainerBuilder();
 		$configuration = $builder->getDefinitionByType(Configuration::class);
 
-		if ($config['metadataCache'] === null && $config['defaultDriver']) {
+		if ($config['metadataCache'] === null && $config['defaultDriver'] !== null) {
 			$configuration->addSetup('setMetadataCacheImpl', [$this->getDefaultDriverCache('metadataCache')]);
 		} elseif ($config['metadataCache'] !== null) {
 			$builder->addDefinition($this->prefix('metadataCache'))
@@ -134,7 +134,7 @@ class OrmCacheExtension extends CompilerExtension
 		$builder = $this->getContainerBuilder();
 		$configuration = $builder->getDefinitionByType(Configuration::class);
 
-		if ($config['secondLevelCache'] === null && $config['defaultDriver']) {
+		if ($config['secondLevelCache'] === null && $config['defaultDriver'] !== null) {
 			$regions = $builder->addDefinition($this->prefix('regions'))
 				->setFactory(RegionsConfiguration::class)
 				->setAutowired(false);
