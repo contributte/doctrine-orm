@@ -164,6 +164,22 @@ orm.annotations:
     cache: @cacheReader
 ```
 
+### XML Bridge
+
+Are you using XML mapping for your entities?
+
+You will need the `OrmXmlExtension`. This is the default configuration:
+
+```yaml
+extensions:
+    orm: Nettrine\ORM\DI\OrmExtension
+    orm.xml: Nettrine\ORM\DI\OrmXmlExtension
+
+orm.xml:
+    paths: []
+    fileExtension: .dcm.xml
+```
+
 ### Cache Bridge
 
 This extension sets up cache for all important parts: `queryCache`, `resultCache`, `hydrationCache`, `metadataCache` and `secondLevelCache`.
