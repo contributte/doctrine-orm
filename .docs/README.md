@@ -225,7 +225,7 @@ This package works well with [Symfony/Console](https://symfony.com/doc/current/c
 ```yaml
 extensions:
     # Console
-    console: Contributte\Console\DI\ConsoleExtension
+    console: Contributte\Console\DI\ConsoleExtension(%consoleMode%)
 
     # Orm
     orm: Nettrine\ORM\DI\OrmExtension
