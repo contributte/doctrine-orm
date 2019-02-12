@@ -36,6 +36,7 @@ composer require nettrine/orm
 	- [Configuration](https://github.com/nettrine/orm/blob/master/.docs/README.md#configuration)
 - [Bridges](https://github.com/nettrine/orm/blob/master/.docs/README.md#bridges)
 	- [Annotations Bridge](https://github.com/nettrine/orm/blob/master/.docs/README.md#annotations-bridge)
+	- [XML Bridge](https://github.com/nettrine/orm/blob/master/.docs/README.md#xml-bridge)
 	- [Cache Bridge](https://github.com/nettrine/orm/blob/master/.docs/README.md#cache-bridge)
 	- [Console Bridge](https://github.com/nettrine/orm/blob/master/.docs/README.md#console-bridge)
 - [Other features](https://github.com/nettrine/orm/blob/master/.docs/README.md#other-features)
