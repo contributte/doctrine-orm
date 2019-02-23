@@ -11,6 +11,7 @@ use Nettrine\ORM\DI\OrmExtension;
 use Nettrine\ORM\EntityManagerDecorator;
 use Tests\Nettrine\ORM\Cases\TestCase;
 use Tests\Nettrine\ORM\Fixtures\DummyEntityManagerDecorator;
+use Tests\Nettrine\ORM\Fixtures\DummyConfiguration;
 
 final class OrmExtensionTest extends TestCase
 {
@@ -51,6 +52,7 @@ final class OrmExtensionTest extends TestCase
 			$compiler->addConfig([
 				'orm' => [
 					'entityManagerDecoratorClass' => DummyEntityManagerDecorator::class,
+					'configurationClass' => DummyConfiguration::class,
 				],
 			]);
 		}, self::class . __METHOD__);
@@ -58,6 +60,7 @@ final class OrmExtensionTest extends TestCase
 		/** @var Container $container */
 		$container = new $class();
 		self::assertInstanceOf(DummyEntityManagerDecorator::class, $container->getByType(DummyEntityManagerDecorator::class));
+		self::assertInstanceOf(DummyConfiguration::class, $container->getByType(DummyConfiguration::class));
 	}
 
 }
