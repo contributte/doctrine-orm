@@ -10,8 +10,8 @@ use Nettrine\ORM\DI\OrmAnnotationsExtension;
 use Nettrine\ORM\DI\OrmExtension;
 use Nettrine\ORM\EntityManagerDecorator;
 use Tests\Nettrine\ORM\Cases\TestCase;
-use Tests\Nettrine\ORM\Fixtures\DummyEntityManagerDecorator;
 use Tests\Nettrine\ORM\Fixtures\DummyConfiguration;
+use Tests\Nettrine\ORM\Fixtures\DummyEntityManagerDecorator;
 
 final class OrmExtensionTest extends TestCase
 {

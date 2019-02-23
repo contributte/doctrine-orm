@@ -9,6 +9,7 @@ use Doctrine\ORM\Mapping\UnderscoreNamingStrategy;
 use Nette\DI\CompilerExtension;
 use Nette\DI\Helpers;
 use Nette\DI\Statement;
+use Nette\InvalidArgumentException;
 use Nettrine\ORM\EntityManagerDecorator;
 use Nettrine\ORM\Exception\Logical\InvalidStateException;
 use Nettrine\ORM\ManagerRegistry;
@@ -61,7 +62,7 @@ final class OrmExtension extends CompilerExtension
 		$configurationClass = $this->config['configurationClass'];
 
 		if ($configurationClass !== Configuration::class && !is_subclass_of($configurationClass, Configuration::class)) {
-			throw new \Nette\InvalidArgumentException('Configuration class must be subclass of '. Configuration::class . ', ' . $configurationClass . ' given.');
+			throw new InvalidArgumentException('Configuration class must be subclass of '. Configuration::class . ', ' . $configurationClass . ' given.');
 		}
 
 		$configuration = $builder->addDefinition($this->prefix('configuration'))
