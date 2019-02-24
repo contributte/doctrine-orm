@@ -29,7 +29,7 @@ class ManagerRegistry extends AbstractManagerRegistry
 
 	/**
 	 * @param string $name
-	 * @return object|mixed
+	 * @return object
 	 * @phpcsSuppress SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingParameterTypeHint
 	 */
 	protected function getService($name)

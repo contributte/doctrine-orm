@@ -22,7 +22,7 @@ class OrmXmlExtension extends CompilerExtension
 	 */
 	public function loadConfiguration(): void
 	{
-		if (!$this->compiler->getExtensions(OrmExtension::class)) {
+		if ($this->compiler->getExtensions(OrmExtension::class) === []) {
 			throw new InvalidStateException(
 				sprintf('You should register %s before %s.', self::class, static::class)
 			);

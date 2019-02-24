@@ -52,7 +52,7 @@ class ContainerEntityListenerResolver implements EntityListenerResolver
 	/**
 	 * @phpcsSuppress SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingParameterTypeHint
 	 * @param string $className
-	 * @return object|mixed
+	 * @return object
 	 */
 	public function resolve($className)
 	{
