@@ -53,10 +53,10 @@
       "codesniffer src tests"
     ],
     "tests": [
-      "phpunit tests --colors=always"
+      "phpunit tests --cache-result-file=tests/tmp/phpunit.cache --colors=always"
     ],
     "coverage": [
-      "phpdbg -qrr vendor/bin/phpunit tests --colors=always -c tests/coverage.xml"
+      "phpdbg -qrr vendor/bin/phpunit tests --cache-result-file=tests/tmp/phpunit.cache --colors=always -c tests/coverage.xml"
     ],
     "phpstan": [
       "vendor/bin/phpstan analyse -l max -c phpstan.neon src"

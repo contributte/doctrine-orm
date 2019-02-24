@@ -9,6 +9,7 @@ use Nette\DI\ContainerLoader;
 use Nettrine\DBAL\DI\DbalExtension;
 use Nettrine\ORM\DI\OrmAnnotationsExtension;
 use Nettrine\ORM\DI\OrmExtension;
+use Nettrine\ORM\Exception\Logical\InvalidStateException;
 use Tests\Nettrine\ORM\Cases\TestCase;
 
 final class OrmAnnotationsExtensionTest extends TestCase
@@ -16,7 +17,7 @@ final class OrmAnnotationsExtensionTest extends TestCase
 
 	public function testDefaultCache(): void
 	{
-		$loader = new ContainerLoader(TEMP_PATH, true);
+		$loader = new ContainerLoader(TEMP_PATH, TRUE);
 		$class = $loader->load(function (Compiler $compiler): void {
 			$compiler->addExtension('dbal', new DbalExtension());
 			$compiler->addExtension('orm', new OrmExtension());
@@ -35,13 +36,12 @@ final class OrmAnnotationsExtensionTest extends TestCase
 		self::assertInstanceOf(FilesystemCache::class, $container->getService('orm.annotations.annotationsCache'));
 	}
 
-	/**
-	 * @expectedException \Nettrine\ORM\Exception\Logical\InvalidStateException
-	 * @expectedExceptionMessage Cache or defaultCache must be provided
-	 */
 	public function testNoCache(): void
 	{
-		$loader = new ContainerLoader(TEMP_PATH, true);
+		$this->expectException(InvalidStateException::class);
+		$this->expectExceptionMessage('Cache or defaultCache must be provided');
+
+		$loader = new ContainerLoader(TEMP_PATH, TRUE);
 		$class = $loader->load(function (Compiler $compiler): void {
 			$compiler->addExtension('dbal', new DbalExtension());
 			$compiler->addExtension('orm', new OrmExtension());
@@ -52,8 +52,8 @@ final class OrmAnnotationsExtensionTest extends TestCase
 					'appDir' => __DIR__,
 				],
 				'orm.annotations' => [
-					'cache' => null,
-					'defaultCache' => null,
+					'cache' => NULL,
+					'defaultCache' => NULL,
 				],
 			]);
 		}, self::class . __METHOD__);
