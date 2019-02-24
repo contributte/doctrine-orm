@@ -17,7 +17,7 @@ final class OrmAnnotationsExtensionTest extends TestCase
 
 	public function testDefaultCache(): void
 	{
-		$loader = new ContainerLoader(TEMP_PATH, TRUE);
+		$loader = new ContainerLoader(TEMP_PATH, true);
 		$class = $loader->load(function (Compiler $compiler): void {
 			$compiler->addExtension('dbal', new DbalExtension());
 			$compiler->addExtension('orm', new OrmExtension());
@@ -41,7 +41,7 @@ final class OrmAnnotationsExtensionTest extends TestCase
 		$this->expectException(InvalidStateException::class);
 		$this->expectExceptionMessage('Cache or defaultCache must be provided');
 
-		$loader = new ContainerLoader(TEMP_PATH, TRUE);
+		$loader = new ContainerLoader(TEMP_PATH, true);
 		$class = $loader->load(function (Compiler $compiler): void {
 			$compiler->addExtension('dbal', new DbalExtension());
 			$compiler->addExtension('orm', new OrmExtension());
@@ -52,8 +52,8 @@ final class OrmAnnotationsExtensionTest extends TestCase
 					'appDir' => __DIR__,
 				],
 				'orm.annotations' => [
-					'cache' => NULL,
-					'defaultCache' => NULL,
+					'cache' => null,
+					'defaultCache' => null,
 				],
 			]);
 		}, self::class . __METHOD__);
