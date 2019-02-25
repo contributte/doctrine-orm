@@ -61,7 +61,7 @@ final class OrmExtension extends CompilerExtension
 
 		$configurationClass = $this->config['configurationClass'];
 
-		if ($configurationClass !== Configuration::class && !is_subclass_of($configurationClass, Configuration::class)) {
+		if (!is_a($configurationClass, Configuration::class, true)) {
 			throw new InvalidArgumentException('Configuration class must be subclass of ' . Configuration::class . ', ' . $configurationClass . ' given.');
 		}
 
