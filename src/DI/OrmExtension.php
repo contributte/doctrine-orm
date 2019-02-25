@@ -10,6 +10,7 @@ use Nette\DI\CompilerExtension;
 use Nette\DI\Helpers;
 use Nette\DI\Statement;
 use Nette\InvalidArgumentException;
+use Nette\Utils\Strings;
 use Nettrine\ORM\EntityManagerDecorator;
 use Nettrine\ORM\Exception\Logical\InvalidStateException;
 use Nettrine\ORM\ManagerRegistry;
@@ -129,26 +130,42 @@ final class OrmExtension extends CompilerExtension
 			throw new InvalidStateException(sprintf('EntityManagerDecorator class "%s" not found', $entityManagerDecoratorClass));
 		}
 
-		// Entity Manager
-		$original = $builder->addDefinition($this->prefix('entityManager'))
-			->setType(DoctrineEntityManager::class)
-			->setFactory(DoctrineEntityManager::class . '::create', [
-				$builder->getDefinitionByType(Connection::class), // Nettrine/DBAL
-				$this->prefix('@configuration'),
-			])
-			->setAutowired(false);
+		foreach ($builder->findByType(\Doctrine\DBAL\Connection::class) as $definitionName => $serviceDefinition) {
+			$match = Strings::match($definitionName, '~([a-zA-Z]+\.([a-zA-Z]+))\.connection~');
 
-		// Entity Manager Decorator
-		$builder->addDefinition($this->prefix('entityManagerDecorator'))
-			->setFactory($entityManagerDecoratorClass, [$original]);
+			if ($serviceDefinition->getTag(\Nettrine\DBAL\DI\DbalExtension::TAG_CONNECTION) !== null && array_key_exists(1, $match) && array_key_exists(2, $match)) {
+				$nameWithPrefix = $match[1];
+				$name = $match[2];
 
-		// ManagerRegistry
-		$builder->addDefinition($this->prefix('managerRegistry'))
-			->setType(ManagerRegistry::class)
-			->setArguments([
-				$builder->getDefinitionByType(Connection::class),
-				$this->prefix('@entityManagerDecorator'),
-			]);
+			} else {
+				continue;
+			}
+
+			// Entity Manager
+			$original = $builder->addDefinition($this->prefix($name . '.entityManager'))
+				->setType(DoctrineEntityManager::class)
+				->setFactory(DoctrineEntityManager::class . '::create', [
+					$builder->getDefinition($nameWithPrefix . '.connection'), // Nettrine/DBAL
+					$this->prefix('@configuration'),
+				])
+				->setAutowired(false);
+
+			$autowired = $name === \Nettrine\DBAL\DI\DbalExtension::DEFAULT_CONNECTION_NAME ? true : false;
+
+			// Entity Manager Decorator
+			$builder->addDefinition($this->prefix($name . '.entityManagerDecorator'))
+				->setFactory($entityManagerDecoratorClass, [$original])
+				->setAutowired($autowired);
+
+			// ManagerRegistry
+			$builder->addDefinition($this->prefix($name . '.managerRegistry'))
+				->setType(ManagerRegistry::class)
+				->setArguments([
+					$builder->getDefinition($nameWithPrefix . '.connection'),
+					$this->prefix('@' . $name . '.entityManagerDecorator'),
+				])
+				->setAutowired($autowired);
+		}
 	}
 
 }
