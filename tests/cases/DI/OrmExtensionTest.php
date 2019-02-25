@@ -5,10 +5,12 @@ namespace Tests\Nettrine\ORM\Cases\DI;
 use Nette\DI\Compiler;
 use Nette\DI\Container;
 use Nette\DI\ContainerLoader;
+use Nette\InvalidArgumentException;
 use Nettrine\DBAL\DI\DbalExtension;
 use Nettrine\ORM\DI\OrmAnnotationsExtension;
 use Nettrine\ORM\DI\OrmExtension;
 use Nettrine\ORM\EntityManagerDecorator;
+use stdClass;
 use Tests\Nettrine\ORM\Cases\TestCase;
 use Tests\Nettrine\ORM\Fixtures\DummyConfiguration;
 use Tests\Nettrine\ORM\Fixtures\DummyEntityManagerDecorator;
@@ -65,6 +67,9 @@ final class OrmExtensionTest extends TestCase
 
 	public function testConfigurationException(): void
 	{
+		$this->expectedException(InvalidArgumentException::class);
+		$this->expectedExceptionMessage('Configuration class must be subclass of Doctrine\ORM\Configuration, stdClass given.');
+
 		$loader = new ContainerLoader(TEMP_PATH, true);
 		$class = $loader->load(function (Compiler $compiler): void {
 			$compiler->addExtension('dbal', new DbalExtension());
@@ -78,13 +83,11 @@ final class OrmExtensionTest extends TestCase
 			]);
 			$compiler->addConfig([
 				'orm' => [
-					'configurationClass' => \stdClass::class,
+					'configurationClass' => stdClass::class,
 				],
 			]);
 		}, self::class . __METHOD__);
 
-		$this->expectedException(\Nette\InvalidArgumentException::class);
-		$this->expectedExceptionMessage('Configuration class must be subclass of Doctrine\ORM\Configuration, stdClass given.');
 		new $class();
 	}
 
