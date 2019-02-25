@@ -9,6 +9,7 @@ use Doctrine\ORM\Mapping\UnderscoreNamingStrategy;
 use Nette\DI\CompilerExtension;
 use Nette\DI\Helpers;
 use Nette\DI\Statement;
+use Nette\InvalidArgumentException;
 use Nettrine\ORM\EntityManagerDecorator;
 use Nettrine\ORM\Exception\Logical\InvalidStateException;
 use Nettrine\ORM\ManagerRegistry;
@@ -20,6 +21,7 @@ final class OrmExtension extends CompilerExtension
 	/** @var mixed[] */
 	private $defaults = [
 		'entityManagerDecoratorClass' => EntityManagerDecorator::class,
+		'configurationClass' => Configuration::class,
 		'configuration' => [
 			'proxyDir' => '%tempDir%/proxies',
 			'autoGenerateProxyClasses' => null,
@@ -53,11 +55,18 @@ final class OrmExtension extends CompilerExtension
 	public function loadDoctrineConfiguration(): void
 	{
 		$builder = $this->getContainerBuilder();
+
 		$config = $this->validateConfig($this->defaults['configuration'], $this->config['configuration']);
 		$config = Helpers::expand($config, $builder->parameters);
 
+		$configurationClass = $this->config['configurationClass'];
+
+		if (!is_a($configurationClass, Configuration::class, true)) {
+			throw new InvalidArgumentException('Configuration class must be subclass of ' . Configuration::class . ', ' . $configurationClass . ' given.');
+		}
+
 		$configuration = $builder->addDefinition($this->prefix('configuration'))
-			->setType(Configuration::class);
+			->setType($configurationClass);
 
 		if ($config['proxyDir'] !== null) {
 			$configuration->addSetup('setProxyDir', [$config['proxyDir']]);
