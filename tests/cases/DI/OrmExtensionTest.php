@@ -65,14 +65,13 @@ final class OrmExtensionTest extends TestCase
 		self::assertInstanceOf(DummyConfiguration::class, $container->getByType(DummyConfiguration::class));
 	}
 
-	/**
-	 * @expectedException InvalidArgumentException
-	 * @expectedExceptionMessage Configuration class must be subclass of Doctrine\ORM\Configuration, stdClass given.
-	 */
 	public function testConfigurationException(): void
 	{
+		$this->expectException(InvalidArgumentException::class);
+		$this->expectExceptionMessage('Configuration class must be subclass of Doctrine\ORM\Configuration, stdClass given.');
+
 		$loader = new ContainerLoader(TEMP_PATH, true);
-		$class = $loader->load(function (Compiler $compiler): void {
+		$loader->load(function (Compiler $compiler): void {
 			$compiler->addExtension('dbal', new DbalExtension());
 			$compiler->addExtension('orm', new OrmExtension());
 			$compiler->addExtension('orm.annotations', new OrmAnnotationsExtension());
@@ -88,8 +87,6 @@ final class OrmExtensionTest extends TestCase
 				],
 			]);
 		}, self::class . __METHOD__);
-
-		new $class();
 	}
 
 }
