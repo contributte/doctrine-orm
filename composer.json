@@ -26,7 +26,7 @@
     "doctrine/annotations": "^1.6.0"
   },
   "require-dev": {
-    "ninjify/qa": "^0.8.0",
+    "ninjify/qa": "^0.9.0",
     "mockery/mockery": "^1.2.2",
     "phpunit/phpunit": "^8.0.4",
     "phpstan/phpstan-shim": "^0.11.2",

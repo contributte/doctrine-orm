@@ -58,6 +58,7 @@ class ManagerRegistry extends AbstractManagerRegistry
 			try {
 				/** @var EntityManagerInterface $entityManager */
 				$entityManager = $this->getManager($name);
+
 				return $entityManager->getConfiguration()->getEntityNamespace($alias);
 			} catch (ORMException $e) {
 				// Ignore

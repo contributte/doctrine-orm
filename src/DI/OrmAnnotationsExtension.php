@@ -69,6 +69,7 @@ class OrmAnnotationsExtension extends CompilerExtension
 			->setAutowired(false);
 
 		Validators::assertField($config, 'ignore', 'array');
+
 		foreach ($config['ignore'] as $annotationName) {
 			$reader->addSetup('addGlobalIgnoredName', [$annotationName]);
 			AnnotationReader::addGlobalIgnoredName($annotationName);

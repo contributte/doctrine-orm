@@ -71,15 +71,19 @@ final class OrmExtension extends CompilerExtension
 		if ($config['proxyDir'] !== null) {
 			$configuration->addSetup('setProxyDir', [$config['proxyDir']]);
 		}
+
 		if ($config['autoGenerateProxyClasses'] !== null) {
 			$configuration->addSetup('setAutoGenerateProxyClasses', [$config['autoGenerateProxyClasses']]);
 		}
+
 		if ($config['proxyNamespace'] !== null) {
 			$configuration->addSetup('setProxyNamespace', [$config['proxyNamespace']]);
 		}
+
 		if ($config['metadataDriverImpl'] !== null) {
 			$configuration->addSetup('setMetadataDriverImpl', [$config['metadataDriverImpl']]);
 		}
+
 		if ($config['entityNamespaces']) {
 			$configuration->addSetup('setEntityNamespaces', [$config['entityNamespaces']]);
 		}
@@ -94,6 +98,7 @@ final class OrmExtension extends CompilerExtension
 		if ($config['classMetadataFactoryName'] !== null) {
 			$configuration->addSetup('setClassMetadataFactoryName', [$config['classMetadataFactoryName']]);
 		}
+
 		if ($config['defaultRepositoryClassName'] !== null) {
 			$configuration->addSetup('setDefaultRepositoryClassName', [$config['defaultRepositoryClassName']]);
 		}
@@ -101,9 +106,11 @@ final class OrmExtension extends CompilerExtension
 		if ($config['namingStrategy'] !== null) {
 			$configuration->addSetup('setNamingStrategy', [new Statement($config['namingStrategy'])]);
 		}
+
 		if ($config['quoteStrategy'] !== null) {
 			$configuration->addSetup('setQuoteStrategy', [$config['quoteStrategy']]);
 		}
+
 		if ($config['entityListenerResolver'] !== null) {
 			$configuration->addSetup('setEntityListenerResolver', [$config['entityListenerResolver']]);
 		} else {
@@ -111,9 +118,11 @@ final class OrmExtension extends CompilerExtension
 				->setType(ContainerEntityListenerResolver::class);
 			$configuration->addSetup('setEntityListenerResolver', [$this->prefix('@entityListenerResolver')]);
 		}
+
 		if ($config['repositoryFactory'] !== null) {
 			$configuration->addSetup('setRepositoryFactory', [$config['repositoryFactory']]);
 		}
+
 		if ($config['defaultQueryHints']) {
 			$configuration->addSetup('setDefaultQueryHints', [$config['defaultQueryHints']]);
 		}
@@ -125,6 +134,7 @@ final class OrmExtension extends CompilerExtension
 		$config = $this->getConfig();
 
 		$entityManagerDecoratorClass = $config['entityManagerDecoratorClass'];
+
 		if (!class_exists($entityManagerDecoratorClass)) {
 			throw new InvalidStateException(sprintf('EntityManagerDecorator class "%s" not found', $entityManagerDecoratorClass));
 		}
