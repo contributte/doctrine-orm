@@ -131,38 +131,28 @@ final class OrmExtension extends CompilerExtension
 		}
 
 		foreach ($builder->findByType(\Doctrine\DBAL\Connection::class) as $definitionName => $serviceDefinition) {
-			$match = Strings::match($definitionName, '~([a-zA-Z]+\.([a-zA-Z]+))\.connection~');
-
-			if ($serviceDefinition->getTag(\Nettrine\DBAL\DI\DbalExtension::TAG_CONNECTION) !== null && array_key_exists(1, $match) && array_key_exists(2, $match)) {
-				$nameWithPrefix = $match[1];
-				$name = $match[2];
-
-			} else {
-				continue;
-			}
-
 			// Entity Manager
-			$original = $builder->addDefinition($this->prefix($name . '.entityManager'))
+			$original = $builder->addDefinition($this->prefix($definitionName . '.entityManager'))
 				->setType(DoctrineEntityManager::class)
 				->setFactory(DoctrineEntityManager::class . '::create', [
-					$builder->getDefinition($nameWithPrefix . '.connection'), // Nettrine/DBAL
+					$builder->getDefinition($definitionName . '.connection'), // Nettrine/DBAL
 					$this->prefix('@configuration'),
 				])
 				->setAutowired(false);
 
-			$autowired = $name === \Nettrine\DBAL\DI\DbalExtension::DEFAULT_CONNECTION_NAME ? true : false;
+			$autowired = $serviceDefinition->isAutowired();
 
 			// Entity Manager Decorator
-			$builder->addDefinition($this->prefix($name . '.entityManagerDecorator'))
+			$builder->addDefinition($this->prefix($definitionName . '.entityManagerDecorator'))
 				->setFactory($entityManagerDecoratorClass, [$original])
 				->setAutowired($autowired);
 
 			// ManagerRegistry
-			$builder->addDefinition($this->prefix($name . '.managerRegistry'))
+			$builder->addDefinition($this->prefix($definitionName . '.managerRegistry'))
 				->setType(ManagerRegistry::class)
 				->setArguments([
-					$builder->getDefinition($nameWithPrefix . '.connection'),
-					$this->prefix('@' . $name . '.entityManagerDecorator'),
+					$builder->getDefinition($definitionName . '.connection'),
+					$this->prefix('@' . $definitionName . '.entityManagerDecorator'),
 				])
 				->setAutowired($autowired);
 		}
