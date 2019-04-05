@@ -32,12 +32,15 @@ And set-up DBAL connection.
 
 ```yaml
 dbal:
-    connection:
-        host: 127.0.0.1
-        user: root
-        password:
-        dbname: nettrine
-        #driver: pdo_pgsql
+    connections:
+        default:
+            host: 127.0.0.1
+            user: root
+            password:
+            dbname: nettrine
+            #driver: pdo_pgsql
+        another_connection:
+            ...
 ```
 
 Secondly, enable the Doctrine ORM extension. It's provided by this package.
