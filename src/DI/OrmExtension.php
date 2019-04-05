@@ -10,7 +10,6 @@ use Nette\DI\CompilerExtension;
 use Nette\DI\Helpers;
 use Nette\DI\Statement;
 use Nette\InvalidArgumentException;
-use Nette\Utils\Strings;
 use Nettrine\ORM\EntityManagerDecorator;
 use Nettrine\ORM\Exception\Logical\InvalidStateException;
 use Nettrine\ORM\ManagerRegistry;
@@ -130,7 +129,7 @@ final class OrmExtension extends CompilerExtension
 			throw new InvalidStateException(sprintf('EntityManagerDecorator class "%s" not found', $entityManagerDecoratorClass));
 		}
 
-		foreach ($builder->findByType(\Doctrine\DBAL\Connection::class) as $definitionName => $serviceDefinition) {
+		foreach ($builder->findByType(Connection::class) as $definitionName => $serviceDefinition) {
 			// Entity Manager
 			$original = $builder->addDefinition($this->prefix($definitionName . '.entityManager'))
 				->setType(DoctrineEntityManager::class)
