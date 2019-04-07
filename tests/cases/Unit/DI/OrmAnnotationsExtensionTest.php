@@ -1,6 +1,6 @@
 <?php declare(strict_types = 1);
 
-namespace Tests\Nettrine\ORM\Cases\DI;
+namespace Tests\Cases\Unit\DI;
 
 use Doctrine\Common\Cache\FilesystemCache;
 use Nette\DI\Compiler;
@@ -10,7 +10,7 @@ use Nettrine\DBAL\DI\DbalExtension;
 use Nettrine\ORM\DI\OrmAnnotationsExtension;
 use Nettrine\ORM\DI\OrmExtension;
 use Nettrine\ORM\Exception\Logical\InvalidStateException;
-use Tests\Nettrine\ORM\Cases\TestCase;
+use Tests\Toolkit\TestCase;
 
 final class OrmAnnotationsExtensionTest extends TestCase
 {
@@ -33,7 +33,7 @@ final class OrmAnnotationsExtensionTest extends TestCase
 		/** @var Container $container */
 		$container = new $class();
 
-		self::assertInstanceOf(FilesystemCache::class, $container->getService('orm.annotations.annotationsCache'));
+		$this->assertInstanceOf(FilesystemCache::class, $container->getService('orm.annotations.annotationsCache'));
 	}
 
 	public function testNoCache(): void

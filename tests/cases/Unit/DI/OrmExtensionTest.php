@@ -1,6 +1,6 @@
 <?php declare(strict_types = 1);
 
-namespace Tests\Nettrine\ORM\Cases\DI;
+namespace Tests\Cases\Unit\DI;
 
 use Nette\DI\Compiler;
 use Nette\DI\Container;
@@ -11,9 +11,9 @@ use Nettrine\ORM\DI\OrmAnnotationsExtension;
 use Nettrine\ORM\DI\OrmExtension;
 use Nettrine\ORM\EntityManagerDecorator;
 use stdClass;
-use Tests\Nettrine\ORM\Cases\TestCase;
-use Tests\Nettrine\ORM\Fixtures\DummyConfiguration;
-use Tests\Nettrine\ORM\Fixtures\DummyEntityManagerDecorator;
+use Tests\Fixtures\DummyConfiguration;
+use Tests\Fixtures\DummyEntityManagerDecorator;
+use Tests\Toolkit\TestCase;
 
 final class OrmExtensionTest extends TestCase
 {
@@ -35,7 +35,7 @@ final class OrmExtensionTest extends TestCase
 
 		/** @var Container $container */
 		$container = new $class();
-		self::assertInstanceOf(EntityManagerDecorator::class, $container->getByType(EntityManagerDecorator::class));
+		$this->assertInstanceOf(EntityManagerDecorator::class, $container->getByType(EntityManagerDecorator::class));
 	}
 
 	public function testOwnEntityManager(): void
@@ -61,8 +61,8 @@ final class OrmExtensionTest extends TestCase
 
 		/** @var Container $container */
 		$container = new $class();
-		self::assertInstanceOf(DummyEntityManagerDecorator::class, $container->getByType(DummyEntityManagerDecorator::class));
-		self::assertInstanceOf(DummyConfiguration::class, $container->getByType(DummyConfiguration::class));
+		$this->assertInstanceOf(DummyEntityManagerDecorator::class, $container->getByType(DummyEntityManagerDecorator::class));
+		$this->assertInstanceOf(DummyConfiguration::class, $container->getByType(DummyConfiguration::class));
 	}
 
 	public function testConfigurationException(): void

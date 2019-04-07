@@ -1,6 +1,6 @@
 <?php declare(strict_types = 1);
 
-namespace Tests\Nettrine\ORM\Cases;
+namespace Tests\Toolkit;
 
 use Mockery;
 use PHPUnit\Framework\TestCase as PHPUnitTestCase;

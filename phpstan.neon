@@ -1,12 +1,8 @@
-includes:
-	- vendor/phpstan/phpstan-deprecation-rules/rules.neon
-	- vendor/phpstan/phpstan-nette/extension.neon
-	- vendor/phpstan/phpstan-nette/rules.neon
-	- vendor/phpstan/phpstan-strict-rules/rules.neon
-
 parameters:
 	ignoreErrors:
-		# Will be removed same time as from Doctrine
-		- '#^Fetching class constant class of deprecated class Doctrine\\Common\\Cache\\(ApcCache|MemcacheCache|XcacheCache)\.$#'
+		# PHPStan bug, there is no Doctrine\Orm\Configuration assignment
+		- '#^Parameter \#1 \$type of method Nette\\DI\\Definitions\\ServiceDefinition::setType\(\) expects string|null, Doctrine\\ORM\\Configuration|string given$#'
 		# No replacement available yet
-		- '#^Call to deprecated method registerUniqueLoader\(\) of class Doctrine\\Common\\Annotations\\AnnotationRegistry\.$#'
+		- '#^Call to deprecated method registerUniqueLoader\(\) of class Doctrine\\Common\\Annotations\\AnnotationRegistry.+#'
+		# We will replace it once, for sure
+		- '#Fetching class constant .+ of deprecated class Doctrine\\Common\\Proxy\\AbstractProxyFactory.+#'

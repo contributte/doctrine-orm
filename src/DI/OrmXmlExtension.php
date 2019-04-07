@@ -2,43 +2,44 @@
 
 namespace Nettrine\ORM\DI;
 
-use Doctrine\ORM\Configuration;
 use Doctrine\ORM\Mapping\Driver\XmlDriver;
-use Nette\DI\CompilerExtension;
-use Nette\DI\Helpers;
-use Nettrine\ORM\Exception\Logical\InvalidStateException;
+use Nette\Schema\Expect;
+use Nette\Schema\Schema;
+use stdClass;
 
-class OrmXmlExtension extends CompilerExtension
+/**
+ * @property-read stdClass $config
+ */
+class OrmXmlExtension extends AbstractExtension
 {
 
-	/** @var mixed[] */
-	public $defaults = [
-		'paths' => [], //'%appDir%'
-		'fileExtension' => XmlDriver::DEFAULT_FILE_EXTENSION,
-	];
+	public function getConfigSchema(): Schema
+	{
+		return Expect::structure([
+			'paths' => Expect::listOf('string'),
+			'fileExtension' => Expect::string(XmlDriver::DEFAULT_FILE_EXTENSION),
+		]);
+	}
 
 	/**
 	 * Register services
 	 */
 	public function loadConfiguration(): void
 	{
-		if ($this->compiler->getExtensions(OrmExtension::class) === []) {
-			throw new InvalidStateException(
-				sprintf('You should register %s before %s.', self::class, static::class)
-			);
-		}
+		// Validates needed extension
+		$this->validate();
 
 		$builder = $this->getContainerBuilder();
-		$config = $this->validateConfig($this->defaults);
+		$config = $this->config;
 
 		$builder->addDefinition($this->prefix('xmlDriver'))
 			->setFactory(XmlDriver::class, [
-				Helpers::expand($config['paths'], $builder->parameters),
-				$config['fileExtension'],
+				$config->paths,
+				$config->fileExtension,
 			]);
 
-		$builder->getDefinitionByType(Configuration::class)
-			->addSetup('setMetadataDriverImpl', [$this->prefix('@xmlDriver')]);
+		$configurationDef = $this->getConfigurationDef();
+		$configurationDef->addSetup('setMetadataDriverImpl', [$this->prefix('@xmlDriver')]);
 	}
 
 }

@@ -1,59 +1,52 @@
 language: php
-
 php:
   - 7.2
   - 7.3
   - 7.4snapshot
+  - nightly
 
 before_install:
-  # Turn off XDebug
-  - phpenv config-rm xdebug.ini || return 0
+  - phpenv config-rm xdebug.ini || return 0 # Turn off XDebug
 
 install:
-  # Composer
-  - travis_retry composer install --no-progress --prefer-dist
+  - travis_retry composer install --no-progress --prefer-dist # Install dependencies
 
 script:
-  # Tests
-  - composer run-script tests
+  - make tests # Tests
 
 jobs:
   include:
-    - env: title="Lowest Dependencies 7.2"
-      php: 7.2
+    - env: title="Lowest Dependencies 7.3"
+      php: 7.3
       install:
-        - travis_retry composer update --no-progress --prefer-dist --prefer-lowest
+        - travis_retry composer update --no-progress --prefer-dist --prefer-lowest --prefer-stable
       script:
-        - composer run-script tests
+        - make tests
 
     - stage: Quality Assurance
-      php: 7.2
+      php: 7.3
       script:
-        - composer run-script qa
-
-    - stage: Phpstan
-      php: 7.2
-      script:
-        - composer run-script phpstan
+        - make qa
 
     - stage: Test Coverage
       if: branch = master AND type = push
-      php: 7.2
+      php: 7.3
       script:
-        - composer run-script coverage
+        - make coverage
       after_script:
         - composer global require php-coveralls/php-coveralls ^2.1.0
         - ~/.composer/vendor/bin/php-coveralls --verbose --config tests/.coveralls.yml
 
     - stage: Outdated Dependencies
       if: branch = master AND type = cron
-      php: 7.2
+      php: 7.3
       script:
-        - composer outdated --direct --strict
+        - composer outdated --direct
 
   allow_failures:
-    - php: 7.4snapshot
     - stage: Test Coverage
+    - php: 7.4snapshot
+    - php: nightly
 
 sudo: false
 

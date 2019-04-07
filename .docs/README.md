@@ -1,46 +1,32 @@
-# Nettrine / ORM
+# Nettrine ORM
+
+Integration of [Doctrine\ORM](http://docs.doctrine-project.org/projects/doctrine-orm/en/latest/) to Nette Framework.
 
 ## Content
 
-- [Minimal configuration](#minimal-configuration)
+- [Setup](#setup)
 - [ORM extension](#ormextension)
 	- [EntityManagerDecorator](#entitymanagerdecorator)
 	- [Configuration](#configuration)
 - [Bridges](#bridges)
 	- [Annotations Bridge](#annotations-bridge)
+	- [XML Bridge](#xml-bridge)
 	- [Cache Bridge](#cache-bridge)
 	- [Console Bridge](#console-bridge)
 - [Other features](#other-features)
 	- [ID attribute](#id-attribute)
 
-## Minimal configuration
+## Setup
 
-At first, you will need the Doctrine DBAL extension. Take a look at [Nettrine DBAL](https://github.com/nettrine/dbal) in this organization. Install `nettrine/dbal` package using composer.
+First of all, install [Nettrine DBAL](https://github.com/nettrine/dbal) package and enable `DbalExtension`.
 
-```
-composer require nettrine/dbal
-```
+Install package
 
-Place `DbalExtension` in your neon config file.
-
-```yaml
-extensions:
-    dbal: Nettrine\DBAL\DI\DbalExtension
+```bash
+composer require nettrine/orm
 ```
 
-And set-up DBAL connection.
-
-```yaml
-dbal:
-    connection:
-        host: 127.0.0.1
-        user: root
-        password:
-        dbname: nettrine
-        #driver: pdo_pgsql
-```
-
-Secondly, enable the Doctrine ORM extension. It's provided by this package.
+Register extension
 
 ```yaml
 extensions:

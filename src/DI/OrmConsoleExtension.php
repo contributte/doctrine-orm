@@ -16,13 +16,12 @@ use Doctrine\ORM\Tools\Console\Command\SchemaTool\DropCommand;
 use Doctrine\ORM\Tools\Console\Command\SchemaTool\UpdateCommand;
 use Doctrine\ORM\Tools\Console\Command\ValidateSchemaCommand;
 use Doctrine\ORM\Tools\Console\Helper\EntityManagerHelper;
-use Nette\DI\CompilerExtension;
+use Nette\DI\Definitions\ServiceDefinition;
+use Nette\DI\Definitions\Statement;
 use Nette\DI\ServiceCreationException;
-use Nette\DI\Statement;
-use Nette\InvalidStateException;
 use Symfony\Component\Console\Application;
 
-class OrmConsoleExtension extends CompilerExtension
+class OrmConsoleExtension extends AbstractExtension
 {
 
 	/** @var bool */
@@ -35,11 +34,8 @@ class OrmConsoleExtension extends CompilerExtension
 
 	public function loadConfiguration(): void
 	{
-		if ($this->compiler->getExtensions(OrmExtension::class) === []) {
-			throw new InvalidStateException(
-				sprintf('You should register %s before %s.', self::class, static::class)
-			);
-		}
+		// Validates needed extension
+		$this->validate();
 
 		if (!class_exists(Application::class)) {
 			throw new ServiceCreationException(sprintf('Missing %s service', Application::class));
@@ -51,6 +47,7 @@ class OrmConsoleExtension extends CompilerExtension
 		}
 
 		$builder = $this->getContainerBuilder();
+
 		// Helpers
 		$builder->addDefinition($this->prefix('entityManagerHelper'))
 			->setType(EntityManagerHelper::class)
@@ -124,11 +121,12 @@ class OrmConsoleExtension extends CompilerExtension
 		$builder = $this->getContainerBuilder();
 
 		// Lookup for Symfony Console Application
-		$application = $builder->getDefinitionByType(Application::class);
+		/** @var ServiceDefinition $applicationDef */
+		$applicationDef = $builder->getDefinitionByType(Application::class);
 
 		// Register helpers
 		$entityManagerHelper = $this->prefix('@entityManagerHelper');
-		$application->addSetup(new Statement('$service->getHelperSet()->set(?,?)', [$entityManagerHelper, 'em']));
+		$applicationDef->addSetup(new Statement('$service->getHelperSet()->set(?,?)', [$entityManagerHelper, 'em']));
 	}
 
 }

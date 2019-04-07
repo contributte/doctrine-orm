@@ -1,10 +1,14 @@
 <?php declare(strict_types = 1);
 
-namespace Nettrine\ORM\DI;
+namespace Nettrine\ORM\DI\Traits;
 
 use Doctrine\Common\Persistence\Mapping\Driver\AnnotationDriver;
-use Nette\DI\ContainerBuilder;
+use Nette\DI\CompilerExtension;
+use Nette\DI\Definitions\ServiceDefinition;
 
+/**
+ * @mixin CompilerExtension
+ */
 trait TEntityMapping
 {
 
@@ -13,9 +17,9 @@ trait TEntityMapping
 	 */
 	public function setEntityMappings(array $mapping): void
 	{
-		/** @var ContainerBuilder $builder */
 		$builder = $this->getContainerBuilder();
 
+		/** @var ServiceDefinition $driver */
 		$driver = $builder->getDefinitionByType(AnnotationDriver::class);
 		$driver->addSetup('addPaths', [$mapping]);
 	}
