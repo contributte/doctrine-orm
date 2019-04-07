@@ -1,6 +1,6 @@
 <?php declare(strict_types = 1);
 
-namespace Tests\Nettrine\ORM\Fixtures;
+namespace Tests\Fixtures;
 
 use Doctrine\ORM\Configuration;
 

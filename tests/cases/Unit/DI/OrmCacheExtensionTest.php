@@ -1,6 +1,6 @@
 <?php declare(strict_types = 1);
 
-namespace Tests\Nettrine\ORM\Cases\DI;
+namespace Tests\Cases\Unit\DI;
 
 use Doctrine\Common\Cache\FilesystemCache;
 use Nette\DI\Compiler;
@@ -11,7 +11,7 @@ use Nettrine\ORM\DI\OrmAnnotationsExtension;
 use Nettrine\ORM\DI\OrmCacheExtension;
 use Nettrine\ORM\DI\OrmExtension;
 use Nettrine\ORM\EntityManagerDecorator;
-use Tests\Nettrine\ORM\Cases\TestCase;
+use Tests\Toolkit\TestCase;
 
 final class OrmCacheExtensionTest extends TestCase
 {
@@ -34,13 +34,14 @@ final class OrmCacheExtensionTest extends TestCase
 
 		/** @var Container $container */
 		$container = new $class();
+
 		/** @var EntityManagerDecorator $em */
 		$em = $container->getByType(EntityManagerDecorator::class);
 
-		self::assertInstanceOf(FilesystemCache::class, $em->getConfiguration()->getHydrationCacheImpl());
-		self::assertInstanceOf(FilesystemCache::class, $em->getConfiguration()->getMetadataCacheImpl());
-		self::assertInstanceOf(FilesystemCache::class, $em->getConfiguration()->getQueryCacheImpl());
-		self::assertInstanceOf(FilesystemCache::class, $em->getConfiguration()->getResultCacheImpl());
+		$this->assertInstanceOf(FilesystemCache::class, $em->getConfiguration()->getHydrationCacheImpl());
+		$this->assertInstanceOf(FilesystemCache::class, $em->getConfiguration()->getMetadataCacheImpl());
+		$this->assertInstanceOf(FilesystemCache::class, $em->getConfiguration()->getQueryCacheImpl());
+		$this->assertInstanceOf(FilesystemCache::class, $em->getConfiguration()->getResultCacheImpl());
 	}
 
 }

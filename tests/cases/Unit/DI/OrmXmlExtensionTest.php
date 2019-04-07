@@ -1,6 +1,6 @@
 <?php declare(strict_types = 1);
 
-namespace Tests\Nettrine\ORM\Cases\DI;
+namespace Tests\Cases\Unit\DI;
 
 use Doctrine\ORM\Mapping\Driver\XmlDriver;
 use Nette\DI\Compiler;
@@ -9,12 +9,12 @@ use Nette\DI\ContainerLoader;
 use Nettrine\DBAL\DI\DbalExtension;
 use Nettrine\ORM\DI\OrmExtension;
 use Nettrine\ORM\DI\OrmXmlExtension;
-use Tests\Nettrine\ORM\Cases\TestCase;
+use Tests\Toolkit\TestCase;
 
 final class OrmXmlExtensionTest extends TestCase
 {
 
-	public function testExtensionCanBeRegistered(): void
+	public function testExtension(): void
 	{
 		$loader = new ContainerLoader(TEMP_PATH, true);
 		$class = $loader->load(function (Compiler $compiler): void {
@@ -32,7 +32,7 @@ final class OrmXmlExtensionTest extends TestCase
 		/** @var Container $container */
 		$container = new $class();
 
-		self::assertInstanceOf(XmlDriver::class, $container->getService('orm.xml.xmlDriver'));
+		$this->assertInstanceOf(XmlDriver::class, $container->getService('orm.xml.xmlDriver'));
 	}
 
 }

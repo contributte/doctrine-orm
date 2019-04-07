@@ -1,8 +1,12 @@
 <?xml version="1.0"?>
-<ruleset name="Nettrine">
+<ruleset>
 	<!-- Contributte Coding Standard -->
 	<rule ref="./vendor/ninjify/coding-standard/contributte.xml">
 		<exclude name="SlevomatCodingStandard.ControlStructures.RequireTernaryOperator.TernaryOperatorNotUsed"/>
+		<exclude name="SlevomatCodingStandard.ControlStructures.ControlStructureSpacing.IncorrectLinesCountBeforeControlStructure"/>
+		<exclude name="SlevomatCodingStandard.ControlStructures.ControlStructureSpacing.IncorrectLinesCountAfterControlStructure"/>
+		<exclude name="SlevomatCodingStandard.ControlStructures.ControlStructureSpacing.IncorrectLinesCountAfterLastControlStructure"/>
+		<exclude name="SlevomatCodingStandard.ControlStructures.RequireMultiLineTernaryOperator.MultiLineTernaryOperatorNotUsed"/>
 	</rule>
 
 	<!-- Specific -->
@@ -10,8 +14,9 @@
 		<properties>
 			<property name="rootNamespaces" type="array" value="
 				src=>Nettrine\ORM,
-				tests/cases=>Tests\Nettrine\ORM\Cases,
-				tests/fixtures=>Tests\Nettrine\ORM\Fixtures
+				tests/cases=>Tests\Cases,
+				tests/fixtures=>Tests\Fixtures,
+				tests/toolkit=>Tests\Toolkit
 			"/>
 		</properties>
 	</rule>

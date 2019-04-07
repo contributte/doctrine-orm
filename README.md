@@ -1,8 +1,6 @@
-# Doctrine ORM
+# Nettrine ORM
 
 Integration of [Doctrine\ORM](http://docs.doctrine-project.org/projects/doctrine-orm/en/latest/) to Nette Framework.
-
------
 
 [![Build Status](https://img.shields.io/travis/nettrine/orm.svg?style=flat-square)](https://travis-ci.org/nettrine/orm)
 [![Code coverage](https://img.shields.io/coveralls/nettrine/orm.svg?style=flat-square)](https://coveralls.io/r/nettrine/orm)
@@ -16,31 +14,26 @@ Integration of [Doctrine\ORM](http://docs.doctrine-project.org/projects/doctrine
 
 [![Join the chat](https://img.shields.io/gitter/room/nettrine/nettrine.svg?style=flat-square)](https://gitter.im/nettrine/nettrine)
 
-## Install
+## Documentation
 
-```sh
-composer require nettrine/orm
-```
+- [Setup](.docs/README.md#setup)
+- [ORM extension](.docs/README.md#ormextension)
+	- [EntityManagerDecorator](.docs/README.md#entitymanagerdecorator)
+	- [Configuration](.docs/README.md#configuration)
+- [Bridges](.docs/README.md#bridges)
+	- [Annotations Bridge](.docs/README.md#annotations-bridge)
+	- [XML Bridge](.docs/README.md#xml-bridge)
+	- [Cache Bridge](.docs/README.md#cache-bridge)
+	- [Console Bridge](.docs/README.md#console-bridge)
+- [Other features](.docs/README.md#other-features)
+	- [ID attribute](.docs/README.md#id-attribute)
+
 ## Versions
 
-| State       | Version       | Branch   | PHP      |
-|-------------|---------------|----------|----------|
-| development | `^0.4`        | `master` | `>= 7.1` |
-| stable      | `^0.3`        | `master` | `>= 7.1` |
-
-## Overview
-
-- [Minimal configuration](https://github.com/nettrine/orm/blob/master/.docs/README.md#minimal-configuration)
-- [ORM extension](https://github.com/nettrine/orm/blob/master/.docs/README.md#ormextension)
-	- [Own entity manager](https://github.com/nettrine/orm/blob/master/.docs/README.md#own-entitymanager)
-	- [Configuration](https://github.com/nettrine/orm/blob/master/.docs/README.md#configuration)
-- [Bridges](https://github.com/nettrine/orm/blob/master/.docs/README.md#bridges)
-	- [Annotations Bridge](https://github.com/nettrine/orm/blob/master/.docs/README.md#annotations-bridge)
-	- [XML Bridge](https://github.com/nettrine/orm/blob/master/.docs/README.md#xml-bridge)
-	- [Cache Bridge](https://github.com/nettrine/orm/blob/master/.docs/README.md#cache-bridge)
-	- [Console Bridge](https://github.com/nettrine/orm/blob/master/.docs/README.md#console-bridge)
-- [Other features](https://github.com/nettrine/orm/blob/master/.docs/README.md#other-features)
-	- [ID attribute](https://github.com/nettrine/orm/blob/master/.docs/README.md#id-attribute)
+| State       | Version     | Branch   | Nette  | PHP    |
+|-------------|-------------|----------|--------|--------|
+| development | `^0.5`      | `master` | `3.0+` | `^7.2` |
+| stable      | `^0.4`      | `master` | `2.4`  | `^7.1` |
 
 ## Other
 
@@ -72,7 +65,5 @@ This repository is inspired by these packages:
     </tr>
   </tbody>
 </table>
-
------
 
 Thank you for testing, reporting and contributing.
