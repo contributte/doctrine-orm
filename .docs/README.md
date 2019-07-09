@@ -234,7 +234,7 @@ extensions:
 
 Since this moment you can use all registered Doctrine ORM commands using `bin/console`.
 
-![Commands](assets/commands.png)
+![Commands](https://raw.githubusercontent.com/nettrine/orm/master/.docs/assets/commands.png)
 
 ## Other features 
 
