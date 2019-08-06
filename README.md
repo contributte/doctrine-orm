@@ -32,8 +32,9 @@ Integration of [Doctrine\ORM](http://docs.doctrine-project.org/projects/doctrine
 
 | State       | Version     | Branch   | Nette  | PHP    |
 |-------------|-------------|----------|--------|--------|
-| development | `^0.5`      | `master` | `3.0+` | `^7.2` |
-| stable      | `^0.4`      | `master` | `2.4`  | `^7.1` |
+| dev         | `^0.5`      | `master` | `3.0+` | `^7.2` |
+| stable      | `^0.4`      | `master` | `3.0+` | `^7.2` |
+| stable      | `^0.3`      | `master` | `2.4`  | `^7.1` |
 
 ## Other
 
