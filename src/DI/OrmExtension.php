@@ -45,7 +45,7 @@ final class OrmExtension extends AbstractExtension
 				'classMetadataFactoryName' => Expect::string(),
 				'defaultRepositoryClassName' => Expect::string(),
 				'namingStrategy' => Expect::string(UnderscoreNamingStrategy::class)->nullable(),
-				'quoteStrategy' => Expect::string(),
+				'quoteStrategy' => Expect::type(Statement::class),
 				'entityListenerResolver' => Expect::string(),
 				'repositoryFactory' => Expect::string(),
 				'defaultQueryHints' => Expect::array(),
