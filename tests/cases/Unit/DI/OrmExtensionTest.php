@@ -10,6 +10,7 @@ use Nettrine\DBAL\DI\DbalExtension;
 use Nettrine\ORM\DI\OrmAnnotationsExtension;
 use Nettrine\ORM\DI\OrmExtension;
 use Nettrine\ORM\EntityManagerDecorator;
+use Nettrine\ORM\ManagerRegistry;
 use stdClass;
 use Tests\Fixtures\DummyConfiguration;
 use Tests\Fixtures\DummyEntityManagerDecorator;
@@ -87,6 +88,31 @@ final class OrmExtensionTest extends TestCase
 				],
 			]);
 		}, self::class . __METHOD__);
+	}
+
+	public function testResetEntityManager(): void
+	{
+		$loader = new ContainerLoader(TEMP_PATH, true);
+		$class = $loader->load(function (Compiler $compiler): void {
+			$compiler->addExtension('dbal', new DbalExtension());
+			$compiler->addExtension('orm', new OrmExtension());
+			$compiler->addExtension('orm.annotations', new OrmAnnotationsExtension());
+			$compiler->addConfig([
+				'parameters' => [
+					'tempDir' => TEMP_PATH,
+					'appDir' => __DIR__,
+				],
+			]);
+		}, self::class . __METHOD__);
+
+		/** @var Container $container */
+		$container = new $class();
+		$registry = $container->getByType(ManagerRegistry::class);
+		$this->assertInstanceOf(ManagerRegistry::class, $registry);
+		$registry->getManager()->close();
+		$this->assertFalse($registry->getManager()->isOpen());
+		$registry->resetManager();
+		$this->assertTrue($registry->getManager()->isOpen());
 	}
 
 }

@@ -150,13 +150,10 @@ final class OrmExtension extends AbstractExtension
 		}
 
 		// Entity Manager
-		$original = $builder->addDefinition($this->prefix('entityManager'))
-			->setType(DoctrineEntityManager::class)
-			->setFactory(DoctrineEntityManager::class . '::create', [
-				$builder->getDefinitionByType(Connection::class), // Nettrine/DBAL
-				$this->prefix('@configuration'),
-			])
-			->setAutowired(false);
+		$original = new Statement(DoctrineEntityManager::class . '::create', [
+			$builder->getDefinitionByType(Connection::class), // Nettrine/DBAL
+			$this->prefix('@configuration'),
+		]);
 
 		// Entity Manager Decorator
 		$builder->addDefinition($this->prefix('entityManagerDecorator'))
