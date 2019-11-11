@@ -41,7 +41,7 @@ extensions:
 
 orm.annotations:
     paths:
-        - App/Model/Database/Entity
+        - %appDir%/Model/Database/Entity
 ```
 
 You can find more examples in our [playground](https://github.com/nettrine/playground) repository.
