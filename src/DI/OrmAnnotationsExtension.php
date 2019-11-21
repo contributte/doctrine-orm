@@ -6,6 +6,7 @@ use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\AnnotationRegistry;
 use Doctrine\Common\Annotations\CachedReader;
 use Doctrine\Common\Annotations\Reader;
+use Nette\DI\Statement;
 use Nette\PhpGenerator\ClassType;
 use Nette\PhpGenerator\PhpLiteral;
 use Nette\Schema\Expect;
@@ -25,7 +26,7 @@ class OrmAnnotationsExtension extends AbstractExtension
 	{
 		return Expect::structure([
 			'debug' => Expect::bool(false),
-			'cache' => Expect::string()->nullable(),
+			'cache' => Expect::anyOf(Expect::string(), Expect::null(), Expect::type(Statement::class)),
 			'defaultCache' => Expect::string('filesystem')->nullable(),
 			'paths' => Expect::listOf('string'),
 			'excludePaths' => Expect::listOf('string'),
