@@ -67,6 +67,7 @@ final class OrmExtension extends AbstractExtension
 
 		// @validate configuration class is subclass of origin one
 		$configurationClass = $globalConfig->configurationClass;
+		assert(is_string($configurationClass));
 		if (!is_a($configurationClass, Configuration::class, true)) {
 			throw new InvalidArgumentException('Configuration class must be subclass of ' . Configuration::class . ', ' . $configurationClass . ' given.');
 		}
