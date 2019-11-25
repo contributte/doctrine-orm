@@ -1,7 +1,5 @@
 parameters:
 	ignoreErrors:
-		# PHPStan bug, there is no Doctrine\Orm\Configuration assignment
-		- '#^Parameter \#1 \$type of method Nette\\DI\\Definitions\\ServiceDefinition::setType\(\) expects string|null, Doctrine\\ORM\\Configuration|string given$#'
 		# We will replace it once, for sure
 		- '#Fetching class constant .+ of deprecated class Doctrine\\Common\\Proxy\\AbstractProxyFactory.+#'
 		- '#Fetching class constant .+ of deprecated class Doctrine\\ORM\\Tools\\Console\\Command\\(GenerateEntities|GenerateRepositories)Command.+#'
