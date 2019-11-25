@@ -114,7 +114,7 @@ class Category
 {
 ```
 
-You will need the `OrmAnnotationsExtension`. This is the default configuration, it uses the `filesystem` cache driver.
+You will need the `OrmAnnotationsExtension`. This is the default configuration, it uses an autowired cache driver.
 
 ```yaml
 extensions:
@@ -124,30 +124,6 @@ extensions:
 orm.annotations:
     paths: []
     excludePaths: []
-    ignore: []
-    defaultCache: filesystem
-```
-
-Available drivers: 
-
-- `apc` - `ApcCache`
-- `apcu` - `ApcuCache`
-- `array` - `ArrayCache`
-- `filesystem` - `FilesystemCache`
-- `memcache` - `MemcacheCache`
-- `memcached` - `MemcachedCache`
-- `redis` - `RedisCache`
-- `void` - `VoidCache`
-- `xcache` - `XcacheCache`
-
-You can change cache settings for the annotation reader.
-
-```yaml
-orm.annotations: 
-    defaultCache: apcu
-
-    # or directly
-    cache: @cacheReader
 ```
 
 ### XML Bridge
