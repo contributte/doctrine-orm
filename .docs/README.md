@@ -146,38 +146,30 @@ orm.xml:
 
 This extension sets up cache for all important parts: `queryCache`, `resultCache`, `hydrationCache`, `metadataCache` and `secondLevelCache`.
 
-This is the default configuration, it uses the `filesystem` driver.
+This is the default configuration, it uses the autowired driver.
 
 ```yaml
 extensions:
     orm: Nettrine\ORM\DI\OrmExtension
     orm.cache: Nettrine\ORM\DI\OrmCacheExtension
-
-orm.cache:
-    defaultDriver: filesystem
 ```
-
-Available drivers: 
-
-- `apc` - `ApcCache`
-- `apcu` - `ApcuCache`
-- `array` - `ArrayCache`
-- `filesystem` - `FilesystemCache`
-- `memcache` - `MemcacheCache`
-- `memcached` - `MemcachedCache`
-- `redis` - `RedisCache`
-- `void` - `VoidCache`
-- `xcache` - `XcacheCache`
 
 You can also specify a single driver. Or change the `orm.cache.defaultDriver` for all of them.
 
 ```yaml
 orm.cache:
+    defaultDriver: App\DefaultOrmCacheDriver
     queryCache: App\SpecialDriver
     resultCache: App\SpecialOtherDriver
     hydrationCache: App\SpecialDriver('foo')
     metadataCache: @cacheDriver
-    secondLevelCache: @cacheDriverFactory::create('bar')
+```
+
+`secondLevelCache` uses autowired driver (or `defaultDriver`, if specified) for `CacheConfiguration` setup, but you can also replace it with custom `CacheConfiguration`
+
+```yaml
+orm.cache:
+    secondLevelCache: @cacheConfigurationFactory::create('bar')
 ```
 
 ### Console Bridge
