@@ -27,6 +27,8 @@
   },
   "require-dev": {
     "mockery/mockery": "^1.2.2",
+    "nettrine/annotations": "^0.6.0",
+    "nettrine/cache": "^0.1.0",
     "ninjify/qa": "^0.9.0",
     "phpstan/extension-installer": "^1.0",
     "phpstan/phpstan-deprecation-rules": "^0.11.0",
