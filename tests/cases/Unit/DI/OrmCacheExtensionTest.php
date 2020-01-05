@@ -92,7 +92,7 @@ final class OrmCacheExtensionTest extends TestCase
 	public function testNoCacheDriver(): void
 	{
 		$this->expectException(ServiceCreationException::class);
-		$this->expectExceptionMessage('Service \'orm.configuration\' (type of Doctrine\ORM\Configuration): Service of type \'Doctrine\Common\Cache\Cache\' not found.');
+		$this->expectExceptionMessage("Service 'dbal.configuration' (type of Doctrine\DBAL\Configuration): Service of type 'Doctrine\Common\Cache\Cache' not found.");
 
 		$loader = new ContainerLoader(TEMP_PATH, true);
 		$class = $loader->load(function (Compiler $compiler): void {

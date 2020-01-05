@@ -7,6 +7,7 @@ use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\ORMException;
 use Doctrine\ORM\Proxy\Proxy;
+use Doctrine\Persistence\ObjectManager;
 use Nette\DI\Container;
 
 class ManagerRegistry extends AbstractManagerRegistry
@@ -29,7 +30,7 @@ class ManagerRegistry extends AbstractManagerRegistry
 
 	/**
 	 * @param string $name
-	 * @return object
+	 * @return object&ObjectManager
 	 * @phpcsSuppress SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingParameterTypeHint
 	 * @phpcsSuppress SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingReturnTypeHint
 	 */

@@ -6,6 +6,7 @@ use Doctrine\ORM\Mapping\Driver\XmlDriver;
 use Nette\DI\Compiler;
 use Nette\DI\Container;
 use Nette\DI\ContainerLoader;
+use Nettrine\Cache\DI\CacheExtension;
 use Nettrine\DBAL\DI\DbalExtension;
 use Nettrine\ORM\DI\OrmExtension;
 use Nettrine\ORM\DI\OrmXmlExtension;
@@ -19,6 +20,7 @@ final class OrmXmlExtensionTest extends TestCase
 		$loader = new ContainerLoader(TEMP_PATH, true);
 		$class = $loader->load(function (Compiler $compiler): void {
 			$compiler->addExtension('dbal', new DbalExtension());
+			$compiler->addExtension('cache', new CacheExtension());
 			$compiler->addExtension('orm', new OrmExtension());
 			$compiler->addExtension('orm.xml', new OrmXmlExtension());
 			$compiler->addConfig([
