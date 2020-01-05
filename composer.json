@@ -19,7 +19,7 @@
     "php": "^7.2",
     "nette/di": "~3.0.0",
     "nette/utils": "~3.0.1",
-    "symfony/console": "^4.2.5",
+    "symfony/console": "^4.2.5|^5.0.0",
     "nettrine/dbal": "^0.5.0 || ^0.6.0",
     "doctrine/orm": "^2.6.3",
     "doctrine/cache": "^1.8.0",
