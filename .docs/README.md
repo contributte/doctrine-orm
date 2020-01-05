@@ -44,8 +44,6 @@ orm.annotations:
         - %appDir%/Model/Database/Entity
 ```
 
-You can find more examples in our [playground](https://github.com/nettrine/playground) repository.
-
 ## OrmExtension
 
 OrmExtension has a few options you can configure. Let's take a look at them.
@@ -96,11 +94,11 @@ orm:
         defaultQueryHints: []
 ```
 
-At this time we support only 1 connection, the **default** connection. If you need more connections (more databases?), please open an issue or send a PR. Thanks. 
+At this time we support only 1 connection, the **default** connection. If you need more connections (more databases?), please open an issue or send a PR. Thanks.
 
 ## Bridges
 
-The compiler extensions would be so big that we decided to split them into more separate files / compiler extensions. 
+The compiler extensions would be so big that we decided to split them into more separate files / compiler extensions.
 
 ### Annotations Bridge
 
@@ -112,6 +110,7 @@ Are you using annotations in your entities?
  */
 class Category
 {
+}
 ```
 
 You will need the `OrmAnnotationsExtension`. This is the default configuration, it uses an autowired cache driver.
@@ -190,7 +189,7 @@ Since this moment you can use all registered Doctrine ORM commands using `bin/co
 
 ![Commands](https://raw.githubusercontent.com/nettrine/orm/master/.docs/assets/commands.png)
 
-## Other features 
+## Other features
 
 ### Id attribute
 
@@ -218,7 +217,7 @@ You can use the predefined `TEntityMapping` trait in your extensions.
 ```php
 
 use Nette\DI\CompilerExtension;
-use Nettrine\ORM\DI\TEntityMapping;
+use Nettrine\ORM\DI\Traits\TEntityMapping;
 
 class CategoryExtension extends CompilerExtension
 {
@@ -233,3 +232,7 @@ class CategoryExtension extends CompilerExtension
     }
 }
 ```
+
+## Examples
+
+You can find more examples in [planette playground](https://github.com/planette/playground) repository.
