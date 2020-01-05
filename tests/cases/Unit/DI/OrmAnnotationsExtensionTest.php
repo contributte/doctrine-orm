@@ -43,7 +43,7 @@ final class OrmAnnotationsExtensionTest extends TestCase
 	public function testNoReader(): void
 	{
 		$this->expectException(ServiceCreationException::class);
-		$this->expectExceptionMessage("Service 'orm.annotations.annotationDriver' (type of Doctrine\Persistence\Mapping\Driver\MappingDriver): Service of type Doctrine\Common\Annotations\Reader needed by \$reader in Nettrine\ORM\Mapping\AnnotationDriver::__construct() not found. Did you register it in configuration file?");
+		$this->expectExceptionMessageRegExp("#Service 'orm.annotations.annotationDriver' .+#");
 
 		$loader = new ContainerLoader(TEMP_PATH, true);
 		$class = $loader->load(function (Compiler $compiler): void {
