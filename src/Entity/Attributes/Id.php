@@ -2,6 +2,9 @@
 
 namespace Nettrine\ORM\Entity\Attributes;
 
+/**
+ * @deprecated Will be dropped in v0.7.
+ */
 trait Id
 {
 
