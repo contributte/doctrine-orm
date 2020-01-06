@@ -18,7 +18,6 @@
   "require": {
     "php": "^7.2",
     "contributte/di": "^0.4.2",
-    "contributte/utils": "^0.4.1",
     "symfony/console": "^4.2.5|^5.0.0",
     "nettrine/annotations": "^0.6.0",
     "nettrine/cache": "^0.1.0",
