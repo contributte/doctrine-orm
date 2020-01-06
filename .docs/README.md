@@ -1,24 +1,20 @@
 # Nettrine ORM
 
-Integration of [Doctrine\ORM](http://docs.doctrine-project.org/projects/doctrine-orm/en/latest/) to Nette Framework.
+[Doctrine/ORM](https://www.doctrine-project.org/projects/orm.html) to Nette Framework.
+
 
 ## Content
-
 - [Setup](#setup)
-- [ORM extension](#ormextension)
-	- [EntityManagerDecorator](#entitymanagerdecorator)
-	- [Configuration](#configuration)
-- [Bridges](#bridges)
-	- [Annotations Bridge](#annotations-bridge)
-	- [XML Bridge](#xml-bridge)
-	- [Cache Bridge](#cache-bridge)
-	- [Console Bridge](#console-bridge)
-- [Other features](#other-features)
-	- [ID attribute](#id-attribute)
+- [Relying](#relying)
+- [Configuration](#configuration)
+- [Mapping](#mapping)
+  - [Annotations](#annotations)
+  - [XML](#xml)
+  - [Helpers](#helpers)
+- [Examples](#examples)
+
 
 ## Setup
-
-First of all, install [Nettrine DBAL](https://github.com/nettrine/dbal) package and enable `DbalExtension`.
 
 Install package
 
@@ -30,77 +26,160 @@ Register extension
 
 ```yaml
 extensions:
-    orm: Nettrine\ORM\DI\OrmExtension
+  nettrine.orm: Nettrine\ORM\DI\OrmExtension
 ```
 
-Pick any metadata provider, for example **annotations** (they are widely used). We have a special extension for annotations (`Nettrine\ORM\DI\OrmAnnotationsExtension`).
+
+## Relying
+
+Take advantage of enpowering this package with 3 extra packages:
+
+- `doctrine/dbal`
+- `doctrine/cache`
+- `symfony/console`
+
+
+### `doctrine/dbal`
+
+This package relies on `doctrine/dbal`, use prepared [nettrine/dbal](https://github.com/nettrine/dbal) integration.
+
+```bash
+composer require nettrine/dbal
+```
 
 ```yaml
 extensions:
-    orm.annotations: Nettrine\ORM\DI\OrmAnnotationsExtension
-
-orm.annotations:
-    paths:
-        - %appDir%/Model/Database/Entity
+  nettrine.dbal: Nettrine\DBAL\DI\DbalExtension
 ```
 
-## OrmExtension
+[Doctrine ORM](https://www.doctrine-project.org/projects/orm.html) needs [Doctrine DBAL](https://www.doctrine-project.org/projects/dbal.html) to be configured. If you register `nettrine/dbal` extension it will detect it automatically.
 
-OrmExtension has a few options you can configure. Let's take a look at them.
+> Doctrine DBAL provides powerful database abstraction layer with many features for database schema introspection, schema management and PDO abstraction.
 
-### EntityManagerDecorator
 
-Defining your own EntityManagerDecorator is useful for adding or overriding methods you need.
+### `doctrine/cache`
+
+This package relies on `doctrine/cache`, use prepared [nettrine/cache](https://github.com/nettrine/cache) integration.
+
+```bash
+composer require nettrine/cache
+```
 
 ```yaml
-orm:
-    entityManagerDecoratorClass: App\Model\Database\EntityManagerDecorator
+extensions:
+  nettrine.cache: Nettrine\Cache\DI\CacheExtension
 ```
 
-```php
-namespace App\Model\Database;
+[Doctrine ORM](https://www.doctrine-project.org/projects/orm.html) needs [Doctrine Cache](https://www.doctrine-project.org/projects/cache.html) to be configured. If you register `nettrine/cache` extension it will detect it automatically.
 
-use Nettrine\ORM\EntityManagerDecorator as NettrineEntityManagerDecorator;
+`CacheExtension` sets up cache for all important parts: `queryCache`, `resultCache`, `hydrationCache`, `metadataCache` and `secondLevelCache`.
 
-class EntityManagerDecorator extends NettrineEntityManagerDecorator
-{
-
-}
-
-```
-
-### Configuration
-
-List of all configuration options:
+This is the default configuration, it uses the autowired driver.
 
 ```yaml
-orm:
-    configuration:
-        proxyDir: '%tempDir%/proxies'
-        autoGenerateProxyClasses: NULL
-        proxyNamespace: 'Nettrine\Proxy'
-        metadataDriverImpl: NULL
-        entityNamespaces: []
-        customStringFunctions: []
-        customNumericFunctions: []
-        customDatetimeFunctions: []
-        customHydrationModes: []
-        classMetadataFactoryName: NULL
-        defaultRepositoryClassName: NULL
-        namingStrategy: Doctrine\ORM\Mapping\UnderscoreNamingStrategy
-        quoteStrategy: NULL
-        entityListenerResolver: NULL
-        repositoryFactory: NULL
-        defaultQueryHints: []
+extensions:
+  nettrine.orm: Nettrine\ORM\DI\OrmExtension
+  nettrine.orm.cache: Nettrine\ORM\DI\OrmCacheExtension
 ```
 
-At this time we support only 1 connection, the **default** connection. If you need more connections (more databases?), please open an issue or send a PR. Thanks.
+You can also specify a single driver ir change the `nettrine.orm.cache.defaultDriver` for all of them.
 
-## Bridges
+```yaml
+nettrine.orm.cache:
+  defaultDriver: App\DefaultOrmCacheDriver
+  queryCache: App\SpecialDriver
+  resultCache: App\SpecialOtherDriver
+  hydrationCache: App\SpecialDriver('foo')
+  metadataCache: @cacheDriver
+```
 
-The compiler extensions would be so big that we decided to split them into more separate files / compiler extensions.
+`secondLevelCache` uses autowired driver (or `defaultDriver`, if specified) for `CacheConfiguration` setup, but you can also replace it with custom `CacheConfiguration`
 
-### Annotations Bridge
+```yaml
+nettrine.orm.cache:
+  secondLevelCache: @cacheConfigurationFactory::create('bar')
+```
+
+
+### `symfony/console`
+
+This package relies on `symfony/console`, use prepared [contributte/console](https://github.com/contributte/console) integration.
+
+```bash
+composer require contributte/console
+```
+
+```yaml
+extensions:
+  console: Contributte\Console\DI\ConsoleExtension(%consoleMode%)
+
+  nettrine.orm: Nettrine\ORM\DI\OrmExtension
+  nettrine.orm.console: Nettrine\ORM\DI\OrmConsoleExtension(%consoleMode)
+```
+
+Since this moment when you type `bin/console`, there'll be registered commands from Doctrine DBAL.
+
+![Console Commands](https://raw.githubusercontent.com/nettrine/orm/master/.docs/assets/console.png)
+
+
+## Configuration
+
+**Schema definition**
+
+ ```yaml
+nettrine.orm:
+  configuration:
+    proxyDir: <path>
+    autoGenerateProxyClasses: <boolean>
+    proxyNamespace: <string>
+    metadataDriverImpl: <service>
+    entityNamespaces: <string[]>
+    customStringFunctions: <mixed[]>
+    customNumericFunctions: <mixed[]>
+    customDatetimeFunctions: <mixed[]>
+    customHydrationModes: <string[]>
+    classMetadataFactoryName: <string>
+    defaultRepositoryClassName: <string>
+    namingStrategy: <class>
+    quoteStrategy: <class>
+    entityListenerResolver: <class>
+    repositoryFactory: <class>
+    defaultQueryHints: <mixed[]>
+
+  entityManagerDecoratorClass: <class>
+  configurationClass: <class>
+```
+
+**Under the hood**
+
+Minimal configuration could looks like this:
+
+```yaml
+nettrine.orm:
+  configuration:
+    autoGenerateProxyClasses: %debugMode%
+```
+
+Take a look at real **Nettrine ORM** configuration example at [Nutella Project](https://github.com/planette/nutella-project/blob/90f1eca94fa62b7589844481549d4823d3ed20f8/app/config/ext/nettrine.neon).
+
+**Side notes**
+
+1. The compiler extensions would be so big that we decided to split them into more separate files / compiler extensions.
+
+2. At this time we support only 1 connection, the **default** connection. If you need more connections (more databases?), please open an issue or send a PR. Thanks.
+
+
+## Mapping
+
+Doctrine ORM needs to know where are your entities located and how are described (mapping).
+
+You gonna needed to register additional metadata provider. We provide these drivers bridges:
+
+- **annotations** (`Nettrine\ORM\DI\OrmAnnotationsExtension`)
+- **xml** (`Nettrine\ORM\DI\OrmXmlExtension`)
+
+
+### Annotations
 
 Are you using annotations in your entities?
 
@@ -113,125 +192,80 @@ class Category
 }
 ```
 
-You will need the `OrmAnnotationsExtension`. This is the default configuration, it uses an autowired cache driver.
+This feature relies on `doctrine/annotations`, use prepared [nettrine/annotations](https://github.com/nettrine/annotations) integration.
+
+```bash
+composer require nettrine/annotations
+```
 
 ```yaml
 extensions:
-    orm: Nettrine\ORM\DI\OrmExtension
-    orm.annotations: Nettrine\ORM\DI\OrmAnnotationsExtension
-
-orm.annotations:
-    paths: []
-    excludePaths: []
+  nettrine.annotations: Nettrine\Annotations\DI\AnnotationsExtension
 ```
 
-### XML Bridge
+You will also appreciate ORM => Annotations bridge, use `OrmAnnotationsExtension`. This is the default configuration, it uses an autowired cache driver.
+
+```yaml
+extensions:
+  nettrine.orm: Nettrine\ORM\DI\OrmExtension
+  nettrine.orm.annotations: Nettrine\ORM\DI\OrmAnnotationsExtension
+
+nettrine.orm.annotations:
+  paths: []
+  excludePaths: []
+```
+
+### XML
 
 Are you using XML mapping for your entities?
 
-You will need the `OrmXmlExtension`. This is the default configuration:
+You will also appreciate ORM => XML bridge, use `OrmXmlExtension`. This is the default configuration:
 
 ```yaml
 extensions:
-    orm: Nettrine\ORM\DI\OrmExtension
-    orm.xml: Nettrine\ORM\DI\OrmXmlExtension
+  nettrine.orm: Nettrine\ORM\DI\OrmExtension
+  nettrine.orm.xml: Nettrine\ORM\DI\OrmXmlExtension
 
-orm.xml:
-    paths: []
-    fileExtension: .dcm.xml
+nettrine.orm.xml:
+  paths: []
+  fileExtension: .dcm.xml
 ```
 
-### Cache Bridge
 
-This extension sets up cache for all important parts: `queryCache`, `resultCache`, `hydrationCache`, `metadataCache` and `secondLevelCache`.
+### Helpers
 
-This is the default configuration, it uses the autowired driver.
-
-```yaml
-extensions:
-    orm: Nettrine\ORM\DI\OrmExtension
-    orm.cache: Nettrine\ORM\DI\OrmCacheExtension
-```
-
-You can also specify a single driver. Or change the `orm.cache.defaultDriver` for all of them.
-
-```yaml
-orm.cache:
-    defaultDriver: App\DefaultOrmCacheDriver
-    queryCache: App\SpecialDriver
-    resultCache: App\SpecialOtherDriver
-    hydrationCache: App\SpecialDriver('foo')
-    metadataCache: @cacheDriver
-```
-
-`secondLevelCache` uses autowired driver (or `defaultDriver`, if specified) for `CacheConfiguration` setup, but you can also replace it with custom `CacheConfiguration`
-
-```yaml
-orm.cache:
-    secondLevelCache: @cacheConfigurationFactory::create('bar')
-```
-
-### Console Bridge
-
-This package works well with [Symfony/Console](https://symfony.com/doc/current/components/console.html). Take a look at [contributte/console](https://github.com/contributte/console) tiny integration for Nette Framework.
-
-```yaml
-extensions:
-    # Console
-    console: Contributte\Console\DI\ConsoleExtension(%consoleMode%)
-
-    # Orm
-    orm: Nettrine\ORM\DI\OrmExtension
-    orm.console: Nettrine\ORM\DI\OrmConsoleExtension
-```
-
-Since this moment you can use all registered Doctrine ORM commands using `bin/console`.
-
-![Commands](https://raw.githubusercontent.com/nettrine/orm/master/.docs/assets/commands.png)
-
-## Other features
-
-### Id attribute
-
-You can use the predefined `Id` trait in your Entities.
+You can use the predefined `TEntityMapping` trait in your compiler extensions.
 
 ```php
-
-use Nettrine\ORM\Entity\Attributes\Id;
-
-/**
- * @ORM\Entity
- */
-class Category
-{
-
-    use Id;
-
-}
-```
-
-### Entity Mapping
-
-You can use the predefined `TEntityMapping` trait in your extensions.
-
-```php
-
 use Nette\DI\CompilerExtension;
 use Nettrine\ORM\DI\Traits\TEntityMapping;
 
 class CategoryExtension extends CompilerExtension
 {
 
-    use TEntityMapping;
+  use TEntityMapping;
 
-    public function loadConfiguration(): void
-    {
-        $this->setEntityMappings([
-            'Forum' => __DIR__ . '/../Entity',
-        ]);
-    }
+  public function loadConfiguration(): void
+  {
+    $this->setEntityMappings([
+      'Forum' => __DIR__ . '/../Entity',
+    ]);
+  }
 }
 ```
+
+
+## Other
+
+This repository is inspired by these packages.
+
+- https://gitlab.com/Kdyby/Doctrine
+- https://gitlab.com/etten/doctrine
+- https://github.com/DTForce/nette-doctrine
+- https://github.com/portiny/doctrine
+
+Thank you guys.
+
 
 ## Examples
 
