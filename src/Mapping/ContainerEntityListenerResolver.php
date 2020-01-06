@@ -3,8 +3,8 @@
 namespace Nettrine\ORM\Mapping;
 
 use Doctrine\ORM\Mapping\EntityListenerResolver;
-use InvalidArgumentException;
 use Nette\DI\Container;
+use Nettrine\ORM\Exception\Logical\InvalidArgumentException;
 
 class ContainerEntityListenerResolver implements EntityListenerResolver
 {
