@@ -114,7 +114,7 @@ extensions:
   console: Contributte\Console\DI\ConsoleExtension(%consoleMode%)
 
   nettrine.orm: Nettrine\ORM\DI\OrmExtension
-  nettrine.orm.console: Nettrine\ORM\DI\OrmConsoleExtension(%consoleMode)
+  nettrine.orm.console: Nettrine\ORM\DI\OrmConsoleExtension(%consoleMode%)
 ```
 
 Since this moment when you type `bin/console`, there'll be registered commands from Doctrine DBAL.
