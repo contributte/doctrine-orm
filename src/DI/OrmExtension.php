@@ -37,7 +37,7 @@ final class OrmExtension extends AbstractExtension
 				'autoGenerateProxyClasses' => Expect::anyOf(Expect::int(), Expect::bool(), Expect::type(Statement::class))->default(AbstractProxyFactory::AUTOGENERATE_FILE_NOT_EXISTS),
 				'proxyNamespace' => Expect::string('Nettrine\Proxy')->nullable(),
 				'metadataDriverImpl' => Expect::string(),
-				'entityNamespaces' => Expect::listOf('string'),
+				'entityNamespaces' => Expect::array(),
 				'customStringFunctions' => Expect::array(),
 				'customNumericFunctions' => Expect::array(),
 				'customDatetimeFunctions' => Expect::array(),
