@@ -133,7 +133,7 @@ nettrine.orm:
     autoGenerateProxyClasses: <boolean>
     proxyNamespace: <string>
     metadataDriverImpl: <service>
-    entityNamespaces: <string[]>
+    entityNamespaces: <mixed[]>
     customStringFunctions: <mixed[]>
     customNumericFunctions: <mixed[]>
     customDatetimeFunctions: <mixed[]>
