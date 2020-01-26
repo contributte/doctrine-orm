@@ -2,7 +2,7 @@
 
 namespace Nettrine\ORM\DI\Traits;
 
-use Doctrine\Common\Persistence\Mapping\Driver\AnnotationDriver;
+use Doctrine\Persistence\Mapping\Driver\MappingDriver;
 use Nette\DI\CompilerExtension;
 use Nette\DI\Definitions\ServiceDefinition;
 
@@ -20,7 +20,7 @@ trait TEntityMapping
 		$builder = $this->getContainerBuilder();
 
 		/** @var ServiceDefinition $driver */
-		$driver = $builder->getDefinitionByType(AnnotationDriver::class);
+		$driver = $builder->getDefinitionByType(MappingDriver::class);
 		$driver->addSetup('addPaths', [$mapping]);
 	}
 
