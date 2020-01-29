@@ -82,7 +82,7 @@ extensions:
   nettrine.orm.cache: Nettrine\ORM\DI\OrmCacheExtension
 ```
 
-You can also specify a single driver ir change the `nettrine.orm.cache.defaultDriver` for all of them.
+You can also specify a single driver or change the `nettrine.orm.cache.defaultDriver` for all of them.
 
 ```yaml
 nettrine.orm.cache:
@@ -93,7 +93,7 @@ nettrine.orm.cache:
   metadataCache: @cacheDriver
 ```
 
-`secondLevelCache` uses autowired driver (or `defaultDriver`, if specified) for `CacheConfiguration` setup, but you can also replace it with custom `CacheConfiguration`
+`secondLevelCache` uses autowired driver (or `defaultDriver`, if specified) for `CacheConfiguration` setup, but you can also replace it with custom `CacheConfiguration`.
 
 ```yaml
 nettrine.orm.cache:
@@ -152,7 +152,7 @@ nettrine.orm:
 
 **Under the hood**
 
-Minimal configuration could looks like this:
+Minimal configuration could look like this:
 
 ```yaml
 nettrine.orm:
@@ -171,9 +171,9 @@ Take a look at real **Nettrine ORM** configuration example at [Nutella Project](
 
 ## Mapping
 
-Doctrine ORM needs to know where are your entities located and how are described (mapping).
+Doctrine ORM needs to know where your entities are located and how they are described (mapping).
 
-You gonna needed to register additional metadata provider. We provide these drivers bridges:
+Additional metadata provider needs to be registered. We provide bridges for these drivers:
 
 - **annotations** (`Nettrine\ORM\DI\OrmAnnotationsExtension`)
 - **xml** (`Nettrine\ORM\DI\OrmXmlExtension`)
