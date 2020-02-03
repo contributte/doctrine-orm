@@ -14,10 +14,13 @@ use stdClass;
 class OrmAnnotationsExtension extends AbstractExtension
 {
 
+	public const DRIVER_TAG = 'nettrine.orm.annotation.driver';
+
 	public function getConfigSchema(): Schema
 	{
 		return Expect::structure([
-			'paths' => Expect::listOf('string'),
+			'namespaces' => Expect::listOf('string')->required(),
+			'paths' => Expect::listOf('string')->required(),
 			'excludePaths' => Expect::listOf('string'),
 		]);
 	}
@@ -36,10 +39,14 @@ class OrmAnnotationsExtension extends AbstractExtension
 		$builder->addDefinition($this->prefix('annotationDriver'))
 			->setFactory(AnnotationDriver::class, [1 => $config->paths])
 			->setType(MappingDriver::class)
-			->addSetup('addExcludePaths', [$config->excludePaths]);
+			->addSetup('addExcludePaths', [$config->excludePaths])
+			->addTag(self::DRIVER_TAG)
+			->setAutowired(false);
 
-		$configurationDef = $this->getConfigurationDef();
-		$configurationDef->addSetup('setMetadataDriverImpl', [$this->prefix('@annotationDriver')]);
+		$mappingDriverDef = $this->getMappingDriverDef();
+		foreach ($config->namespaces as $namespace) {
+			$mappingDriverDef->addSetup('addDriver', [$this->prefix('@annotationDriver'), $namespace]);
+		}
 	}
 
 }
