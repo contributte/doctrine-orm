@@ -7,6 +7,7 @@ use Doctrine\DBAL\Connection;
 use Doctrine\ORM\Configuration;
 use Doctrine\ORM\EntityManager as DoctrineEntityManager;
 use Doctrine\ORM\Mapping\UnderscoreNamingStrategy;
+use Doctrine\Persistence\Mapping\Driver\MappingDriverChain;
 use Nette\DI\Definitions\Statement;
 use Nette\DI\Helpers;
 use Nette\Schema\Expect;
@@ -57,6 +58,7 @@ final class OrmExtension extends AbstractExtension
 	{
 		$this->loadDoctrineConfiguration();
 		$this->loadEntityManagerConfiguration();
+		$this->loadMappingConfiguration();
 	}
 
 	public function loadDoctrineConfiguration(): void
@@ -93,6 +95,8 @@ final class OrmExtension extends AbstractExtension
 
 		if ($config->metadataDriverImpl !== null) {
 			$configuration->addSetup('setMetadataDriverImpl', [$config->metadataDriverImpl]);
+		} else {
+			$configuration->addSetup('setMetadataDriverImpl', [$this->prefix('@mappingDriver')]);
 		}
 
 		if ($config->entityNamespaces !== []) {
@@ -167,6 +171,15 @@ final class OrmExtension extends AbstractExtension
 				$builder->getDefinitionByType(Connection::class),
 				$this->prefix('@entityManagerDecorator'),
 			]);
+	}
+
+	public function loadMappingConfiguration(): void
+	{
+		$builder = $this->getContainerBuilder();
+
+		// Driver Chain
+		$builder->addDefinition($this->prefix('mappingDriver'))
+			->setFactory(MappingDriverChain::class);
 	}
 
 }

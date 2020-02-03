@@ -2,9 +2,10 @@
 
 namespace Nettrine\ORM\DI\Traits;
 
-use Doctrine\Persistence\Mapping\Driver\MappingDriver;
 use Nette\DI\CompilerExtension;
 use Nette\DI\Definitions\ServiceDefinition;
+use Nettrine\ORM\DI\OrmAnnotationsExtension;
+use Nettrine\ORM\Exception\Logical\InvalidStateException;
 
 /**
  * @mixin CompilerExtension
@@ -19,8 +20,14 @@ trait TEntityMapping
 	{
 		$builder = $this->getContainerBuilder();
 
+		$tagged = $builder->findByTag(OrmAnnotationsExtension::DRIVER_TAG);
+
+		if (!$tagged) {
+			throw new InvalidStateException('AnnotationDriver not found');
+		}
+
 		/** @var ServiceDefinition $driver */
-		$driver = $builder->getDefinitionByType(MappingDriver::class);
+		$driver = $builder->getDefinition(current(array_keys($tagged)));
 		$driver->addSetup('addPaths', [$mapping]);
 	}
 

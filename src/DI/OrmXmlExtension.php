@@ -16,7 +16,8 @@ class OrmXmlExtension extends AbstractExtension
 	public function getConfigSchema(): Schema
 	{
 		return Expect::structure([
-			'paths' => Expect::listOf('string'),
+			'namespaces' => Expect::listOf('string')->required(),
+			'paths' => Expect::listOf('string')->required(),
 			'fileExtension' => Expect::string(XmlDriver::DEFAULT_FILE_EXTENSION),
 		]);
 	}
@@ -38,8 +39,10 @@ class OrmXmlExtension extends AbstractExtension
 				$config->fileExtension,
 			]);
 
-		$configurationDef = $this->getConfigurationDef();
-		$configurationDef->addSetup('setMetadataDriverImpl', [$this->prefix('@xmlDriver')]);
+		$mappingDriverDef = $this->getMappingDriverDef();
+		foreach ($config->namespaces as $namespace) {
+			$mappingDriverDef->addSetup('addDriver', [$this->prefix('@xmlDriver'), $namespace]);
+		}
 	}
 
 }

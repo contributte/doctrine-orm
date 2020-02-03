@@ -4,6 +4,7 @@ namespace Nettrine\ORM\DI;
 
 use Contributte\DI\Extension\CompilerExtension;
 use Doctrine\ORM\Configuration;
+use Doctrine\Persistence\Mapping\Driver\MappingDriverChain;
 use Nette\DI\Definitions\ServiceDefinition;
 use Nettrine\ORM\Exception\Logical\InvalidStateException;
 use stdClass;
@@ -27,6 +28,14 @@ abstract class AbstractExtension extends CompilerExtension
 	{
 		/** @var ServiceDefinition $def */
 		$def = $this->getContainerBuilder()->getDefinitionByType(Configuration::class);
+
+		return $def;
+	}
+
+	protected function getMappingDriverDef(): ServiceDefinition
+	{
+		/** @var ServiceDefinition $def */
+		$def = $this->getContainerBuilder()->getDefinitionByType(MappingDriverChain::class);
 
 		return $def;
 	}
