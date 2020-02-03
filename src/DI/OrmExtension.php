@@ -7,7 +7,7 @@ use Doctrine\DBAL\Connection;
 use Doctrine\ORM\Configuration;
 use Doctrine\ORM\EntityManager as DoctrineEntityManager;
 use Doctrine\ORM\Mapping\UnderscoreNamingStrategy;
-use Doctrine\Persistence\Mapping\Driver\MappingDriverChain;
+use Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain;
 use Nette\DI\Definitions\Statement;
 use Nette\DI\Helpers;
 use Nette\Schema\Expect;
