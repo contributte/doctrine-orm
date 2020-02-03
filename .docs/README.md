@@ -211,6 +211,7 @@ extensions:
   nettrine.orm.annotations: Nettrine\ORM\DI\OrmAnnotationsExtension
 
 nettrine.orm.annotations:
+  namespaces: []
   paths: []
   excludePaths: []
 ```
@@ -227,6 +228,7 @@ extensions:
   nettrine.orm.xml: Nettrine\ORM\DI\OrmXmlExtension
 
 nettrine.orm.xml:
+  namespaces: []
   paths: []
   fileExtension: .dcm.xml
 ```
