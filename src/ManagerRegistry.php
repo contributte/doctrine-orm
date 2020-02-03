@@ -3,11 +3,11 @@
 namespace Nettrine\ORM;
 
 use Doctrine\Common\Persistence\AbstractManagerRegistry;
+use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\ORMException;
 use Doctrine\ORM\Proxy\Proxy;
-use Doctrine\Persistence\ObjectManager;
 use Nette\DI\Container;
 
 class ManagerRegistry extends AbstractManagerRegistry
