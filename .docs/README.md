@@ -168,6 +168,7 @@ Take a look at real **Nettrine ORM** configuration example at [Nutella Project](
 
 2. At this time we support only 1 connection, the **default** connection. If you need more connections (more databases?), please open an issue or send a PR. Thanks.
 
+3. Are you looking for custom types? You can register custom types in DBAL, see [Nettrine DBAL](https://github.com/nettrine/dbal/blob/master/.docs/README.md#types).
 
 ## Mapping
 
