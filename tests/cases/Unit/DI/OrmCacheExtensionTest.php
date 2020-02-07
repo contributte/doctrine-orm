@@ -6,6 +6,7 @@ use Doctrine\Common\Cache\ApcuCache;
 use Doctrine\Common\Cache\ArrayCache;
 use Doctrine\Common\Cache\PhpFileCache;
 use Doctrine\Common\Cache\VoidCache;
+use Doctrine\ORM\Cache\CacheConfiguration;
 use Nette\DI\Compiler;
 use Nette\DI\Container;
 use Nette\DI\ContainerLoader;
@@ -17,6 +18,7 @@ use Nettrine\ORM\DI\OrmAnnotationsExtension;
 use Nettrine\ORM\DI\OrmCacheExtension;
 use Nettrine\ORM\DI\OrmExtension;
 use Nettrine\ORM\EntityManagerDecorator;
+use Tests\Fixtures\DummyCacheConfigurationFactory;
 use Tests\Toolkit\TestCase;
 
 final class OrmCacheExtensionTest extends TestCase
@@ -68,6 +70,7 @@ final class OrmCacheExtensionTest extends TestCase
 					'hydrationCache' => VoidCache::class,
 					'metadataCache' => null,
 					'queryCache' => ApcuCache::class,
+					'secondLevelCache' => [DummyCacheConfigurationFactory::class, 'create'],
 					//'resultCache' => null,
 				],
 				'parameters' => [
@@ -87,6 +90,7 @@ final class OrmCacheExtensionTest extends TestCase
 		$this->assertInstanceOf(ArrayCache::class, $em->getConfiguration()->getMetadataCacheImpl());
 		$this->assertInstanceOf(ApcuCache::class, $em->getConfiguration()->getQueryCacheImpl());
 		$this->assertInstanceOf(ArrayCache::class, $em->getConfiguration()->getResultCacheImpl());
+		$this->assertInstanceOf(CacheConfiguration::class, $em->getConfiguration()->getSecondLevelCacheConfiguration());
 	}
 
 	public function testNoCacheDriver(): void

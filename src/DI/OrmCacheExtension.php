@@ -38,7 +38,7 @@ class OrmCacheExtension extends AbstractExtension
 			'hydrationCache' => $this->getServiceSchema(),
 			'metadataCache' => $this->getServiceSchema(),
 			'resultCache' => $this->getServiceSchema(),
-			'secondLevelCache' => Expect::array()->default(null),
+			'secondLevelCache' => $this->getServiceSchema(),
 		]);
 	}
 
