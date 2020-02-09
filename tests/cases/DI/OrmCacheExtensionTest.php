@@ -9,6 +9,7 @@ use Doctrine\Common\Cache\VoidCache;
 use Nette\DI\Compiler;
 use Nettrine\ORM\DI\OrmCacheExtension;
 use Nettrine\ORM\EntityManagerDecorator;
+use Tests\Fixtures\DummyCacheConfigurationFactory;
 use Tests\Toolkit\Nette\ContainerBuilder;
 use Tests\Toolkit\TestCase;
 
@@ -45,7 +46,7 @@ final class OrmCacheExtensionTest extends TestCase
 						'hydrationCache' => VoidCache::class,
 						'metadataCache' => null,
 						'queryCache' => ApcuCache::class,
-						//'resultCache' => null,
+						'secondLevelCache' => [DummyCacheConfigurationFactory::class, 'create'],
 					],
 				]);
 			})
