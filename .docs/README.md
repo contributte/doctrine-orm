@@ -170,6 +170,8 @@ Take a look at real **Nettrine ORM** configuration example at [Nutella Project](
 
 3. Are you looking for custom types? You can register custom types in DBAL, see [Nettrine DBAL](https://github.com/nettrine/dbal/blob/master/.docs/README.md#types).
 
+4. You have to configure entity mapping (see below), otherwise you will get `It's a requirement to specify a Metadata Driver` error.
+
 ## Mapping
 
 Doctrine ORM needs to know where your entities are located and how they are described (mapping).
