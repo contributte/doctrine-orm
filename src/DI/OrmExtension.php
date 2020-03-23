@@ -50,6 +50,12 @@ final class OrmExtension extends AbstractExtension
 				'entityListenerResolver' => Expect::string(),
 				'repositoryFactory' => Expect::string(),
 				'defaultQueryHints' => Expect::array(),
+				'filters' => Expect::arrayOf(
+					Expect::structure([
+						'class' => Expect::string()->required(),
+						'enabled' => Expect::bool(false),
+					])
+				),
 			]),
 		]);
 	}
@@ -141,6 +147,12 @@ final class OrmExtension extends AbstractExtension
 		if ($config->defaultQueryHints !== []) {
 			$configuration->addSetup('setDefaultQueryHints', [$config->defaultQueryHints]);
 		}
+
+		if ($config->filters !== []) {
+			foreach ($config->filters as $filterName => $filter) {
+				$configuration->addSetup('addFilter', [$filterName, $filter->class]);
+			}
+		}
 	}
 
 	public function loadEntityManagerConfiguration(): void
@@ -161,8 +173,16 @@ final class OrmExtension extends AbstractExtension
 		]);
 
 		// Entity Manager Decorator
-		$builder->addDefinition($this->prefix('entityManagerDecorator'))
+		$decorator = $builder->addDefinition($this->prefix('entityManagerDecorator'))
 			->setFactory($entityManagerDecoratorClass, [$original]);
+
+		if ($config->configuration->filters !== []) {
+			foreach ($config->configuration->filters as $filterName => $filter) {
+				if ($filter->enabled) {
+					$decorator->addSetup(new Statement('$service->getFilters()->enable(?)', [$filterName]));
+				}
+			}
+		}
 
 		// ManagerRegistry
 		$builder->addDefinition($this->prefix('managerRegistry'))
