@@ -145,6 +145,10 @@ nettrine.orm:
     entityListenerResolver: <class>
     repositoryFactory: <class>
     defaultQueryHints: <mixed[]>
+    filters:
+      <string>:
+        class: <string>
+        enabled: <boolean>
 
   entityManagerDecoratorClass: <class>
   configurationClass: <class>
