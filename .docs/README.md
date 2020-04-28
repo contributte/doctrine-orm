@@ -243,7 +243,7 @@ nettrine.orm.xml:
 
 ### Helpers
 
-You can use the predefined `TEntityMapping` trait in your compiler extensions.
+You can use the predefined `TEntityMapping` trait in your compiler extensions. Be careful, you have to call it in `beforeCompile` phase.
 
 ```php
 use Nette\DI\CompilerExtension;
@@ -254,7 +254,7 @@ class CategoryExtension extends CompilerExtension
 
   use TEntityMapping;
 
-  public function loadConfiguration(): void
+  public function beforeCompile(): void
   {
     $this->setEntityMappings([
       'Forum' => __DIR__ . '/../Entity',
