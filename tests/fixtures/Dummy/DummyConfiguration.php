@@ -1,6 +1,6 @@
 <?php declare(strict_types = 1);
 
-namespace Tests\Fixtures;
+namespace Tests\Fixtures\Dummy;
 
 use Doctrine\ORM\Configuration;
 

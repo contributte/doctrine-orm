@@ -2,9 +2,8 @@
 
 namespace Nettrine\ORM\DI;
 
-use Doctrine\Common\Annotations\Reader;
-use Doctrine\ORM\Mapping\Driver\AnnotationDriver;
-use Nette\DI\ServiceCreationException;
+use Doctrine\ORM\Mapping\Driver\SimplifiedYamlDriver;
+use Nette\DI\Definitions\Statement;
 use Nette\Schema\Expect;
 use Nette\Schema\Schema;
 use Nettrine\ORM\Exception\Logical\InvalidStateException;
@@ -13,16 +12,16 @@ use stdClass;
 /**
  * @property-read stdClass $config
  */
-class OrmAnnotationsExtension extends AbstractExtension
+class OrmYamlExtension extends AbstractExtension
 {
 
-	public const DRIVER_TAG = 'nettrine.orm.annotation.driver';
+	public const DRIVER_TAG = 'nettrine.orm.yaml.driver';
 
 	public function getConfigSchema(): Schema
 	{
 		return Expect::structure([
 			'mapping' => Expect::arrayOf('string')->required(),
-			'excludePaths' => Expect::listOf('string'),
+			'fileExtension' => Expect::string(SimplifiedYamlDriver::DEFAULT_FILE_EXTENSION),
 		]);
 	}
 
@@ -37,15 +36,12 @@ class OrmAnnotationsExtension extends AbstractExtension
 		$builder = $this->getContainerBuilder();
 		$config = $this->config;
 
-		$reader = $builder->getByType(Reader::class);
-		if ($reader === null) {
-			throw new ServiceCreationException(sprintf('Missing "%s" service', Reader::class));
-		}
-
-		$driverDef = $builder->addDefinition($this->prefix('annotationDriver'))
-			->setFactory(AnnotationDriver::class, [$builder->getDefinition($reader)])
-			->setType(AnnotationDriver::class)
-			->addSetup('addExcludePaths', [$config->excludePaths])
+		$driverDef = $builder->addDefinition($this->prefix('yamlDriver'))
+			->setFactory(SimplifiedYamlDriver::class, [
+				[],
+				$config->fileExtension,
+			])
+			->setType(SimplifiedYamlDriver::class)
 			->addTag(self::DRIVER_TAG)
 			->setAutowired(false);
 
@@ -55,8 +51,8 @@ class OrmAnnotationsExtension extends AbstractExtension
 				throw new InvalidStateException(sprintf('Given mapping path "%s" does not exist', $path));
 			}
 
-			$driverDef->addSetup('addPaths', [[$path]]);
-			$mappingDriverDef->addSetup('addDriver', [$this->prefix('@annotationDriver'), $namespace]);
+			$driverDef->addSetup(new Statement('$service->getLocator()->addNamespacePrefixes([? => ?])', [$path, $namespace]));
+			$mappingDriverDef->addSetup('addDriver', [$this->prefix('@yamlDriver'), $namespace]);
 		}
 	}
 
