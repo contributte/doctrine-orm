@@ -9,7 +9,7 @@ use Doctrine\Common\Cache\VoidCache;
 use Nette\DI\Compiler;
 use Nettrine\ORM\DI\OrmCacheExtension;
 use Nettrine\ORM\EntityManagerDecorator;
-use Tests\Fixtures\DummyCacheConfigurationFactory;
+use Tests\Fixtures\Dummy\DummyCacheConfigurationFactory;
 use Tests\Toolkit\Nette\ContainerBuilder;
 use Tests\Toolkit\TestCase;
 

@@ -3,19 +3,17 @@
 namespace Tests\Fixtures;
 
 use Nette\DI\CompilerExtension;
-use Nettrine\ORM\DI\Traits\TEntityMapping;
+use Nettrine\ORM\DI\Helpers\MappingHelper;
 use Tests\Toolkit\Tests;
 
 class EntityMappingCompilerExtension extends CompilerExtension
 {
 
-	use TEntityMapping;
-
-	public function loadConfiguration(): void
+	public function beforeCompile(): void
 	{
-		$this->setEntityMappings([
-			'Tests' => Tests::FIXTURES_PATH,
-		]);
+		MappingHelper::of($this)->addAnnotation('Tests1', Tests::FIXTURES_PATH);
+		MappingHelper::of($this)->addXml('Tests2', Tests::FIXTURES_PATH);
+		MappingHelper::of($this)->addYaml('Tests3', Tests::FIXTURES_PATH);
 	}
 
 }

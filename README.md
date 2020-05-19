@@ -22,6 +22,7 @@
 - [Mapping](.docs/README.md#mapping)
   - [Annotations](.docs/README.md#annotations)
   - [XML](.docs/README.md#xml)
+  - [YAML](.docs/README.md#yaml)
   - [Helpers](.docs/README.md#helpers)
 - [Examples](.docs/README.md#examples)
 

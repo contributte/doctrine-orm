@@ -38,7 +38,7 @@ class OrmConsoleExtension extends AbstractExtension
 		$this->validate();
 
 		if (!class_exists(Application::class)) {
-			throw new ServiceCreationException(sprintf('Missing %s service', Application::class));
+			throw new ServiceCreationException(sprintf('Missing "%s" service', Application::class));
 		}
 
 		// Skip if it's not CLI mode

@@ -25,6 +25,8 @@ use stdClass;
 final class OrmExtension extends AbstractExtension
 {
 
+	public const MAPPING_DRIVER_TAG = 'nettrine.orm.mapping.driver';
+
 	public function getConfigSchema(): Schema
 	{
 		$parameters = $this->getContainerBuilder()->parameters;
@@ -199,7 +201,8 @@ final class OrmExtension extends AbstractExtension
 
 		// Driver Chain
 		$builder->addDefinition($this->prefix('mappingDriver'))
-			->setFactory(MappingDriverChain::class);
+			->setFactory(MappingDriverChain::class)
+			->addTag(self::MAPPING_DRIVER_TAG);
 	}
 
 }

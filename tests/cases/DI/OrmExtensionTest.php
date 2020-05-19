@@ -6,9 +6,9 @@ use Nette\DI\Compiler;
 use Nettrine\ORM\EntityManagerDecorator;
 use Nettrine\ORM\Exception\Logical\InvalidArgumentException;
 use stdClass;
-use Tests\Fixtures\DummyConfiguration;
-use Tests\Fixtures\DummyEntityManagerDecorator;
-use Tests\Fixtures\DummyFilter;
+use Tests\Fixtures\Dummy\DummyConfiguration;
+use Tests\Fixtures\Dummy\DummyEntityManagerDecorator;
+use Tests\Fixtures\Dummy\DummyFilter;
 use Tests\Toolkit\Nette\ContainerBuilder;
 use Tests\Toolkit\TestCase;
 
@@ -48,20 +48,20 @@ final class OrmExtensionTest extends TestCase
 			->withDefaults()
 			->withCompiler(static function (Compiler $compiler): void {
 				$compiler->addConfig([
-										 'nettrine.orm' => [
-											 'configuration' => [
-												 'filters' => [
-													 'autoEnabledFilter' => [
-														 'class' => DummyFilter::class,
-														 'enabled' => true,
-													 ],
-													 'autoDisabledFilter' => [
-														 'class' => DummyFilter::class,
-													 ],
-												 ],
-											 ],
-										 ],
-									 ]);
+					'nettrine.orm' => [
+						'configuration' => [
+							'filters' => [
+								'autoEnabledFilter' => [
+									'class' => DummyFilter::class,
+									'enabled' => true,
+								],
+								'autoDisabledFilter' => [
+									'class' => DummyFilter::class,
+								],
+							],
+						],
+					],
+				]);
 			})
 			->build();
 		/** @var EntityManagerDecorator $em */

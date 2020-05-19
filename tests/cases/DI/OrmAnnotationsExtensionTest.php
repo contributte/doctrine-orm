@@ -2,12 +2,13 @@
 
 namespace Tests\Cases\DI;
 
+use Doctrine\ORM\Mapping\Driver\AnnotationDriver;
 use Doctrine\Persistence\Mapping\Driver\MappingDriverChain;
 use Nette\DI\Compiler;
+use Nette\DI\InvalidConfigurationException;
 use Nette\DI\ServiceCreationException;
 use Nettrine\Annotations\DI\AnnotationsExtension;
 use Nettrine\ORM\DI\OrmAnnotationsExtension;
-use Nettrine\ORM\Mapping\AnnotationDriver;
 use Tests\Toolkit\Neon\NeonLoader;
 use Tests\Toolkit\Nette\ContainerBuilder;
 use Tests\Toolkit\TestCase;
@@ -24,10 +25,8 @@ final class OrmAnnotationsExtensionTest extends TestCase
 				$compiler->addExtension('nettrine.orm.annotations', new OrmAnnotationsExtension());
 				$compiler->addConfig(NeonLoader::load('
 				nettrine.orm.annotations:
-					namespaces:
-						- App\Model\Entity
-					paths:
-						- %appDir%
+					mapping:
+						App\Model\Entity: %appDir%
 				'));
 			})
 			->build();
@@ -36,12 +35,28 @@ final class OrmAnnotationsExtensionTest extends TestCase
 		$driver = $container->getService('nettrine.orm.mappingDriver');
 
 		$this->assertInstanceOf(AnnotationDriver::class, current($driver->getDrivers()));
+
+		/** @var AnnotationDriver $annotationDriver */
+		$annotationDriver = current($driver->getDrivers());
+		$this->assertEmpty($annotationDriver->getAllClassNames());
+	}
+
+	public function testMissingMapping(): void
+	{
+		$this->expectException(InvalidConfigurationException::class);
+		$this->expectDeprecationMessage("The mandatory option 'nettrine.orm.annotations › mapping' is missing.");
+
+		ContainerBuilder::of()
+			->withDefaults()
+			->withCompiler(function (Compiler $compiler): void {
+				$compiler->addExtension('nettrine.orm.annotations', new OrmAnnotationsExtension());
+			})
+			->build();
 	}
 
 	public function testNoReader(): void
 	{
 		$this->expectException(ServiceCreationException::class);
-		$this->expectExceptionMessageMatches("#Service 'nettrine.orm.annotations.annotationDriver' .+#");
 
 		ContainerBuilder::of()
 			->withDefaults()
@@ -49,10 +64,8 @@ final class OrmAnnotationsExtensionTest extends TestCase
 				$compiler->addExtension('nettrine.orm.annotations', new OrmAnnotationsExtension());
 				$compiler->addConfig(NeonLoader::load('
 				nettrine.orm.annotations:
-					namespaces:
-						- App\Model\Entity
-					paths:
-						- %appDir%
+					mapping:
+						App\Model\Entity: %appDir%
 				'));
 			})
 			->build();

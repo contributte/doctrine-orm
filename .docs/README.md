@@ -10,6 +10,7 @@
 - [Mapping](#mapping)
   - [Annotations](#annotations)
   - [XML](#xml)
+  - [YAML](#yaml)
   - [Helpers](#helpers)
 - [Examples](#examples)
 
@@ -176,6 +177,7 @@ Take a look at real **Nettrine ORM** configuration example at [Nutella Project](
 
 4. You have to configure entity mapping (see below), otherwise you will get `It's a requirement to specify a Metadata Driver` error.
 
+
 ## Mapping
 
 Doctrine ORM needs to know where your entities are located and how they are described (mapping).
@@ -188,14 +190,29 @@ Additional metadata provider needs to be registered. We provide bridges for thes
 
 ### Annotations
 
-Are you using annotations in your entities?
+Are you using [@annotations](https://www.doctrine-project.org/projects/doctrine-orm/en/2.7/reference/annotations-reference.html) in your entities?
 
 ```php
+<?php
+
+namespace App\Model\Database;
+
 /**
  * @ORM\Entity
  */
 class Category
 {
+
+    /**
+     * @ORM\Column(type="string", length=32, unique=true, nullable=false)
+     */
+    protected $username;
+
+    /**
+     * @ORM\Column(type="string", columnDefinition="CHAR(2) NOT NULL")
+     */
+    protected $country;
+
 }
 ```
 
@@ -218,14 +235,35 @@ extensions:
   nettrine.orm.annotations: Nettrine\ORM\DI\OrmAnnotationsExtension
 
 nettrine.orm.annotations:
-  namespaces: []
-  paths: []
-  excludePaths: []
+  mapping: [
+    namespace: path
+  ]
+  excluded: []
 ```
+
+Example configuration for entity located at `app/model/Database` folder.
+
+```yaml
+nettrine.orm.annotations:
+  mapping:
+   App\Model\Database: %appDir%/model/database
+```
+
 
 ### XML
 
-Are you using XML mapping for your entities?
+Are you using [XML mapping](https://www.doctrine-project.org/projects/doctrine-orm/en/2.7/reference/xml-mapping.html) for your entities?
+
+```xml
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                          https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    ...
+
+</doctrine-mapping>
+```
 
 You will also appreciate ORM => XML bridge, use `OrmXmlExtension`. This is the default configuration:
 
@@ -235,31 +273,76 @@ extensions:
   nettrine.orm.xml: Nettrine\ORM\DI\OrmXmlExtension
 
 nettrine.orm.xml:
-  namespaces: []
-  paths: []
+  mapping: [
+    namespace: path
+  ]
   fileExtension: .dcm.xml
+  simple: false
+```
+
+Using **simple** you will enable [`SimplifiedYamlDriver`](https://www.doctrine-project.org/projects/doctrine-orm/en/2.7/reference/xml-mapping.html#simplified-xml-driver).
+
+
+### YAML
+
+Are you using [YAML mapping](https://www.doctrine-project.org/projects/doctrine-orm/en/2.7/reference/yaml-mapping.html) for your entities?
+
+```yaml
+# Doctrine.Tests.ORM.Mapping.User.dcm.yml
+Doctrine\Tests\ORM\Mapping\User:
+  type: entity
+  repositoryClass: Doctrine\Tests\ORM\Mapping\UserRepository
+  table: cms_users
+  schema: schema_name
+  readOnly: true
+  indexes:
+    name_index:
+      columns: [ name ]
+  id:
+    id:
+      type: integer
+      generator:
+        strategy: AUTO
+```
+
+You will also appreciate ORM => YAML bridge, use `OrmYamlExtension`. This is the default configuration:
+
+```yaml
+extensions:
+  nettrine.orm: Nettrine\ORM\DI\OrmExtension
+  nettrine.orm.yaml: Nettrine\ORM\DI\OrmYamlExtension
+
+nettrine.orm.yaml:
+  mapping: [
+    namespace: path
+  ]
+  fileExtension: .orm.yml
 ```
 
 
 ### Helpers
 
-You can use the predefined `TEntityMapping` trait in your compiler extensions. Be careful, you have to call it in `beforeCompile` phase.
+**MappingHelper**
+
+You can use the predefined `MappingHelper` helper class in your compiler extensions. Be careful, you have to call it in `beforeCompile` phase.
 
 ```php
 use Nette\DI\CompilerExtension;
-use Nettrine\ORM\DI\Traits\TEntityMapping;
+use Nettrine\ORM\DI\Helpers\MappingHelper;
 
 class CategoryExtension extends CompilerExtension
 {
 
-  use TEntityMapping;
-
   public function beforeCompile(): void
   {
-    $this->setEntityMappings([
-      'Forum' => __DIR__ . '/../Entity',
-    ]);
+    MappingHelper::of($this)
+        ->addAnnotation('App\Model\Database', __DIR__ . '/../app/Model/Database')
+        ->addAnnotation('Forum\Modules\Database', __DIR__ . '/../../modules/Forum/Database')
+        ->addXml('Gallery1\Modules\Database', __DIR__ . '/../../modules/Gallery1/Database')
+        ->addXml('Gallery2\Modules\Database', __DIR__ . '/../../modules/Gallery2/Database', $simple = TRUE)
+        ->addYaml('Users\Modules\Database', __DIR__ . '/../../modules/Users/Database');
   }
+
 }
 ```
 
@@ -268,6 +351,7 @@ class CategoryExtension extends CompilerExtension
 
 This repository is inspired by these packages.
 
+- https://github.com/doctrine
 - https://gitlab.com/Kdyby/Doctrine
 - https://gitlab.com/etten/doctrine
 - https://github.com/DTForce/nette-doctrine
