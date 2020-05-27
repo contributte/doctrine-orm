@@ -18,7 +18,8 @@
     "nettrine/annotations": "^0.6.0 || ^0.7.0",
     "nettrine/cache": "^0.2.0",
     "nettrine/dbal": "^0.6.0 || ^0.7.0",
-    "doctrine/orm": "^2.6.3"
+    "doctrine/orm": "^2.6.3",
+    "doctrine/common":"^2.13.1"
   },
   "require-dev": {
     "mockery/mockery": "^1.3.1",
