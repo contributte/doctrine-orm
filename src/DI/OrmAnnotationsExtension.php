@@ -2,7 +2,7 @@
 
 namespace Nettrine\ORM\DI;
 
-use Doctrine\Common\Persistence\Mapping\Driver\MappingDriver;
+use Doctrine\Persistence\Mapping\Driver\MappingDriver;
 use Nette\Schema\Expect;
 use Nette\Schema\Schema;
 use Nettrine\ORM\Mapping\AnnotationDriver;

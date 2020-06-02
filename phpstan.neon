@@ -1,6 +1,5 @@
 parameters:
 	ignoreErrors:
 		# We will replace it once, for sure
-		- '#Fetching class constant .+ of deprecated class Doctrine\\Common\\Proxy\\AbstractProxyFactory.+#'
 		- '#Fetching class constant .+ of deprecated class Doctrine\\ORM\\Tools\\Console\\Command\\(GenerateEntities|GenerateRepositories)Command.+#'
 		- '#Fetching class constant .+ of deprecated class Doctrine\\ORM\\Proxy\\Proxy.+#'
