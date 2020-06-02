@@ -3,8 +3,8 @@
 namespace Nettrine\ORM\DI;
 
 use Contributte\DI\Extension\CompilerExtension;
-use Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain;
 use Doctrine\ORM\Configuration;
+use Doctrine\Persistence\Mapping\Driver\MappingDriverChain;
 use Nette\DI\Definitions\ServiceDefinition;
 use Nettrine\ORM\Exception\Logical\InvalidStateException;
 use stdClass;
