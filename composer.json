@@ -23,7 +23,8 @@
     "nettrine/dbal": "^0.2.0 || ^0.3.0",
     "doctrine/orm": "^2.6.3",
     "doctrine/cache": "^1.8.0",
-    "doctrine/annotations": "^1.6.0"
+    "doctrine/annotations": "^1.6.0",
+    "doctrine/common": "^2.13.1"
   },
   "require-dev": {
     "ninjify/qa": "^0.8.0",
