@@ -227,11 +227,12 @@ extensions:
   nettrine.annotations: Nettrine\Annotations\DI\AnnotationsExtension
 ```
 
-You will also appreciate ORM => Annotations bridge, use `OrmAnnotationsExtension`. This is the default configuration, it uses an autowired cache driver.
+You will also appreciate ORM => Annotations bridge, use `OrmAnnotationsExtension`. This is the default configuration, it uses an autowired cache driver. Please note that `OrmAnnotationsExtension` must be registered after `AnnotationsExtension`.
 
 ```yaml
 extensions:
   nettrine.orm: Nettrine\ORM\DI\OrmExtension
+  nettrine.annotations: Nettrine\Annotations\DI\AnnotationsExtension
   nettrine.orm.annotations: Nettrine\ORM\DI\OrmAnnotationsExtension
 
 nettrine.orm.annotations:
