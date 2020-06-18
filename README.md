@@ -25,6 +25,7 @@
   - [YAML](.docs/README.md#yaml)
   - [Helpers](.docs/README.md#helpers)
 - [Examples](.docs/README.md#examples)
+- [Other](.docs/README.md#other)
 
 ## Versions
 
