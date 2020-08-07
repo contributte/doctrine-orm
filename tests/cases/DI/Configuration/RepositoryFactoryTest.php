@@ -40,4 +40,19 @@ final class RepositoryFactoryTest extends AbstractConfigurationTest
 		$this->assertInstanceOf(DefaultRepositoryFactory::class, $configuration->getRepositoryFactory());
 	}
 
+	public function testReference(): void
+	{
+		$configuration = $this->createConfiguration(function (Compiler $compiler): void {
+			$compiler->addConfig(NeonLoader::load('
+					services:
+						reference: Doctrine\ORM\Repository\DefaultRepositoryFactory()
+
+					nettrine.orm:
+						configuration:
+							repositoryFactory: @reference
+				'));
+		});
+		$this->assertInstanceOf(DefaultRepositoryFactory::class, $configuration->getRepositoryFactory());
+	}
+
 }

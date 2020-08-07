@@ -41,4 +41,19 @@ final class EntityListenerResolverTest extends AbstractConfigurationTest
 		$this->assertInstanceOf(DefaultEntityListenerResolver::class, $configuration->getEntityListenerResolver());
 	}
 
+	public function testReference(): void
+	{
+		$configuration = $this->createConfiguration(function (Compiler $compiler): void {
+			$compiler->addConfig(NeonLoader::load('
+					services:
+						reference: Doctrine\ORM\Mapping\DefaultEntityListenerResolver()
+
+					nettrine.orm:
+						configuration:
+							entityListenerResolver: @reference
+				'));
+		});
+		$this->assertInstanceOf(DefaultEntityListenerResolver::class, $configuration->getEntityListenerResolver());
+	}
+
 }

@@ -40,4 +40,19 @@ final class NamingStrategyTest extends AbstractConfigurationTest
 		$this->assertInstanceOf(UnderscoreNamingStrategy::class, $configuration->getNamingStrategy());
 	}
 
+	public function testReference(): void
+	{
+		$configuration = $this->createConfiguration(function (Compiler $compiler): void {
+			$compiler->addConfig(NeonLoader::load('
+					services:
+						reference: Doctrine\ORM\Mapping\UnderscoreNamingStrategy()
+
+					nettrine.orm:
+						configuration:
+							namingStrategy: @reference
+				'));
+		});
+		$this->assertInstanceOf(UnderscoreNamingStrategy::class, $configuration->getNamingStrategy());
+	}
+
 }

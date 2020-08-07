@@ -41,4 +41,19 @@ final class QuoteStrategyTest extends AbstractConfigurationTest
 		$this->assertInstanceOf(AnsiQuoteStrategy::class, $configuration->getQuoteStrategy());
 	}
 
+	public function testReference(): void
+	{
+		$configuration = $this->createConfiguration(function (Compiler $compiler): void {
+			$compiler->addConfig(NeonLoader::load('
+					services:
+						reference: Doctrine\ORM\Mapping\AnsiQuoteStrategy()
+
+					nettrine.orm:
+						configuration:
+							quoteStrategy: @reference
+				'));
+		});
+		$this->assertInstanceOf(AnsiQuoteStrategy::class, $configuration->getQuoteStrategy());
+	}
+
 }
