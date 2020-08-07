@@ -8,16 +8,16 @@ vendor: composer.json composer.lock
 
 qa: phpstan cs
 
-cs: vendor
+cs:
 	vendor/bin/codesniffer src tests
 
-csf: vendor
+csf:
 	vendor/bin/codefixer src tests
 
-phpstan: vendor
+phpstan:
 	vendor/bin/phpstan analyse -l max -c phpstan.neon src
 
-tests: vendor
+tests:
 	vendor/bin/phpunit tests --cache-result-file=tests/tmp/phpunit.cache --colors=always
 
 coverage: vendor
