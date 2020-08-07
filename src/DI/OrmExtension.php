@@ -12,6 +12,7 @@ use Nette\DI\Definitions\Statement;
 use Nette\DI\Helpers;
 use Nette\Schema\Expect;
 use Nette\Schema\Schema;
+use Nettrine\ORM\DI\Definitions\SmartStatement;
 use Nettrine\ORM\EntityManagerDecorator;
 use Nettrine\ORM\Exception\Logical\InvalidArgumentException;
 use Nettrine\ORM\Exception\Logical\InvalidStateException;
@@ -47,10 +48,10 @@ final class OrmExtension extends AbstractExtension
 				'customHydrationModes' => Expect::array(),
 				'classMetadataFactoryName' => Expect::string(),
 				'defaultRepositoryClassName' => Expect::string(),
-				'namingStrategy' => Expect::string(UnderscoreNamingStrategy::class)->nullable(),
-				'quoteStrategy' => Expect::type(Statement::class),
-				'entityListenerResolver' => Expect::string(),
-				'repositoryFactory' => Expect::string(),
+				'namingStrategy' => Expect::anyOf(Expect::string(), Expect::type(Statement::class))->default(UnderscoreNamingStrategy::class),
+				'quoteStrategy' => Expect::anyOf(Expect::string(), Expect::type(Statement::class)),
+				'entityListenerResolver' => Expect::anyOf(Expect::string(), Expect::type(Statement::class)),
+				'repositoryFactory' => Expect::anyOf(Expect::string(), Expect::type(Statement::class)),
 				'defaultQueryHints' => Expect::array(),
 				'filters' => Expect::arrayOf(
 					Expect::structure([
@@ -127,15 +128,15 @@ final class OrmExtension extends AbstractExtension
 		}
 
 		if ($config->namingStrategy !== null) {
-			$configuration->addSetup('setNamingStrategy', [new Statement($config->namingStrategy)]);
+			$configuration->addSetup('setNamingStrategy', [SmartStatement::from($config->namingStrategy)]);
 		}
 
 		if ($config->quoteStrategy !== null) {
-			$configuration->addSetup('setQuoteStrategy', [$config->quoteStrategy]);
+			$configuration->addSetup('setQuoteStrategy', [SmartStatement::from($config->quoteStrategy)]);
 		}
 
 		if ($config->entityListenerResolver !== null) {
-			$configuration->addSetup('setEntityListenerResolver', [$config->entityListenerResolver]);
+			$configuration->addSetup('setEntityListenerResolver', [SmartStatement::from($config->entityListenerResolver)]);
 		} else {
 			$builder->addDefinition($this->prefix('entityListenerResolver'))
 				->setType(ContainerEntityListenerResolver::class);
@@ -143,7 +144,7 @@ final class OrmExtension extends AbstractExtension
 		}
 
 		if ($config->repositoryFactory !== null) {
-			$configuration->addSetup('setRepositoryFactory', [$config->repositoryFactory]);
+			$configuration->addSetup('setRepositoryFactory', [SmartStatement::from($config->repositoryFactory)]);
 		}
 
 		if ($config->defaultQueryHints !== []) {

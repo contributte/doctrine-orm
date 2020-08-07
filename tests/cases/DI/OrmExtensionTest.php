@@ -2,6 +2,8 @@
 
 namespace Tests\Cases\DI;
 
+use Doctrine\ORM\Configuration;
+use Doctrine\ORM\Mapping\DefaultQuoteStrategy;
 use Nette\DI\Compiler;
 use Nettrine\ORM\EntityManagerDecorator;
 use Nettrine\ORM\Exception\Logical\InvalidArgumentException;
@@ -9,6 +11,7 @@ use stdClass;
 use Tests\Fixtures\Dummy\DummyConfiguration;
 use Tests\Fixtures\Dummy\DummyEntityManagerDecorator;
 use Tests\Fixtures\Dummy\DummyFilter;
+use Tests\Toolkit\Neon\NeonLoader;
 use Tests\Toolkit\Nette\ContainerBuilder;
 use Tests\Toolkit\TestCase;
 
@@ -90,6 +93,42 @@ final class OrmExtensionTest extends TestCase
 				]);
 			})
 			->build();
+	}
+
+	public function testQuoteStrategyString(): void
+	{
+		$container = ContainerBuilder::of()
+			->withDefaults()
+			->withCompiler(function (Compiler $compiler): void {
+				$compiler->addConfig(NeonLoader::load('
+					nettrine.orm:
+						configuration:
+							quoteStrategy: Doctrine\ORM\Mapping\DefaultQuoteStrategy
+				'));
+			})
+			->build();
+
+		$configuration = $container->getByType(Configuration::class);
+
+		$this->assertInstanceOf(DefaultQuoteStrategy::class, $configuration->getQuoteStrategy());
+	}
+
+	public function testQuoteStrategyStatement(): void
+	{
+		$container = ContainerBuilder::of()
+			->withDefaults()
+			->withCompiler(function (Compiler $compiler): void {
+				$compiler->addConfig(NeonLoader::load('
+					nettrine.orm:
+						configuration:
+							quoteStrategy: Doctrine\ORM\Mapping\DefaultQuoteStrategy()
+				'));
+			})
+			->build();
+
+		$configuration = $container->getByType(Configuration::class);
+
+		$this->assertInstanceOf(DefaultQuoteStrategy::class, $configuration->getQuoteStrategy());
 	}
 
 }

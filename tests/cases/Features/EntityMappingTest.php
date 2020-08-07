@@ -1,6 +1,6 @@
 <?php declare(strict_types = 1);
 
-namespace Tests\Cases\DI;
+namespace Tests\Cases\Features;
 
 use Doctrine\ORM\Mapping\Driver\AnnotationDriver;
 use Doctrine\ORM\Mapping\Driver\SimplifiedYamlDriver;
@@ -17,7 +17,7 @@ use Tests\Toolkit\Nette\ContainerBuilder;
 use Tests\Toolkit\TestCase;
 use Tests\Toolkit\Tests;
 
-final class OrmExtensionEntityMappingTest extends TestCase
+final class EntityMappingTest extends TestCase
 {
 
 	public function testHelper(): void
