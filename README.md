@@ -1,31 +1,35 @@
-# Nettrine ORM
+<h1 align=center>Nettrine ORM</h1>
 
-[Doctrine/ORM](https://www.doctrine-project.org/projects/orm.html) to Nette Framework.
+<p align=center>
+    <a href="https://www.doctrine-project.org/projects/orm.html">Doctrine/ORM</a> for Nette Framework.
+</p>
 
-[![Build Status](https://img.shields.io/travis/nettrine/orm.svg?style=flat-square)](https://travis-ci.org/nettrine/orm)
-[![Code coverage](https://img.shields.io/coveralls/nettrine/orm.svg?style=flat-square)](https://coveralls.io/r/nettrine/orm)
-[![Licence](https://img.shields.io/packagist/l/nettrine/orm.svg?style=flat-square)](https://packagist.org/packages/nettrine/orm)
-[![Downloads this Month](https://img.shields.io/packagist/dm/nettrine/orm.svg?style=flat-square)](https://packagist.org/packages/nettrine/orm)
-[![Downloads total](https://img.shields.io/packagist/dt/nettrine/orm.svg?style=flat-square)](https://packagist.org/packages/nettrine/orm)
-[![Latest stable](https://img.shields.io/packagist/v/nettrine/orm.svg?style=flat-square)](https://packagist.org/packages/nettrine/orm)
-[![PHPStan](https://img.shields.io/badge/PHPStan-enabled-brightgreen.svg?style=flat-square)](https://github.com/phpstan/phpstan)
+<p align=center>
+  <a href="https://travis-ci.org/nettrine/orm"><img src="https://img.shields.io/travis/nettrine/orm.svg?style=flat-square"></a>
+  <a href="https://coveralls.io/r/nettrine/orm"><img src="https://img.shields.io/coveralls/nettrine/orm.svg?style=flat-square"></a>
+  <a href="https://packagist.org/packages/nettrine/orm"><img src="https://img.shields.io/packagist/l/nettrine/orm.svg?style=flat-square"></a>
+  <a href="https://packagist.org/packages/nettrine/orm"><img src="https://img.shields.io/packagist/dm/nettrine/orm.svg?style=flat-square"></a>
+  <a href="https://packagist.org/packages/nettrine/orm"><img src="https://img.shields.io/packagist/dt/nettrine/orm.svg?style=flat-square"></a>
+  <a href="https://packagist.org/packages/nettrine/orm"><img src="https://img.shields.io/packagist/v/nettrine/orm.svg?style=flat-square"></a>
+  <a href="https://github.com/phpstan/phpstan"><img src="https://img.shields.io/badge/PHPStan-enabled-brightgreen.svg?style=flat-square"></a>
+  <a href="http://bit.ly/ctteg"><img src="https://img.shields.io/gitter/room/contributte/contributte.svg?style=flat-square"></a>
+<p>
 
-## Discussion / Help
+<p align=center>
+    Website 🚀 <a href="https://contributte.org">contributte.org</a> | Contact 👨🏻‍💻 <a href="https://f3l1x.io">f3l1x.io</a> | Twitter 🐦 <a href="https://twitter.com/contributte">@contributte</a>
+</p>
 
-[![Join the chat](https://img.shields.io/gitter/room/nettrine/nettrine.svg?style=flat-square)](https://gitter.im/nettrine/nettrine)
+## Usage
+
+To install the latest version of `nettrine/orm` use [Composer](https://getcomposer.com).
+
+```
+composer require nettrine/orm
+```
 
 ## Documentation
 
-- [Setup](.docs/README.md#setup)
-- [Relying](.docs/README.md#relying)
-- [Configuration](.docs/README.md#configuration)
-- [Mapping](.docs/README.md#mapping)
-  - [Annotations](.docs/README.md#annotations)
-  - [XML](.docs/README.md#xml)
-  - [YAML](.docs/README.md#yaml)
-  - [Helpers](.docs/README.md#helpers)
-- [Examples](.docs/README.md#examples)
-- [Other](.docs/README.md#other)
+For details on how to use this package, check out our [documentation](.docs).
 
 ## Versions
 
@@ -35,34 +39,23 @@
 | stable      | `^0.7`      | `master` | `3.0+` | `^7.2` |
 | stable      | `^0.3`      | `master` | `2.4`  | `^7.1` |
 
-## Maintainers
+## Development
 
-<table>
-  <tbody>
-    <tr>
-      <td align="center">
-        <a href="https://github.com/f3l1x">
-            <img width="150" height="150" src="https://avatars2.githubusercontent.com/u/538058?v=3&s=150">
-        </a>
-        </br>
-        <a href="https://github.com/f3l1x">Milan Felix Šulc</a>
-      </td>
-      <td align="center">
-        <a href="https://github.com/mabar">
-            <img width="150" height="150" src="https://avatars0.githubusercontent.com/u/20974277?s=150&v=4">
-        </a>
-        </br>
-        <a href="https://github.com/mabar">Marek Bartoš</a>
-      </td>
-      <td align="center">
-        <a href="https://github.com/benijo">
-            <img width="150" height="150" src="https://avatars3.githubusercontent.com/u/6731626?v=3&s=150">
-        </a>
-        </br>
-        <a href="https://github.com/benijo">Josef Benjač</a>
-      </td>
-    </tr>
-  </tbody>
-</table>
+See [how to contribute](https://contributte.org/contributing.html) to this package.
 
-Thank you for testing, reporting and contributing.
+This package is currently maintaining by these authors.
+
+<a href="https://github.com/f3l1x">
+    <img width="80" height="80" src="https://avatars2.githubusercontent.com/u/538058?v=3&s=80">
+</a>
+<a href="https://github.com/mabar">
+    <img width="80" height="80" src="https://avatars2.githubusercontent.com/u/20974277?v=3&s=80">
+</a>
+<a href="https://github.com/josefbenjac">
+    <img width="80" height="80" src="https://avatars2.githubusercontent.com/u/6731626?v=3&s=80">
+</a>
+
+-----
+
+Consider to [support](https://contributte.org/partners.html) **contributte** development team.
+Also thank you for using this package.
