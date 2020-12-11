@@ -61,11 +61,7 @@ class ContainerEntityListenerResolver implements EntityListenerResolver
 			return $this->instances[$className];
 		}
 
-		if (($service = $this->container->getByType($className, false))) {
-			$this->instances[$className] = $this->container->getByType($className);
-		} else {
-			$this->instances[$className] = new $className();
-		}
+		$this->instances[$className] = $this->container->getByType($className, false) ?? new $className();
 
 		return $this->instances[$className];
 	}

@@ -1,29 +1,18 @@
 <?xml version="1.0"?>
 <ruleset>
 	<!-- Contributte Coding Standard -->
-	<rule ref="./vendor/ninjify/coding-standard/contributte.xml">
-		<exclude name="SlevomatCodingStandard.ControlStructures.RequireTernaryOperator.TernaryOperatorNotUsed"/>
-		<exclude name="SlevomatCodingStandard.ControlStructures.ControlStructureSpacing.IncorrectLinesCountBeforeControlStructure"/>
-		<exclude name="SlevomatCodingStandard.ControlStructures.ControlStructureSpacing.IncorrectLinesCountAfterControlStructure"/>
-		<exclude name="SlevomatCodingStandard.ControlStructures.ControlStructureSpacing.IncorrectLinesCountAfterLastControlStructure"/>
-		<exclude name="SlevomatCodingStandard.ControlStructures.RequireMultiLineTernaryOperator.MultiLineTernaryOperatorNotUsed"/>
-	</rule>
+	<rule ref="./vendor/ninjify/coding-standard/contributte.xml"/>
 
 	<!-- Specific -->
 	<rule ref="SlevomatCodingStandard.Files.TypeNameMatchesFileName">
 		<properties>
-			<property name="rootNamespaces" type="array" value="
-				src=>Nettrine\ORM,
-				tests/cases=>Tests\Cases,
-				tests/fixtures=>Tests\Fixtures,
-				tests/toolkit=>Tests\Toolkit
-			"/>
+			<property name="rootNamespaces" type="array">
+				<element key="src" value="Nettrine\ORM"/>
+				<element key="tests/cases" value="Tests\Cases"/>
+				<element key="tests/fixtures" value="Tests\Fixtures"/>
+				<element key="tests/toolkit" value="Tests\Toolkit"/>
+			</property>
 		</properties>
-	</rule>
-
-	<!-- Tests specific -->
-	<rule ref="SlevomatCodingStandard.TypeHints.TypeHintDeclaration.UselessDocComment">
-		<exclude-pattern>/tests/cases</exclude-pattern>
 	</rule>
 
 	<!--Exclude folders -->
