@@ -5,16 +5,14 @@ namespace Tests\Cases\DI\Helper;
 use Nette\DI\CompilerExtension;
 use Nettrine\ORM\DI\Helpers\MappingHelper;
 use Nettrine\ORM\Exception\Logical\InvalidStateException;
-use Tests\Toolkit\TestCase;
+use Ninjify\Nunjuck\Toolkit;
+use Tester\Assert;
 
-final class MappingHelperTest extends TestCase
-{
+require_once __DIR__ . '/../../../bootstrap.php';
 
-	public function testValidatePath(): void
-	{
-		$this->expectException(InvalidStateException::class);
-		$this->expectDeprecationMessage('Given mapping path "invalid" does not exist');
-
+// Validate path
+Toolkit::test(function (): void {
+	Assert::exception(function (): void {
 		$extension = new class extends CompilerExtension {
 
 			// Empty class
@@ -22,6 +20,5 @@ final class MappingHelperTest extends TestCase
 		};
 
 		MappingHelper::of($extension)->addAnnotation('fake', 'invalid');
-	}
-
-}
+	}, InvalidStateException::class, 'Given mapping path "invalid" does not exist');
+});

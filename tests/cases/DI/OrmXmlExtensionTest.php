@@ -8,74 +8,71 @@ use Doctrine\Persistence\Mapping\Driver\MappingDriverChain;
 use Nette\DI\Compiler;
 use Nette\DI\InvalidConfigurationException;
 use Nettrine\ORM\DI\OrmXmlExtension;
-use Tests\Toolkit\Neon\NeonLoader;
-use Tests\Toolkit\Nette\ContainerBuilder;
-use Tests\Toolkit\TestCase;
+use Ninjify\Nunjuck\Toolkit;
+use Tester\Assert;
+use Tests\Toolkit\Container;
+use Tests\Toolkit\Helpers;
 
-final class OrmXmlExtensionTest extends TestCase
-{
+require_once __DIR__ . '/../../bootstrap.php';
 
-	public function testStandardDriver(): void
-	{
-		$container = ContainerBuilder::of()
-			->withDefaults()
-			->withCompiler(function (Compiler $compiler): void {
-				$compiler->addExtension('nettrine.orm.xml', new OrmXmlExtension());
-				$compiler->addConfig(NeonLoader::load('
+// Standard driver
+Toolkit::test(function (): void {
+	$container = Container::of()
+		->withDefaults()
+		->withCompiler(function (Compiler $compiler): void {
+			$compiler->addExtension('nettrine.orm.xml', new OrmXmlExtension());
+			$compiler->addConfig(Helpers::neon('
 				nettrine.orm.xml:
 					simple: false
 					mapping:
 						App\Model\Entity: %appDir%
 				'));
-			})
-			->build();
+		})
+		->build();
 
-		/** @var MappingDriverChain $driver */
-		$driver = $container->getService('nettrine.orm.mappingDriver');
+	/** @var MappingDriverChain $driver */
+	$driver = $container->getService('nettrine.orm.mappingDriver');
 
-		/** @var XmlDriver $xmlDriver */
-		$xmlDriver = current($driver->getDrivers());
+	/** @var XmlDriver $xmlDriver */
+	$xmlDriver = current($driver->getDrivers());
 
-		$this->assertInstanceOf(XmlDriver::class, $xmlDriver);
-		$this->assertEmpty($xmlDriver->getAllClassNames());
-	}
+	Assert::type(XmlDriver::class, $xmlDriver);
+	Assert::equal([], $xmlDriver->getAllClassNames());
+});
 
-	public function testSimpleDriver(): void
-	{
-		$container = ContainerBuilder::of()
-			->withDefaults()
-			->withCompiler(function (Compiler $compiler): void {
-				$compiler->addExtension('nettrine.orm.xml', new OrmXmlExtension());
-				$compiler->addConfig(NeonLoader::load('
+// Simple driver
+Toolkit::test(function (): void {
+	$container = Container::of()
+		->withDefaults()
+		->withCompiler(function (Compiler $compiler): void {
+			$compiler->addExtension('nettrine.orm.xml', new OrmXmlExtension());
+			$compiler->addConfig(Helpers::neon('
 				nettrine.orm.xml:
 					simple: true
 					mapping:
 						App\Model\Entity: %appDir%
 				'));
-			})
-			->build();
+		})
+		->build();
 
-		/** @var MappingDriverChain $driver */
-		$driver = $container->getService('nettrine.orm.mappingDriver');
+	/** @var MappingDriverChain $driver */
+	$driver = $container->getService('nettrine.orm.mappingDriver');
 
-		/** @var SimplifiedXmlDriver $xmlDriver */
-		$xmlDriver = current($driver->getDrivers());
+	/** @var SimplifiedXmlDriver $xmlDriver */
+	$xmlDriver = current($driver->getDrivers());
 
-		$this->assertInstanceOf(SimplifiedXmlDriver::class, $xmlDriver);
-		$this->assertEmpty($xmlDriver->getAllClassNames());
-	}
+	Assert::type(SimplifiedXmlDriver::class, $xmlDriver);
+	Assert::equal([], $xmlDriver->getAllClassNames());
+});
 
-	public function testMissingMapping(): void
-	{
-		$this->expectException(InvalidConfigurationException::class);
-		$this->expectDeprecationMessage("The mandatory option 'nettrine.orm.xml › mapping' is missing.");
-
-		ContainerBuilder::of()
+// Error (missing mapping)
+Toolkit::test(function (): void {
+	Assert::exception(function (): void {
+		Container::of()
 			->withDefaults()
 			->withCompiler(function (Compiler $compiler): void {
 				$compiler->addExtension('nettrine.orm.xml', new OrmXmlExtension());
 			})
 			->build();
-	}
-
-}
+	}, InvalidConfigurationException::class, "The mandatory option 'nettrine.orm.xml › mapping' is missing.");
+});

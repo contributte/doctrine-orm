@@ -2,88 +2,83 @@
 
 namespace Tests\Cases\DI;
 
-use Doctrine\ORM\Configuration;
-use Doctrine\ORM\Mapping\DefaultQuoteStrategy;
 use Nette\DI\Compiler;
 use Nettrine\ORM\EntityManagerDecorator;
 use Nettrine\ORM\Exception\Logical\InvalidArgumentException;
+use Ninjify\Nunjuck\Toolkit;
 use stdClass;
+use Tester\Assert;
 use Tests\Fixtures\Dummy\DummyConfiguration;
 use Tests\Fixtures\Dummy\DummyEntityManagerDecorator;
 use Tests\Fixtures\Dummy\DummyFilter;
-use Tests\Toolkit\Neon\NeonLoader;
-use Tests\Toolkit\Nette\ContainerBuilder;
-use Tests\Toolkit\TestCase;
+use Tests\Toolkit\Container;
 
-final class OrmExtensionTest extends TestCase
-{
+require_once __DIR__ . '/../../bootstrap.php';
 
-	public function testOk(): void
-	{
-		$container = ContainerBuilder::of()
-			->withDefaults()
-			->build();
+// Ok
+Toolkit::test(function (): void {
+	$container = Container::of()
+		->withDefaults()
+		->build();
 
-		$this->assertInstanceOf(EntityManagerDecorator::class, $container->getService('nettrine.orm.entityManagerDecorator'));
-	}
+	Assert::type(EntityManagerDecorator::class, $container->getService('nettrine.orm.entityManagerDecorator'));
+});
 
-	public function testCustomEntityManager(): void
-	{
-		$container = ContainerBuilder::of()
-			->withDefaults()
-			->withCompiler(function (Compiler $compiler): void {
-				$compiler->addConfig([
-					'nettrine.orm' => [
-						'entityManagerDecoratorClass' => DummyEntityManagerDecorator::class,
-						'configurationClass' => DummyConfiguration::class,
-					],
-				]);
-			})
-			->build();
+// Custom entity manager
+Toolkit::test(function (): void {
+	$container = Container::of()
+		->withDefaults()
+		->withCompiler(function (Compiler $compiler): void {
+			$compiler->addConfig([
+				'nettrine.orm' => [
+					'entityManagerDecoratorClass' => DummyEntityManagerDecorator::class,
+					'configurationClass' => DummyConfiguration::class,
+				],
+			]);
+		})
+		->build();
 
-		$this->assertInstanceOf(DummyEntityManagerDecorator::class, $container->getByType(DummyEntityManagerDecorator::class));
-		$this->assertInstanceOf(DummyConfiguration::class, $container->getByType(DummyConfiguration::class));
-	}
+	Assert::type(DummyEntityManagerDecorator::class, $container->getByType(DummyEntityManagerDecorator::class));
+	Assert::type(DummyConfiguration::class, $container->getByType(DummyConfiguration::class));
+});
 
-	public function testFilters(): void
-	{
-		$container = ContainerBuilder::of()
-			->withDefaults()
-			->withCompiler(static function (Compiler $compiler): void {
-				$compiler->addConfig([
-					'nettrine.orm' => [
-						'configuration' => [
-							'filters' => [
-								'autoEnabledFilter' => [
-									'class' => DummyFilter::class,
-									'enabled' => true,
-								],
-								'autoDisabledFilter' => [
-									'class' => DummyFilter::class,
-								],
+// Filters
+Toolkit::test(function (): void {
+	$container = Container::of()
+		->withDefaults()
+		->withCompiler(static function (Compiler $compiler): void {
+			$compiler->addConfig([
+				'nettrine.orm' => [
+					'configuration' => [
+						'filters' => [
+							'autoEnabledFilter' => [
+								'class' => DummyFilter::class,
+								'enabled' => true,
+							],
+							'autoDisabledFilter' => [
+								'class' => DummyFilter::class,
 							],
 						],
 					],
-				]);
-			})
-			->build();
-		/** @var EntityManagerDecorator $em */
-		$em = $container->getService('nettrine.orm.entityManagerDecorator');
-		$filters = $em->getFilters();
+				],
+			]);
+		})
+		->build();
+	/** @var EntityManagerDecorator $em */
+	$em = $container->getService('nettrine.orm.entityManagerDecorator');
+	$filters = $em->getFilters();
 
-		$this->assertEquals(true, $filters->has('autoEnabledFilter'));
-		$this->assertEquals(true, $filters->isEnabled('autoEnabledFilter'));
+	Assert::equal(true, $filters->has('autoEnabledFilter'));
+	Assert::equal(true, $filters->isEnabled('autoEnabledFilter'));
 
-		$this->assertEquals(true, $filters->has('autoDisabledFilter'));
-		$this->assertEquals(false, $filters->isEnabled('autoDisabledFilter'));
-	}
+	Assert::equal(true, $filters->has('autoDisabledFilter'));
+	Assert::equal(false, $filters->isEnabled('autoDisabledFilter'));
+});
 
-	public function testConfigurationException(): void
-	{
-		$this->expectException(InvalidArgumentException::class);
-		$this->expectExceptionMessage('Configuration class must be subclass of Doctrine\ORM\Configuration, stdClass given.');
-
-		ContainerBuilder::of()
+// Error (configuration subclass)
+Toolkit::test(function (): void {
+	Assert::exception(function (): void {
+		Container::of()
 			->withDefaults()
 			->withCompiler(function (Compiler $compiler): void {
 				$compiler->addConfig([
@@ -93,42 +88,5 @@ final class OrmExtensionTest extends TestCase
 				]);
 			})
 			->build();
-	}
-
-	public function testQuoteStrategyString(): void
-	{
-		$container = ContainerBuilder::of()
-			->withDefaults()
-			->withCompiler(function (Compiler $compiler): void {
-				$compiler->addConfig(NeonLoader::load('
-					nettrine.orm:
-						configuration:
-							quoteStrategy: Doctrine\ORM\Mapping\DefaultQuoteStrategy
-				'));
-			})
-			->build();
-
-		$configuration = $container->getByType(Configuration::class);
-
-		$this->assertInstanceOf(DefaultQuoteStrategy::class, $configuration->getQuoteStrategy());
-	}
-
-	public function testQuoteStrategyStatement(): void
-	{
-		$container = ContainerBuilder::of()
-			->withDefaults()
-			->withCompiler(function (Compiler $compiler): void {
-				$compiler->addConfig(NeonLoader::load('
-					nettrine.orm:
-						configuration:
-							quoteStrategy: Doctrine\ORM\Mapping\DefaultQuoteStrategy()
-				'));
-			})
-			->build();
-
-		$configuration = $container->getByType(Configuration::class);
-
-		$this->assertInstanceOf(DefaultQuoteStrategy::class, $configuration->getQuoteStrategy());
-	}
-
-}
+	}, InvalidArgumentException::class, 'Configuration class must be subclass of Doctrine\ORM\Configuration, stdClass given.');
+});

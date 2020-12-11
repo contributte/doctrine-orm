@@ -1,16 +1,15 @@
 <?php declare(strict_types = 1);
 
-namespace Tests\Toolkit\Nette;
+namespace Tests\Toolkit;
 
 use Nette\DI\Compiler;
-use Nette\DI\Container;
+use Nette\DI\Container as NetteContainer;
 use Nette\DI\ContainerLoader;
 use Nettrine\Cache\DI\CacheExtension;
 use Nettrine\DBAL\DI\DbalExtension;
 use Nettrine\ORM\DI\OrmExtension;
-use Tests\Toolkit\Tests;
 
-final class ContainerBuilder
+final class Container
 {
 
 	/** @var string */
@@ -24,12 +23,12 @@ final class ContainerBuilder
 		$this->key = $key;
 	}
 
-	public static function of(?string $key = null): ContainerBuilder
+	public static function of(?string $key = null): Container
 	{
 		return new static($key ?? uniqid(random_bytes(16)));
 	}
 
-	public function withDefaults(): ContainerBuilder
+	public function withDefaults(): Container
 	{
 		$this->withDefaultExtensions();
 		$this->withDefaultParameters();
@@ -37,7 +36,7 @@ final class ContainerBuilder
 		return $this;
 	}
 
-	public function withDefaultExtensions(): ContainerBuilder
+	public function withDefaultExtensions(): Container
 	{
 		$this->onCompile[] = function (Compiler $compiler): void {
 			$compiler->addExtension('nettrine.dbal', new DbalExtension());
@@ -48,7 +47,7 @@ final class ContainerBuilder
 		return $this;
 	}
 
-	public function withDefaultParameters(): ContainerBuilder
+	public function withDefaultParameters(): Container
 	{
 		$this->onCompile[] = function (Compiler $compiler): void {
 			$compiler->addConfig([
@@ -57,12 +56,17 @@ final class ContainerBuilder
 					'appDir' => Tests::APP_PATH,
 				],
 			]);
+			$compiler->addConfig(Helpers::neon('
+				nettrine.dbal:
+					connection:
+						driver: pdo_sqlite
+			'));
 		};
 
 		return $this;
 	}
 
-	public function withCompiler(callable $cb): ContainerBuilder
+	public function withCompiler(callable $cb): Container
 	{
 		$this->onCompile[] = function (Compiler $compiler) use ($cb): void {
 			$cb($compiler);
@@ -71,7 +75,7 @@ final class ContainerBuilder
 		return $this;
 	}
 
-	public function build(): Container
+	public function build(): NetteContainer
 	{
 		$loader = new ContainerLoader(Tests::TEMP_PATH, true);
 		$class = $loader->load(function (Compiler $compiler): void {
@@ -80,10 +84,7 @@ final class ContainerBuilder
 			}
 		}, $this->key);
 
-		/** @var Container $container */
-		$container = new $class();
-
-		return $container;
+		return new $class();
 	}
 
 }

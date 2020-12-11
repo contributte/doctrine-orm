@@ -1,3 +1,7 @@
+# Folders - recursive
+*.expected
+*.actual
+
 # Folders
 /tmp
 
