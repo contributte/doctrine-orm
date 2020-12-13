@@ -19,7 +19,7 @@
     "nettrine/cache": "^0.3.0 || ^0.4.0",
     "nettrine/dbal": "^0.7.0 || ^0.8.0",
     "doctrine/orm": "^2.6.3",
-    "doctrine/common":"^2.13.1"
+    "doctrine/common":"^2.13.1 || ^3.0.0"
   },
   "require-dev": {
     "mockery/mockery": "^1.3.1",
