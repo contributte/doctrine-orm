@@ -74,5 +74,5 @@ Toolkit::test(function (): void {
 				$compiler->addExtension('nettrine.orm.xml', new OrmXmlExtension());
 			})
 			->build();
-	}, InvalidConfigurationException::class, "The mandatory option 'nettrine.orm.xml › mapping' is missing.");
+	}, InvalidConfigurationException::class, "The mandatory item 'nettrine.orm.xml › mapping' is missing.");
 });

@@ -50,7 +50,7 @@ Toolkit::test(function (): void {
 				$compiler->addExtension('nettrine.orm.annotations', new OrmAnnotationsExtension());
 			})
 			->build();
-	}, InvalidConfigurationException::class, "The mandatory option 'nettrine.orm.annotations › mapping' is missing.");
+	}, InvalidConfigurationException::class, "The mandatory item 'nettrine.orm.annotations › mapping' is missing.");
 });
 
 
