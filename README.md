@@ -1,4 +1,4 @@
-![Nettrine Orm](https://heatbadger.now.sh/github/readme/nettrine/orm/)
+![](https://heatbadger.now.sh/github/readme/nettrine/orm/)
 
 <p align=center>
   <a href="https://github.com/nettrine/orm/actions">
@@ -33,7 +33,7 @@
 <p>
 
 <p align=center>
-Website 🚀 <a href="https://contributte.org">contributte.org</a> | Contact 👨🏻💻 <a href="https://f3l1x.io">f3l1x.io</a> | Twitter 🐦 <a href="https://twitter.com/contributte">@contributte</a>
+Website 🚀 <a href="https://contributte.org">contributte.org</a> | Contact 👨🏻‍💻 <a href="https://f3l1x.io">f3l1x.io</a> | Twitter 🐦 <a href="https://twitter.com/contributte">@contributte</a>
 </p>
 
 ## Usage
@@ -74,3 +74,7 @@ This package is currently maintaining by these authors.
 
 The development is sponsored by [Tlapnet](https://www.tlapnet.cz)
 
+-----
+
+Consider to [support](https://contributte.com/partners) **contributte** development team.
+Also thank you for using this package.
