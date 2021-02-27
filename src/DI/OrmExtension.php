@@ -96,6 +96,8 @@ final class OrmExtension extends AbstractExtension
 			]);
 		} elseif (is_int($config->autoGenerateProxyClasses)) {
 			$configuration->addSetup('setAutoGenerateProxyClasses', [$config->autoGenerateProxyClasses]);
+		} elseif ($config->autoGenerateProxyClasses instanceof Statement) {
+			$configuration->addSetup('setAutoGenerateProxyClasses', [$config->autoGenerateProxyClasses]);
 		}
 
 		if ($config->proxyNamespace !== null) {
