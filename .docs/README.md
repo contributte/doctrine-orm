@@ -385,15 +385,15 @@ extensions:
 
 ### 2. Example projects
 
-We've made a few starter projects with preconfigured Nettrine nad Contributte packages.
+We've made a few skeletons with preconfigured Nettrine nad Contributte packages.
 
-- Nutella Project - https://github.com/planette/nutella-project
-- FoREST Project - https://github.com/planette/forest-project
+- https://github.com/contributte/webapp-skeleton
+- https://github.com/contributte/apitte-skeleton
 
 ### 3. Example playground
 
-You can find more examples in [planette playground](https://github.com/planette/playground) repository.
-
+- https://github.com/contributte/playground (playground)
+- https://contributte.org/examples.html (more examples)
 
 ## Other
 
@@ -405,4 +405,4 @@ This repository is inspired by these packages.
 - https://github.com/DTForce/nette-doctrine
 - https://github.com/portiny/doctrine
 
-Thank you guys.
+Thank you folks.
