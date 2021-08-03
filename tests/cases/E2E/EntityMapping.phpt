@@ -3,7 +3,7 @@
 namespace Tests\Cases\E2E;
 
 use Doctrine\ORM\Mapping\Driver\AnnotationDriver;
-use Doctrine\ORM\Mapping\Driver\AAttributeDriver;
+use Doctrine\ORM\Mapping\Driver\AttributeDriver;
 use Doctrine\ORM\Mapping\Driver\SimplifiedYamlDriver;
 use Doctrine\ORM\Mapping\Driver\XmlDriver;
 use Doctrine\Persistence\Mapping\Driver\MappingDriverChain;
@@ -57,13 +57,15 @@ Toolkit::test(function (): void {
 		Tests::FIXTURES_PATH,
 	], array_values($annotationDriver->getPaths()));
 
-	/** @var AttributeDriver $attributeDriver */
-	$attributeDriver = $container->getService(current(array_keys($container->findByTag(OrmAttributesExtension::DRIVER_TAG))));
+	if (PHP_VERSION_ID >= 80000) { // Because attributes can be used only in 8.0+
+		/** @var AttributeDriver $attributeDriver */
+		$attributeDriver = $container->getService(current(array_keys($container->findByTag(OrmAttributesExtension::DRIVER_TAG))));
 
-	Assert::equal([
-		Tests::APP_PATH,
-		Tests::FIXTURES_PATH,
-	], array_values($attributeDriver->getPaths()));
+		Assert::equal([
+			Tests::APP_PATH,
+			Tests::FIXTURES_PATH,
+		], array_values($attributeDriver->getPaths()));
+	}
 
 	/** @var XmlDriver $xmlDriver */
 	$xmlDriver = $container->getService(current(array_keys($container->findByTag(OrmXmlExtension::DRIVER_TAG))));
