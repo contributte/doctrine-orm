@@ -194,7 +194,7 @@ Additional metadata provider needs to be registered. We provide bridges for thes
 
 ### Attributes
 
-Since PHP 8.0 we can use [#[attributes]](https://www.doctrine-project.org/projects/doctrine-orm/en/2.7/reference/annotations-reference.html) for entity mapping.
+Since PHP 8.0 we can use [#[attributes]](https://www.doctrine-project.org/projects/doctrine-orm/en/2.9/reference/attributes-reference.html) for entity mapping.
 
 ```php
 <?php
