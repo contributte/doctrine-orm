@@ -194,7 +194,7 @@ Additional metadata provider needs to be registered. We provide bridges for thes
 
 ### Attributes
 
-Since PHP 8.0 we can use [#[attributes]](https://www.doctrine-project.org/projects/doctrine-orm/en/2.9/reference/attributes-reference.html) for entity mapping.
+Since PHP 8.0, we can use [#[attributes]](https://www.doctrine-project.org/projects/doctrine-orm/en/2.9/reference/attributes-reference.html) for entity mapping.
 
 ```php
 <?php
@@ -209,15 +209,15 @@ class Category
 {
 
     #[ORM\Column(length: 32, unique: true, nullable: true)]
-    protected $username;
+    protected string $username;
 
     #[ORM\Column(columnDefinition: 'CHAR(2) NOT NULL')]
-    protected $country;
+    protected string $country;
 
 }
 ```
 
-Use `OrmAttributesExtension` as the bridge to AttributeDriver. This is the default configuration.
+Use `OrmAttributesExtension` as the bridge to the AttributeDriver. This is the default configuration.
 
 ```neon
 extensions:
@@ -261,12 +261,12 @@ class Category
     /**
      * @ORM\Column(length=32, unique=true, nullable=false)
      */
-    protected $username;
+    protected string $username;
 
     /**
      * @ORM\Column(columnDefinition="CHAR(2) NOT NULL")
      */
-    protected $country;
+    protected string $country;
 
 }
 ```
