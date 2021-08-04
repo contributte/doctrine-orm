@@ -5,7 +5,6 @@ namespace Nettrine\ORM;
 use Doctrine\ORM\Decorator\EntityManagerDecorator as DoctrineEntityManagerDecorator;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use Doctrine\Persistence\ObjectRepository;
 
 class EntityManagerDecorator extends DoctrineEntityManagerDecorator
 {

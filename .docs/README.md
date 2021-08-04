@@ -8,6 +8,7 @@
 - [Relying](#relying)
 - [Configuration](#configuration)
 - [Mapping](#mapping)
+  - [Attributes](#attributes)
   - [Annotations](#annotations)
   - [XML](#xml)
   - [YAML](#yaml)
@@ -26,7 +27,7 @@ composer require nettrine/orm
 
 Register extension
 
-```yaml
+```neon
 extensions:
   nettrine.orm: Nettrine\ORM\DI\OrmExtension
 ```
@@ -49,7 +50,7 @@ This package relies on `doctrine/dbal`, use prepared [nettrine/dbal](https://git
 composer require nettrine/dbal
 ```
 
-```yaml
+```neon
 extensions:
   nettrine.dbal: Nettrine\DBAL\DI\DbalExtension
 ```
@@ -67,7 +68,7 @@ This package relies on `doctrine/cache`, use prepared [nettrine/cache](https://g
 composer require nettrine/cache
 ```
 
-```yaml
+```neon
 extensions:
   nettrine.cache: Nettrine\Cache\DI\CacheExtension
 ```
@@ -78,7 +79,7 @@ extensions:
 
 This is the default configuration, it uses the autowired driver.
 
-```yaml
+```neon
 extensions:
   nettrine.orm: Nettrine\ORM\DI\OrmExtension
   nettrine.orm.cache: Nettrine\ORM\DI\OrmCacheExtension
@@ -86,7 +87,7 @@ extensions:
 
 You can also specify a single driver or change the `nettrine.orm.cache.defaultDriver` for all of them.
 
-```yaml
+```neon
 nettrine.orm.cache:
   defaultDriver: App\DefaultOrmCacheDriver
   queryCache: App\SpecialDriver
@@ -97,7 +98,7 @@ nettrine.orm.cache:
 
 `secondLevelCache` uses autowired driver (or `defaultDriver`, if specified) for `CacheConfiguration` setup, but you can also replace it with custom `CacheConfiguration`.
 
-```yaml
+```neon
 nettrine.orm.cache:
   secondLevelCache: @cacheConfigurationFactory::create('bar')
 ```
@@ -111,7 +112,7 @@ This package relies on `symfony/console`, use prepared [contributte/console](htt
 composer require contributte/console
 ```
 
-```yaml
+```neon
 extensions:
   console: Contributte\Console\DI\ConsoleExtension(%consoleMode%)
 
@@ -128,7 +129,7 @@ Since this moment when you type `bin/console`, there'll be registered commands f
 
 **Schema definition**
 
- ```yaml
+ ```neon
 nettrine.orm:
   configuration:
     proxyDir: <path>
@@ -160,7 +161,7 @@ nettrine.orm:
 
 Minimal configuration could look like this:
 
-```yaml
+```neon
 nettrine.orm:
   configuration:
     autoGenerateProxyClasses: %debugMode%
@@ -185,8 +186,58 @@ Doctrine ORM needs to know where your entities are located and how they are desc
 
 Additional metadata provider needs to be registered. We provide bridges for these drivers:
 
+- **attributes** (`Nettrine\ORM\DI\OrmAttributesExtension`)
 - **annotations** (`Nettrine\ORM\DI\OrmAnnotationsExtension`)
+- **yaml** (`Nettrine\ORM\DI\OrmYamlExtension`)
 - **xml** (`Nettrine\ORM\DI\OrmXmlExtension`)
+
+
+### Attributes
+
+Since PHP 8.0 we can use [#[attributes]](https://www.doctrine-project.org/projects/doctrine-orm/en/2.7/reference/annotations-reference.html) for entity mapping.
+
+```php
+<?php
+
+namespace App\Model\Database;
+
+use Doctrine\ORM\Mapping as ORM;
+
+#[ORM\Entity]
+#[ORM\Table(name: 'category')]
+class Category
+{
+
+    #[ORM\Column(length: 32, unique: true, nullable: true)]
+    protected $username;
+
+    #[ORM\Column(columnDefinition: 'CHAR(2) NOT NULL')]
+    protected $country;
+
+}
+```
+
+Use `OrmAttributesExtension` as the bridge to AttributeDriver. This is the default configuration.
+
+```neon
+extensions:
+  nettrine.orm: Nettrine\ORM\DI\OrmExtension
+  nettrine.orm.attributes: Nettrine\ORM\DI\OrmAttributesExtension
+
+nettrine.orm.attributes:
+  mapping: [
+    namespace: path
+  ]
+  excluded: []
+```
+
+Example configuration for entity located at `app/Model/Database` folder.
+
+```neon
+nettrine.orm.attributes:
+  mapping:
+   App\Model\Database: %appDir%/Model/Database
+```
 
 
 ### Annotations
@@ -198,19 +249,22 @@ Are you using [@annotations](https://www.doctrine-project.org/projects/doctrine-
 
 namespace App\Model\Database;
 
+use Doctrine\ORM\Mapping as ORM;
+
 /**
  * @ORM\Entity
+ * @ORM\Table(name="category")
  */
 class Category
 {
 
     /**
-     * @ORM\Column(type="string", length=32, unique=true, nullable=false)
+     * @ORM\Column(length=32, unique=true, nullable=false)
      */
     protected $username;
 
     /**
-     * @ORM\Column(type="string", columnDefinition="CHAR(2) NOT NULL")
+     * @ORM\Column(columnDefinition="CHAR(2) NOT NULL")
      */
     protected $country;
 
@@ -223,7 +277,7 @@ This feature relies on `doctrine/annotations`, use prepared [nettrine/annotation
 composer require nettrine/annotations
 ```
 
-```yaml
+```neon
 extensions:
   nettrine.annotations: Nettrine\Annotations\DI\AnnotationsExtension
 ```
@@ -231,7 +285,7 @@ extensions:
 You will also appreciate ORM => Annotations bridge, use `OrmAnnotationsExtension`. This is the default configuration, it uses an autowired cache driver.
 Please note that `OrmAnnotationsExtension` must be registered after `AnnotationsExtension`. Ordering is crucial!
 
-```yaml
+```neon
 extensions:
   # Common
   nettrine.annotations: Nettrine\Annotations\DI\AnnotationsExtension
@@ -247,12 +301,12 @@ nettrine.orm.annotations:
   excluded: []
 ```
 
-Example configuration for entity located at `app/model/Database` folder.
+Example configuration for entity located at `app/Model/Database` folder.
 
-```yaml
+```neon
 nettrine.orm.annotations:
   mapping:
-   App\Model\Database: %appDir%/model/database
+   App\Model\Database: %appDir%/Model/Database
 ```
 
 
@@ -273,7 +327,7 @@ Are you using [XML mapping](https://www.doctrine-project.org/projects/doctrine-o
 
 You will also appreciate ORM => XML bridge, use `OrmXmlExtension`. This is the default configuration:
 
-```yaml
+```neon
 extensions:
   nettrine.orm: Nettrine\ORM\DI\OrmExtension
   nettrine.orm.xml: Nettrine\ORM\DI\OrmXmlExtension
@@ -313,7 +367,7 @@ Doctrine\Tests\ORM\Mapping\User:
 
 You will also appreciate ORM => YAML bridge, use `OrmYamlExtension`. This is the default configuration:
 
-```yaml
+```neon
 extensions:
   nettrine.orm: Nettrine\ORM\DI\OrmExtension
   nettrine.orm.yaml: Nettrine\ORM\DI\OrmYamlExtension
@@ -361,7 +415,7 @@ class CategoryExtension extends CompilerExtension
 composer require nettrine/annotations nettrine/cache nettrine/migrations nettrine/fixtures nettrine/dbal nettrine/orm
 ```
 
-```yaml
+```neon
 # Extension > Nettrine
 # => order is crucial
 #
