@@ -4,6 +4,8 @@ namespace Nettrine\ORM;
 
 use Doctrine\ORM\Decorator\EntityManagerDecorator as DoctrineEntityManagerDecorator;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
+use Doctrine\Persistence\ObjectRepository;
 
 class EntityManagerDecorator extends DoctrineEntityManagerDecorator
 {
@@ -15,8 +17,14 @@ class EntityManagerDecorator extends DoctrineEntityManagerDecorator
 
 	/**
 	 * {@inheritdoc}
+	 *
+	 * @psalm-param class-string<T> $className
+	 *
+	 * @psalm-return EntityRepository<T>
+	 *
+	 * @template T
 	 */
-	public function getRepository($className)
+	public function getRepository($className): ObjectRepository
 	{
 		return $this->wrapped->getRepository($className);
 	}
