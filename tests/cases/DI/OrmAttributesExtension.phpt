@@ -1,12 +1,15 @@
 <?php declare(strict_types = 1);
 
+/**
+ * @phpVersion >= 8.0
+ */
+
 namespace Tests\Cases\DI;
 
 use Doctrine\ORM\Mapping\Driver\AttributeDriver;
 use Doctrine\Persistence\Mapping\Driver\MappingDriverChain;
 use Nette\DI\Compiler;
 use Nette\DI\InvalidConfigurationException;
-use Nette\DI\ServiceCreationException;
 use Nettrine\ORM\DI\OrmAttributesExtension;
 use Ninjify\Nunjuck\Toolkit;
 use Tester\Assert;
@@ -17,40 +20,36 @@ require_once __DIR__ . '/../../bootstrap.php';
 
 // Ok
 Toolkit::test(function (): void {
-	if (PHP_VERSION_ID >= 80000) { // Because attributes can be used only in 8.0+
-		$container = Container::of()
-			->withDefaults()
-			->withCompiler(function (Compiler $compiler): void {
-				$compiler->addExtension('nettrine.orm.attributes', new OrmAttributesExtension());
-				$compiler->addConfig(Helpers::neon('
-					nettrine.orm.attributes:
-						mapping:
-							App\Model\Entity: %appDir%
-					'));
-			})
-			->build();
+	$container = Container::of()
+		->withDefaults()
+		->withCompiler(function (Compiler $compiler): void {
+			$compiler->addExtension('nettrine.orm.attributes', new OrmAttributesExtension());
+			$compiler->addConfig(Helpers::neon('
+				nettrine.orm.attributes:
+					mapping:
+						App\Model\Entity: %appDir%
+				'));
+		})
+		->build();
 
-		/** @var MappingDriverChain $driver */
-		$driver = $container->getService('nettrine.orm.mappingDriver');
+	/** @var MappingDriverChain $driver */
+	$driver = $container->getService('nettrine.orm.mappingDriver');
 
-		Assert::type(AttributeDriver::class, current($driver->getDrivers()));
+	Assert::type(AttributeDriver::class, current($driver->getDrivers()));
 
-		/** @var AttributeDriver $attributeDriver */
-		$attributeDriver = current($driver->getDrivers());
-		Assert::equal([], $attributeDriver->getAllClassNames());
-	}
+	/** @var AttributeDriver $attributeDriver */
+	$attributeDriver = current($driver->getDrivers());
+	Assert::equal([], $attributeDriver->getAllClassNames());
 });
 
 // Error (missing mapping)
 Toolkit::test(function (): void {
-	if (PHP_VERSION_ID >= 80000) { // Because attributes can be used only in 8.0+
-		Assert::exception(function (): void {
-			Container::of()
-				->withDefaults()
-				->withCompiler(function (Compiler $compiler): void {
-					$compiler->addExtension('nettrine.orm.attributes', new OrmAttributesExtension());
-				})
-				->build();
-		}, InvalidConfigurationException::class, "The mandatory item 'nettrine.orm.attributes › mapping' is missing.");
-	}
+	Assert::exception(function (): void {
+		Container::of()
+			->withDefaults()
+			->withCompiler(function (Compiler $compiler): void {
+				$compiler->addExtension('nettrine.orm.attributes', new OrmAttributesExtension());
+			})
+			->build();
+	}, InvalidConfigurationException::class, "The mandatory item 'nettrine.orm.attributes › mapping' is missing.");
 });

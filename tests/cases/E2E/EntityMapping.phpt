@@ -3,14 +3,12 @@
 namespace Tests\Cases\E2E;
 
 use Doctrine\ORM\Mapping\Driver\AnnotationDriver;
-use Doctrine\ORM\Mapping\Driver\AttributeDriver;
 use Doctrine\ORM\Mapping\Driver\SimplifiedYamlDriver;
 use Doctrine\ORM\Mapping\Driver\XmlDriver;
 use Doctrine\Persistence\Mapping\Driver\MappingDriverChain;
 use Nette\DI\Compiler;
 use Nettrine\Annotations\DI\AnnotationsExtension;
 use Nettrine\ORM\DI\OrmAnnotationsExtension;
-use Nettrine\ORM\DI\OrmAttributesExtension;
 use Nettrine\ORM\DI\OrmXmlExtension;
 use Nettrine\ORM\DI\OrmYamlExtension;
 use Ninjify\Nunjuck\Toolkit;
@@ -28,15 +26,11 @@ Toolkit::test(function (): void {
 		->withCompiler(function (Compiler $compiler): void {
 			$compiler->addExtension('annotations', new AnnotationsExtension());
 			$compiler->addExtension('nettrine.orm.annotations', new OrmAnnotationsExtension());
-			$compiler->addExtension('nettrine.orm.attributes', new OrmAttributesExtension());
 			$compiler->addExtension('nettrine.orm.xml', new OrmXmlExtension());
 			$compiler->addExtension('nettrine.orm.yaml', new OrmYamlExtension());
 			$compiler->addExtension('tests.mapping', new EntityMappingCompilerExtension());
 			$compiler->addConfig(Helpers::neon('
 					nettrine.orm.annotations:
-						mapping:
-							App\Model\Entity1: %appDir%
-					nettrine.orm.attributes:
 						mapping:
 							App\Model\Entity1: %appDir%
 					nettrine.orm.xml:
@@ -57,16 +51,6 @@ Toolkit::test(function (): void {
 		Tests::FIXTURES_PATH,
 	], array_values($annotationDriver->getPaths()));
 
-	if (PHP_VERSION_ID >= 80000) { // Because attributes can be used only in 8.0+
-		/** @var AttributeDriver $attributeDriver */
-		$attributeDriver = $container->getService(current(array_keys($container->findByTag(OrmAttributesExtension::DRIVER_TAG))));
-
-		Assert::equal([
-			Tests::APP_PATH,
-			Tests::FIXTURES_PATH,
-		], array_values($attributeDriver->getPaths()));
-	}
-
 	/** @var XmlDriver $xmlDriver */
 	$xmlDriver = $container->getService(current(array_keys($container->findByTag(OrmXmlExtension::DRIVER_TAG))));
 
@@ -85,5 +69,5 @@ Toolkit::test(function (): void {
 
 	/** @var MappingDriverChain $chainDriver */
 	$chainDriver = $container->getService('nettrine.orm.mappingDriver');
-	Assert::count(7, $chainDriver->getDrivers());
+	Assert::count(6, $chainDriver->getDrivers());
 });

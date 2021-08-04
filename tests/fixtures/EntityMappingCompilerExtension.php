@@ -14,7 +14,6 @@ class EntityMappingCompilerExtension extends CompilerExtension
 		MappingHelper::of($this)->addAnnotation('Tests1', Tests::FIXTURES_PATH);
 		MappingHelper::of($this)->addXml('Tests2', Tests::FIXTURES_PATH);
 		MappingHelper::of($this)->addYaml('Tests3', Tests::FIXTURES_PATH);
-		MappingHelper::of($this)->addAttribute('Tests4', Tests::FIXTURES_PATH);
 	}
 
 }
