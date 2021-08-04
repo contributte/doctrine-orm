@@ -19,9 +19,7 @@ class EntityManagerDecorator extends DoctrineEntityManagerDecorator
 	 * {@inheritdoc}
 	 *
 	 * @psalm-param class-string<T> $className
-	 *
 	 * @psalm-return EntityRepository<T>
-	 *
 	 * @template T
 	 */
 	public function getRepository($className): ObjectRepository
