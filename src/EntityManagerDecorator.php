@@ -22,7 +22,7 @@ class EntityManagerDecorator extends DoctrineEntityManagerDecorator
 	 * @psalm-return EntityRepository<T>
 	 * @template T
 	 */
-	public function getRepository($className): ObjectRepository
+	public function getRepository($className)
 	{
 		return $this->wrapped->getRepository($className);
 	}
