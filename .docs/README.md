@@ -204,11 +204,11 @@ namespace App\Model\Database;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]
-#[ORM\Table(name: 'category')]
-class Category
+#[ORM\Table(name: 'customer')]
+class Customer
 {
 
-    #[ORM\Column(length: 32, unique: true, nullable: true)]
+    #[ORM\Column(length: 32, unique: true, nullable: false)]
     protected string $username;
 
     #[ORM\Column(columnDefinition: 'CHAR(2) NOT NULL')]
@@ -253,9 +253,9 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity
- * @ORM\Table(name="category")
+ * @ORM\Table(name="customer")
  */
-class Category
+class Customer
 {
 
     /**
