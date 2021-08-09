@@ -167,7 +167,7 @@ nettrine.orm:
     autoGenerateProxyClasses: %debugMode%
 ```
 
-Take a look at real **Nettrine ORM** configuration example at [Nutella Project](https://github.com/planette/nutella-project/blob/90f1eca94fa62b7589844481549d4823d3ed20f8/app/config/ext/nettrine.neon).
+Take a look at real **Nettrine ORM** configuration example at [contributte/webapp-project](https://github.com/contributte/webapp-skeleton/blob/d23e6cbac9b91d6d069583f1661dd1171ccfe077/app/config/ext/nettrine.neon).
 
 **Side notes**
 
