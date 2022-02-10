@@ -3,14 +3,12 @@
 	<!-- Contributte Coding Standard -->
 	<rule ref="./vendor/ninjify/coding-standard/contributte.xml"/>
 
-	<!-- Specific -->
+	<!-- Specific rules -->
 	<rule ref="SlevomatCodingStandard.Files.TypeNameMatchesFileName">
 		<properties>
 			<property name="rootNamespaces" type="array">
 				<element key="src" value="Nettrine\ORM"/>
-				<element key="tests/cases" value="Tests\Cases"/>
-				<element key="tests/fixtures" value="Tests\Fixtures"/>
-				<element key="tests/toolkit" value="Tests\Toolkit"/>
+				<element key="tests" value="Tests"/>
 			</property>
 		</properties>
 	</rule>
@@ -18,3 +16,4 @@
 	<!--Exclude folders -->
 	<exclude-pattern>/tests/tmp</exclude-pattern>
 </ruleset>
+

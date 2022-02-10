@@ -1,6 +1,6 @@
 <?php declare(strict_types = 1);
 
-namespace Tests\Cases\DI\Configuration;
+namespace Tests\Casesě\DI\Configuration;
 
 use Doctrine\ORM\Mapping\AnsiQuoteStrategy;
 use Doctrine\ORM\Mapping\DefaultQuoteStrategy;

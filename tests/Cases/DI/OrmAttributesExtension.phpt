@@ -4,7 +4,7 @@
  * @phpVersion >= 8.0
  */
 
-namespace Tests\Cases\DI;
+namespace Tests\Casesě\DI;
 
 use Doctrine\ORM\Mapping\Driver\AttributeDriver;
 use Doctrine\Persistence\Mapping\Driver\MappingDriverChain;

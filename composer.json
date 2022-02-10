@@ -25,10 +25,10 @@
     "mockery/mockery": "^1.3.1",
     "ninjify/qa": "^0.12",
     "ninjify/nunjuck": "^0.4",
-    "phpstan/phpstan": "^0.12.64",
-    "phpstan/phpstan-deprecation-rules": "^0.12.2",
-    "phpstan/phpstan-nette": "^0.12.3",
-    "phpstan/phpstan-strict-rules": "^0.12.2"
+    "phpstan/phpstan": "^1.4.0",
+    "phpstan/phpstan-deprecation-rules": "^1.0.0",
+    "phpstan/phpstan-nette": "^1.0.0",
+    "phpstan/phpstan-strict-rules": "^1.0.0"
   },
   "conflict": {
     "nette/di": "<3.0.6",
@@ -41,9 +41,7 @@
   },
   "autoload-dev": {
     "psr-4": {
-      "Tests\\Cases\\": "tests/cases",
-      "Tests\\Fixtures\\": "tests/fixtures",
-      "Tests\\Toolkit\\": "tests/toolkit"
+      "Tests\\": "tests"
     }
   },
   "minimum-stability": "dev",

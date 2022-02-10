@@ -5,7 +5,11 @@ includes:
 	- vendor/phpstan/phpstan-strict-rules/rules.neon
 
 parameters:
+	level: 9
+	phpVersion: 70200
+
+	paths:
+		- src
+
 	ignoreErrors:
-		# We will replace it once, for sure
-		- '#Fetching class constant .+ of deprecated class Doctrine\\ORM\\Tools\\Console\\Command\\(GenerateEntities|GenerateRepositories)Command.+#'
-		- '#Fetching class constant .+ of deprecated class Doctrine\\ORM\\Proxy\\Proxy.+#'
+		- '#Fetching class constant .+ of deprecated class Doctrine\\\w+.+#'

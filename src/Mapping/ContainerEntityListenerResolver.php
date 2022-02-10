@@ -57,11 +57,20 @@ class ContainerEntityListenerResolver implements EntityListenerResolver
 	 */
 	public function resolve($className)
 	{
-		if (isset($this->instances[$className = trim($className, '\\')])) {
+		/** @var class-string $className */
+		$className = trim($className, '\\');
+
+		if (isset($this->instances[$className])) {
 			return $this->instances[$className];
 		}
 
-		$this->instances[$className] = $this->container->getByType($className, false) ?? new $className();
+		$service = $this->container->getByType($className, false);
+
+		if ($service) {
+			$this->instances[$className] = $service;
+		} else {
+			$this->instances[$className] = new $className();
+		}
 
 		return $this->instances[$className];
 	}

@@ -1,6 +1,6 @@
 <?php declare(strict_types = 1);
 
-namespace Tests\Cases\E2E;
+namespace Tests\Casesě\E2E;
 
 use Doctrine\Common\Proxy\AbstractProxyFactory;
 use Doctrine\ORM\Configuration;

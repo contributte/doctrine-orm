@@ -1,6 +1,6 @@
 <?php declare(strict_types = 1);
 
-namespace Tests\Cases\DI\Helper;
+namespace Tests\Casesě\DI\Helper;
 
 use Nette\DI\CompilerExtension;
 use Nettrine\ORM\DI\Helpers\MappingHelper;

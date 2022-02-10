@@ -1,6 +1,6 @@
 <?php declare(strict_types = 1);
 
-namespace Tests\Cases\DI;
+namespace Tests\Casesě\DI;
 
 use Nette\DI\Compiler;
 use Nettrine\ORM\EntityManagerDecorator;

@@ -1,6 +1,6 @@
 <?php declare(strict_types = 1);
 
-namespace Tests\Cases;
+namespace Tests\Casesě;
 
 use Nettrine\ORM\ManagerRegistry;
 use Ninjify\Nunjuck\Toolkit;

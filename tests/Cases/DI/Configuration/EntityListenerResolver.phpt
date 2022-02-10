@@ -1,9 +1,10 @@
 <?php declare(strict_types = 1);
 
-namespace Tests\Cases\DI\Configuration;
+namespace Tests\Casesě\DI\Configuration;
 
-use Doctrine\ORM\Repository\DefaultRepositoryFactory;
+use Doctrine\ORM\Mapping\DefaultEntityListenerResolver;
 use Nette\DI\Compiler;
+use Nettrine\ORM\Mapping\ContainerEntityListenerResolver;
 use Ninjify\Nunjuck\Toolkit;
 use Tester\Assert;
 use Tests\Toolkit\Helpers;
@@ -13,7 +14,7 @@ require_once __DIR__ . '/../../../bootstrap.php';
 // Default
 Toolkit::test(function (): void {
 	$configuration = Helpers::createConfiguration();
-	Assert::type(DefaultRepositoryFactory::class, $configuration->getRepositoryFactory());
+	Assert::type(ContainerEntityListenerResolver::class, $configuration->getEntityListenerResolver());
 });
 
 // Configuration (string)
@@ -22,10 +23,10 @@ Toolkit::test(function (): void {
 		$compiler->addConfig(Helpers::neon('
 			nettrine.orm:
 				configuration:
-					repositoryFactory: Doctrine\ORM\Repository\DefaultRepositoryFactory
+					entityListenerResolver: Doctrine\ORM\Mapping\DefaultEntityListenerResolver
 		'));
 	});
-	Assert::type(DefaultRepositoryFactory::class, $configuration->getRepositoryFactory());
+	Assert::type(DefaultEntityListenerResolver::class, $configuration->getEntityListenerResolver());
 });
 
 // Configuration (statement)
@@ -34,10 +35,10 @@ Toolkit::test(function (): void {
 		$compiler->addConfig(Helpers::neon('
 			nettrine.orm:
 				configuration:
-					repositoryFactory: Doctrine\ORM\Repository\DefaultRepositoryFactory()
+					entityListenerResolver: Doctrine\ORM\Mapping\DefaultEntityListenerResolver()
 		'));
 	});
-	Assert::type(DefaultRepositoryFactory::class, $configuration->getRepositoryFactory());
+	Assert::type(DefaultEntityListenerResolver::class, $configuration->getEntityListenerResolver());
 });
 
 // Configuration (reference)
@@ -45,12 +46,12 @@ Toolkit::test(function (): void {
 	$configuration = Helpers::createConfiguration(function (Compiler $compiler): void {
 		$compiler->addConfig(Helpers::neon('
 			services:
-				reference: Doctrine\ORM\Repository\DefaultRepositoryFactory()
+				reference: Doctrine\ORM\Mapping\DefaultEntityListenerResolver()
 
 			nettrine.orm:
 				configuration:
-					repositoryFactory: @reference
+					entityListenerResolver: @reference
 		'));
 	});
-	Assert::type(DefaultRepositoryFactory::class, $configuration->getRepositoryFactory());
+	Assert::type(DefaultEntityListenerResolver::class, $configuration->getEntityListenerResolver());
 });
