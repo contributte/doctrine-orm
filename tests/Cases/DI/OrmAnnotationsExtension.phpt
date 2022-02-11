@@ -1,7 +1,5 @@
 <?php declare(strict_types = 1);
 
-namespace Tests\Casesě\DI;
-
 use Doctrine\ORM\Mapping\Driver\AnnotationDriver;
 use Doctrine\Persistence\Mapping\Driver\MappingDriverChain;
 use Nette\DI\Compiler;

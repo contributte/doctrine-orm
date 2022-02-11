@@ -1,7 +1,5 @@
 <?php declare(strict_types = 1);
 
-namespace Tests\Casesě\DI\Configuration;
-
 use Doctrine\ORM\Mapping\AnsiQuoteStrategy;
 use Doctrine\ORM\Mapping\DefaultQuoteStrategy;
 use Nette\DI\Compiler;

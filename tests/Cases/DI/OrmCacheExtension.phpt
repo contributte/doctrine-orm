@@ -1,7 +1,5 @@
 <?php declare(strict_types = 1);
 
-namespace Tests\Casesě\DI;
-
 use Doctrine\Common\Cache\ApcuCache;
 use Doctrine\Common\Cache\ArrayCache;
 use Doctrine\Common\Cache\PhpFileCache;

@@ -1,7 +1,5 @@
 <?php declare(strict_types = 1);
 
-namespace Tests\Casesě\DI\Configuration;
-
 use Doctrine\ORM\Repository\DefaultRepositoryFactory;
 use Nette\DI\Compiler;
 use Ninjify\Nunjuck\Toolkit;

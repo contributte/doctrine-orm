@@ -1,7 +1,5 @@
 <?php declare(strict_types = 1);
 
-namespace Tests\Casesě\E2E;
-
 use Doctrine\Common\Proxy\AbstractProxyFactory;
 use Doctrine\ORM\Configuration;
 use Nette\DI\Compiler;

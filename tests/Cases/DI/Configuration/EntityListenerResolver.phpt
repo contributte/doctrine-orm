@@ -1,7 +1,5 @@
 <?php declare(strict_types = 1);
 
-namespace Tests\Casesě\DI\Configuration;
-
 use Doctrine\ORM\Mapping\DefaultEntityListenerResolver;
 use Nette\DI\Compiler;
 use Nettrine\ORM\Mapping\ContainerEntityListenerResolver;

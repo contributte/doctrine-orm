@@ -1,12 +1,9 @@
 <?php declare(strict_types = 1);
 
-namespace Tests\Casesě\DI;
-
 use Nette\DI\Compiler;
 use Nettrine\ORM\EntityManagerDecorator;
 use Nettrine\ORM\Exception\Logical\InvalidArgumentException;
 use Ninjify\Nunjuck\Toolkit;
-use stdClass;
 use Tester\Assert;
 use Tests\Fixtures\Dummy\DummyConfiguration;
 use Tests\Fixtures\Dummy\DummyEntityManagerDecorator;
