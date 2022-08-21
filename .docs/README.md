@@ -340,7 +340,7 @@ nettrine.orm.xml:
   simple: false
 ```
 
-Using **simple** you will enable [`SimplifiedYamlDriver`](https://www.doctrine-project.org/projects/doctrine-orm/en/2.7/reference/xml-mapping.html#simplified-xml-driver).
+Using **simple** you will enable [`SimplifiedXmlDriver`](https://www.doctrine-project.org/projects/doctrine-orm/en/2.7/reference/xml-mapping.html#simplified-xml-driver).
 
 
 ### YAML
