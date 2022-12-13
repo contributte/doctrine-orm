@@ -1,4 +1,4 @@
-# Nettrine ORM
+# Contributte Doctrine ORM
 
 [Doctrine/ORM](https://www.doctrine-project.org/projects/orm.html) to Nette Framework.
 
@@ -44,7 +44,7 @@ Take advantage of enpowering this package with 3 extra packages:
 
 ### `doctrine/dbal`
 
-This package relies on `doctrine/dbal`, use prepared [nettrine/dbal](https://github.com/nettrine/dbal) integration.
+This package relies on `doctrine/dbal`, use prepared [nettrine/dbal](https://github.com/contributte/doctrine-dbal) integration.
 
 ```bash
 composer require nettrine/dbal
@@ -62,7 +62,7 @@ extensions:
 
 ### `doctrine/cache`
 
-This package relies on `doctrine/cache`, use prepared [nettrine/cache](https://github.com/nettrine/cache) integration.
+This package relies on `doctrine/cache`, use prepared [nettrine/cache](https://github.com/contributte/doctrine-cache) integration.
 
 ```bash
 composer require nettrine/cache
@@ -175,7 +175,7 @@ Take a look at real **Nettrine ORM** configuration example at [contributte/webap
 
 2. At this time we support only 1 connection, the **default** connection. If you need more connections (more databases?), please open an issue or send a PR. Thanks.
 
-3. Are you looking for custom types? You can register custom types in DBAL, see [Nettrine DBAL](https://github.com/nettrine/dbal/blob/master/.docs/README.md#types).
+3. Are you looking for custom types? You can register custom types in DBAL, see [Nettrine DBAL](https://github.com/contributte/doctrine-dbal/blob/master/.docs/README.md#types).
 
 4. You have to configure entity mapping (see below), otherwise you will get `It's a requirement to specify a Metadata Driver` error.
 
@@ -271,7 +271,7 @@ class Customer
 }
 ```
 
-This feature relies on `doctrine/annotations`, use prepared [nettrine/annotations](https://github.com/nettrine/annotations) integration.
+This feature relies on `doctrine/annotations`, use prepared [nettrine/annotations](https://github.com/contributte/doctrine-annotations) integration.
 
 ```bash
 composer require nettrine/annotations

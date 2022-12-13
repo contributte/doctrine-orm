@@ -1,7 +1,7 @@
-![](https://heatbadger.now.sh/github/readme/nettrine/orm/)
+![](https://heatbadger.now.sh/github/readme/contributte/doctrine-orm/)
 
 <p align=center>
-  <a href="https://github.com/nettrine/orm/actions">
+  <a href="https://github.com/contributte/doctrine-orm/actions">
     <img src="https://badgen.net/github/checks/nettrine/orm/master?cache=300">
   </a>
   <a href="https://coveralls.io/r/nettrine/orm">
@@ -18,8 +18,8 @@
   <a href="https://packagist.org/packages/nettrine/orm">
     <img src="https://badgen.net/packagist/php/nettrine/orm">
   </a>
-  <a href="https://github.com/nettrine/orm">
-    <img src="https://badgen.net/github/license/nettrine/orm">
+  <a href="https://github.com/contributte/doctrine-orm">
+    <img src="https://badgen.net/github/license/contributte/doctrine-orm">
   </a>
   <a href="http://bit.ly/apittegitter">
     <img src="https://badgen.net/badge/chat/apitte/cyan">

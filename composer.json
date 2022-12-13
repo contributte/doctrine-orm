@@ -4,7 +4,7 @@
   "keywords": ["nette", "doctrine", "orm", "database"],
   "type": "library",
   "license": "MIT",
-  "homepage": "https://github.com/nettrine/orm",
+  "homepage": "https://github.com/contributte/doctrine-orm",
   "authors": [
     {
       "name": "Milan Felix Šulc",
