@@ -6,10 +6,7 @@ includes:
 
 parameters:
 	level: 9
-	phpVersion: 70200
+	phpVersion: 70400
 
 	paths:
 		- src
-
-	ignoreErrors:
-		- '#Fetching class constant .+ of deprecated class Doctrine\\\w+.+#'
