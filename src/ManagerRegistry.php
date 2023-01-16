@@ -4,10 +4,10 @@ namespace Nettrine\ORM;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\ORMException;
-use Doctrine\ORM\Proxy\Proxy;
+use Doctrine\ORM\Exception\ORMException;
 use Doctrine\Persistence\AbstractManagerRegistry;
 use Doctrine\Persistence\ObjectManager;
+use Doctrine\Persistence\Proxy;
 use Nette\DI\Container;
 
 class ManagerRegistry extends AbstractManagerRegistry
@@ -66,7 +66,7 @@ class ManagerRegistry extends AbstractManagerRegistry
 			}
 		}
 
-		throw ORMException::unknownEntityNamespace($alias);
+		throw new ORMException(sprintf('Unknown Entity namespace alias "%s"', $alias));
 	}
 
 }
