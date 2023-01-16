@@ -11,7 +11,6 @@
   - [Attributes](#attributes)
   - [Annotations](#annotations)
   - [XML](#xml)
-  - [YAML](#yaml)
   - [Helpers](#helpers)
 - [Examples](#examples)
 - [Other](#other)
@@ -188,7 +187,6 @@ Additional metadata provider needs to be registered. We provide bridges for thes
 
 - **attributes** (`Nettrine\ORM\DI\OrmAttributesExtension`)
 - **annotations** (`Nettrine\ORM\DI\OrmAnnotationsExtension`)
-- **yaml** (`Nettrine\ORM\DI\OrmYamlExtension`)
 - **xml** (`Nettrine\ORM\DI\OrmXmlExtension`)
 
 
@@ -343,43 +341,6 @@ nettrine.orm.xml:
 Using **simple** you will enable [`SimplifiedXmlDriver`](https://www.doctrine-project.org/projects/doctrine-orm/en/2.7/reference/xml-mapping.html#simplified-xml-driver).
 
 
-### YAML
-
-Are you using [YAML mapping](https://www.doctrine-project.org/projects/doctrine-orm/en/2.7/reference/yaml-mapping.html) for your entities?
-
-```yaml
-# Doctrine.Tests.ORM.Mapping.User.dcm.yml
-Doctrine\Tests\ORM\Mapping\User:
-  type: entity
-  repositoryClass: Doctrine\Tests\ORM\Mapping\UserRepository
-  table: cms_users
-  schema: schema_name
-  readOnly: true
-  indexes:
-    name_index:
-      columns: [ name ]
-  id:
-    id:
-      type: integer
-      generator:
-        strategy: AUTO
-```
-
-You will also appreciate ORM => YAML bridge, use `OrmYamlExtension`. This is the default configuration:
-
-```neon
-extensions:
-  nettrine.orm: Nettrine\ORM\DI\OrmExtension
-  nettrine.orm.yaml: Nettrine\ORM\DI\OrmYamlExtension
-
-nettrine.orm.yaml:
-  mapping: [
-    namespace: path
-  ]
-  fileExtension: .orm.yml
-```
-
-
 ### Helpers
 
 **MappingHelper**
@@ -400,7 +361,6 @@ class CategoryExtension extends CompilerExtension
         ->addAnnotation('Forum\Modules\Database', __DIR__ . '/../../modules/Forum/Database')
         ->addXml('Gallery1\Modules\Database', __DIR__ . '/../../modules/Gallery1/Database')
         ->addXml('Gallery2\Modules\Database', __DIR__ . '/../../modules/Gallery2/Database', $simple = TRUE)
-        ->addYaml('Users\Modules\Database', __DIR__ . '/../../modules/Users/Database');
   }
 
 }

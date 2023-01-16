@@ -10,7 +10,6 @@ use Nettrine\ORM\DI\OrmAnnotationsExtension;
 use Nettrine\ORM\DI\OrmAttributesExtension;
 use Nettrine\ORM\DI\OrmExtension;
 use Nettrine\ORM\DI\OrmXmlExtension;
-use Nettrine\ORM\DI\OrmYamlExtension;
 use Nettrine\ORM\Exception\Logical\InvalidStateException;
 
 class MappingHelper
@@ -80,23 +79,6 @@ class MappingHelper
 		/** @var ServiceDefinition $chainDriver */
 		$chainDriver = $this->getService(OrmExtension::MAPPING_DRIVER_TAG, 'MappingDriverChain');
 		$chainDriver->addSetup('addDriver', [$xmlDriver, $namespace]);
-
-		return $this;
-	}
-
-	public function addYaml(string $namespace, string $path): self
-	{
-		if (!is_dir($path)) {
-			throw new InvalidStateException(sprintf('Given mapping path "%s" does not exist', $path));
-		}
-
-		/** @var ServiceDefinition $yamlDriver */
-		$yamlDriver = $this->getService(OrmYamlExtension::DRIVER_TAG, 'YamlDriver');
-		$yamlDriver->addSetup(new Statement('$service->getLocator()->addNamespacePrefixes([? => ?])', [$path, $namespace]));
-
-		/** @var ServiceDefinition $chainDriver */
-		$chainDriver = $this->getService(OrmExtension::MAPPING_DRIVER_TAG, 'MappingDriverChain');
-		$chainDriver->addSetup('addDriver', [$yamlDriver, $namespace]);
 
 		return $this;
 	}
