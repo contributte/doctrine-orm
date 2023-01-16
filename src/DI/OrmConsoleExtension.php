@@ -3,11 +3,7 @@
 namespace Nettrine\ORM\DI;
 
 use Doctrine\ORM\Tools\Console\Command\ClearCache\MetadataCommand;
-use Doctrine\ORM\Tools\Console\Command\ConvertMappingCommand;
-use Doctrine\ORM\Tools\Console\Command\EnsureProductionSettingsCommand;
-use Doctrine\ORM\Tools\Console\Command\GenerateEntitiesCommand;
 use Doctrine\ORM\Tools\Console\Command\GenerateProxiesCommand;
-use Doctrine\ORM\Tools\Console\Command\GenerateRepositoriesCommand;
 use Doctrine\ORM\Tools\Console\Command\InfoCommand;
 use Doctrine\ORM\Tools\Console\Command\MappingDescribeCommand;
 use Doctrine\ORM\Tools\Console\Command\RunDqlCommand;
@@ -15,7 +11,6 @@ use Doctrine\ORM\Tools\Console\Command\SchemaTool\CreateCommand;
 use Doctrine\ORM\Tools\Console\Command\SchemaTool\DropCommand;
 use Doctrine\ORM\Tools\Console\Command\SchemaTool\UpdateCommand;
 use Doctrine\ORM\Tools\Console\Command\ValidateSchemaCommand;
-use Doctrine\ORM\Tools\Console\Helper\EntityManagerHelper;
 use Nette\DI\Definitions\ServiceDefinition;
 use Nette\DI\Definitions\Statement;
 use Nette\DI\ServiceCreationException;
@@ -48,11 +43,6 @@ class OrmConsoleExtension extends AbstractExtension
 
 		$builder = $this->getContainerBuilder();
 
-		// Helpers
-		$builder->addDefinition($this->prefix('entityManagerHelper'))
-			->setType(EntityManagerHelper::class)
-			->setAutowired(false);
-
 		// Commands
 		$builder->addDefinition($this->prefix('schemaToolCreateCommand'))
 			->setType(CreateCommand::class)
@@ -66,25 +56,9 @@ class OrmConsoleExtension extends AbstractExtension
 			->setType(DropCommand::class)
 			->addTag('console.command', 'orm:schema-tool:drop')
 			->setAutowired(false);
-		$builder->addDefinition($this->prefix('convertMappingCommand'))
-			->setType(ConvertMappingCommand::class)
-			->addTag('console.command', 'orm:convert-mapping')
-			->setAutowired(false);
-		$builder->addDefinition($this->prefix('ensureProductionSettingsCommand'))
-			->setType(EnsureProductionSettingsCommand::class)
-			->addTag('console.command', 'orm:ensure-production-settings')
-			->setAutowired(false);
-		$builder->addDefinition($this->prefix('generateEntitiesCommand'))
-			->setType(GenerateEntitiesCommand::class)
-			->addTag('console.command', 'orm:generate-entities')
-			->setAutowired(false);
 		$builder->addDefinition($this->prefix('generateProxiesCommand'))
 			->setType(GenerateProxiesCommand::class)
 			->addTag('console.command', 'orm:generate-proxies')
-			->setAutowired(false);
-		$builder->addDefinition($this->prefix('generateRepositoriesCommand'))
-			->setType(GenerateRepositoriesCommand::class)
-			->addTag('console.command', 'orm:generate-repositories')
 			->setAutowired(false);
 		$builder->addDefinition($this->prefix('infoCommand'))
 			->setType(InfoCommand::class)
