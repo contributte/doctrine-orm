@@ -10,6 +10,6 @@ on:
     - cron: "0 8 * * 1"
 
 jobs:
-  coverage:
+  test80:
     name: "Nette Tester"
     uses: contributte/.github/.github/workflows/nette-tester-coverage.yml@v1
