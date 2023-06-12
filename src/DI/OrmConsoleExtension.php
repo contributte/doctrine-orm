@@ -82,25 +82,4 @@ class OrmConsoleExtension extends AbstractExtension
 			->setAutowired(false);
 	}
 
-	/**
-	 * Decorate services
-	 */
-	public function beforeCompile(): void
-	{
-		// Skip if it's not CLI mode
-		if (!$this->cliMode) {
-			return;
-		}
-
-		$builder = $this->getContainerBuilder();
-
-		// Lookup for Symfony Console Application
-		/** @var ServiceDefinition $applicationDef */
-		$applicationDef = $builder->getDefinitionByType(Application::class);
-
-		// Register helpers
-		$entityManagerHelper = $this->prefix('@entityManagerHelper');
-		$applicationDef->addSetup(new Statement('$service->getHelperSet()->set(?,?)', [$entityManagerHelper, 'em']));
-	}
-
 }

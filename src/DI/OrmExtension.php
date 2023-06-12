@@ -16,6 +16,7 @@ use Nettrine\ORM\DI\Definitions\SmartStatement;
 use Nettrine\ORM\EntityManagerDecorator;
 use Nettrine\ORM\Exception\Logical\InvalidArgumentException;
 use Nettrine\ORM\Exception\Logical\InvalidStateException;
+use Nettrine\ORM\ManagerProvider;
 use Nettrine\ORM\ManagerRegistry;
 use Nettrine\ORM\Mapping\ContainerEntityListenerResolver;
 use stdClass;
@@ -181,6 +182,7 @@ final class OrmExtension extends AbstractExtension
 		$decorator = $builder->addDefinition($this->prefix('entityManagerDecorator'))
 			->setFactory($entityManagerDecoratorClass, [$original]);
 
+		// Configuration filters
 		if ($config->configuration->filters !== []) {
 			foreach ($config->configuration->filters as $filterName => $filter) {
 				if ($filter->enabled) {
@@ -189,13 +191,17 @@ final class OrmExtension extends AbstractExtension
 			}
 		}
 
-		// ManagerRegistry
+		// Manager Registry
 		$builder->addDefinition($this->prefix('managerRegistry'))
-			->setType(ManagerRegistry::class)
-			->setArguments([
+			->setType(\Doctrine\Persistence\ManagerRegistry::class)
+			->setFactory(ManagerRegistry::class, [
 				$builder->getDefinitionByType(Connection::class),
 				$this->prefix('@entityManagerDecorator'),
 			]);
+
+		// Manager Provider
+		$builder->addDefinition($this->prefix('managerProvider'))
+			->setFactory(ManagerProvider::class, [$this->prefix('@managerRegistry')]);
 	}
 
 	public function loadMappingConfiguration(): void
