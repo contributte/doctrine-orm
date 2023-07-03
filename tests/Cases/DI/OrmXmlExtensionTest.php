@@ -1,12 +1,12 @@
 <?php declare(strict_types = 1);
 
+use Contributte\Tester\Toolkit;
 use Doctrine\ORM\Mapping\Driver\SimplifiedXmlDriver;
 use Doctrine\ORM\Mapping\Driver\XmlDriver;
 use Doctrine\Persistence\Mapping\Driver\MappingDriverChain;
 use Nette\DI\Compiler;
 use Nette\DI\InvalidConfigurationException;
 use Nettrine\ORM\DI\OrmXmlExtension;
-use Contributte\Tester\Toolkit;
 use Tester\Assert;
 use Tests\Toolkit\Container;
 use Tests\Toolkit\Helpers;
