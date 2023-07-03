@@ -9,11 +9,10 @@ use Nettrine\ORM\Exception\Logical\InvalidArgumentException;
 class ContainerEntityListenerResolver implements EntityListenerResolver
 {
 
-	/** @var Container */
-	private $container;
-
 	/** @var object[] */
-	protected $instances = [];
+	protected array $instances = [];
+
+	private Container $container;
 
 	public function __construct(Container $container)
 	{
@@ -24,7 +23,7 @@ class ContainerEntityListenerResolver implements EntityListenerResolver
 	 * @phpcsSuppress SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingParameterTypeHint
 	 * @param string|NULL $className
 	 */
-	public function clear($className = null): void
+	public function clear(?string $className = null): void
 	{
 		if ($className === null) {
 			$this->instances = [];
@@ -37,25 +36,20 @@ class ContainerEntityListenerResolver implements EntityListenerResolver
 		}
 	}
 
-	/**
-	 * @param object|mixed $object
-	 */
-	public function register($object): void
+	public function register(mixed $object): void
 	{
 		if (!is_object($object)) {
 			throw new InvalidArgumentException(sprintf('An object was expected, but got "%s".', gettype($object)));
 		}
 
-		$this->instances[get_class($object)] = $object;
+		$this->instances[$object::class] = $object;
 	}
 
 	/**
-	 * @param string $className
-	 * @return object
 	 * @phpcsSuppress SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingParameterTypeHint
 	 * @phpcsSuppress SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingReturnTypeHint
 	 */
-	public function resolve($className)
+	public function resolve(string $className): object
 	{
 		/** @var class-string $className */
 		$className = trim($className, '\\');
@@ -66,11 +60,7 @@ class ContainerEntityListenerResolver implements EntityListenerResolver
 
 		$service = $this->container->getByType($className, false);
 
-		if ($service) {
-			$this->instances[$className] = $service;
-		} else {
-			$this->instances[$className] = new $className();
-		}
+		$this->instances[$className] = $service ?: new $className();
 
 		return $this->instances[$className];
 	}

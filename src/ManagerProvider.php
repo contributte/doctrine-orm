@@ -17,12 +17,18 @@ class ManagerProvider implements EntityManagerProvider
 
 	public function getDefaultManager(): EntityManagerInterface
 	{
-		return $this->registry->getManager($this->registry->getDefaultManagerName());
+		/** @var EntityManagerInterface $manager */
+		$manager = $this->registry->getManager($this->registry->getDefaultManagerName());
+
+		return $manager;
 	}
 
 	public function getManager(string $name): EntityManagerInterface
 	{
-		return $this->registry->getManager($name);
+		/** @var EntityManagerInterface $manager */
+		$manager = $this->registry->getManager($name);
+
+		return $manager;
 	}
 
 }

@@ -11,16 +11,13 @@ use Doctrine\ORM\Tools\Console\Command\SchemaTool\CreateCommand;
 use Doctrine\ORM\Tools\Console\Command\SchemaTool\DropCommand;
 use Doctrine\ORM\Tools\Console\Command\SchemaTool\UpdateCommand;
 use Doctrine\ORM\Tools\Console\Command\ValidateSchemaCommand;
-use Nette\DI\Definitions\ServiceDefinition;
-use Nette\DI\Definitions\Statement;
 use Nette\DI\ServiceCreationException;
 use Symfony\Component\Console\Application;
 
 class OrmConsoleExtension extends AbstractExtension
 {
 
-	/** @var bool */
-	private $cliMode;
+	private bool $cliMode;
 
 	public function __construct(?bool $cliMode = null)
 	{
