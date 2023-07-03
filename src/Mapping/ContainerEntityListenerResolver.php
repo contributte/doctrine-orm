@@ -4,7 +4,6 @@ namespace Nettrine\ORM\Mapping;
 
 use Doctrine\ORM\Mapping\EntityListenerResolver;
 use Nette\DI\Container;
-use Nettrine\ORM\Exception\Logical\InvalidArgumentException;
 
 class ContainerEntityListenerResolver implements EntityListenerResolver
 {
@@ -38,12 +37,8 @@ class ContainerEntityListenerResolver implements EntityListenerResolver
 	/**
 	 * {@inheritDoc}
 	 */
-	public function register(mixed $object): void
+	public function register($object): void
 	{
-		if (!is_object($object)) {
-			throw new InvalidArgumentException(sprintf('An object was expected, but got "%s".', gettype($object)));
-		}
-
 		$this->instances[$object::class] = $object;
 	}
 
@@ -52,6 +47,7 @@ class ContainerEntityListenerResolver implements EntityListenerResolver
 	 */
 	public function resolve($className): object
 	{
+		/** @var class-string<object> $className */
 		$className = trim($className, '\\');
 
 		if (isset($this->instances[$className])) {
@@ -60,7 +56,7 @@ class ContainerEntityListenerResolver implements EntityListenerResolver
 
 		$service = $this->container->getByType($className, false);
 
-		$this->instances[$className] = $service ?: new $className();
+		$this->instances[$className] = $service ?? new $className();
 
 		return $this->instances[$className];
 	}
