@@ -1,8 +1,8 @@
 <?php declare(strict_types = 1);
 
+use Contributte\Tester\Toolkit;
 use Doctrine\ORM\Repository\DefaultRepositoryFactory;
 use Nette\DI\Compiler;
-use Ninjify\Nunjuck\Toolkit;
 use Tester\Assert;
 use Tests\Toolkit\Helpers;
 

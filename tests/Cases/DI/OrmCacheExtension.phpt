@@ -1,13 +1,13 @@
 <?php declare(strict_types = 1);
 
+use Contributte\Tester\Toolkit;
 use Doctrine\Common\Cache\ApcuCache;
 use Doctrine\Common\Cache\ArrayCache;
 use Doctrine\Common\Cache\PhpFileCache;
 use Doctrine\Common\Cache\VoidCache;
+use Doctrine\ORM\Decorator\EntityManagerDecorator;
 use Nette\DI\Compiler;
 use Nettrine\ORM\DI\OrmCacheExtension;
-use Nettrine\ORM\EntityManagerDecorator;
-use Ninjify\Nunjuck\Toolkit;
 use Tester\Assert;
 use Tests\Fixtures\Dummy\DummyCacheConfigurationFactory;
 use Tests\Toolkit\Container;

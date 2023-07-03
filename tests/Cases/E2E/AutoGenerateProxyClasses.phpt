@@ -1,9 +1,9 @@
 <?php declare(strict_types = 1);
 
+use Contributte\Tester\Toolkit;
 use Doctrine\Common\Proxy\AbstractProxyFactory;
 use Doctrine\ORM\Configuration;
 use Nette\DI\Compiler;
-use Ninjify\Nunjuck\Toolkit;
 use Tester\Assert;
 use Tests\Toolkit\Container;
 use Tests\Toolkit\Helpers;

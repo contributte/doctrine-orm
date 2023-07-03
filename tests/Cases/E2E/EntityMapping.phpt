@@ -7,7 +7,7 @@ use Nette\DI\Compiler;
 use Nettrine\Annotations\DI\AnnotationsExtension;
 use Nettrine\ORM\DI\OrmAnnotationsExtension;
 use Nettrine\ORM\DI\OrmXmlExtension;
-use Ninjify\Nunjuck\Toolkit;
+use Contributte\Tester\Toolkit;
 use Tester\Assert;
 use Tests\Fixtures\EntityMappingCompilerExtension;
 use Tests\Toolkit\Container;

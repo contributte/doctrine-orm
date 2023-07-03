@@ -1,7 +1,7 @@
 <?php declare(strict_types = 1);
 
-use Nettrine\ORM\ManagerRegistry;
-use Ninjify\Nunjuck\Toolkit;
+use Contributte\Tester\Toolkit;
+use Doctrine\Persistence\ManagerRegistry;
 use Tester\Assert;
 use Tests\Toolkit\Container;
 

@@ -1,9 +1,9 @@
 <?php declare(strict_types = 1);
 
+use Doctrine\ORM\Decorator\EntityManagerDecorator;
 use Nette\DI\Compiler;
-use Nettrine\ORM\EntityManagerDecorator;
 use Nettrine\ORM\Exception\Logical\InvalidArgumentException;
-use Ninjify\Nunjuck\Toolkit;
+use Contributte\Tester\Toolkit;
 use Tester\Assert;
 use Tests\Fixtures\Dummy\DummyConfiguration;
 use Tests\Fixtures\Dummy\DummyEntityManagerDecorator;
