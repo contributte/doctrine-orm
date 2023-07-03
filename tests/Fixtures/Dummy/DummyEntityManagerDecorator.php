@@ -2,9 +2,9 @@
 
 namespace Tests\Fixtures\Dummy;
 
-use Nettrine\ORM\EntityManagerDecorator;
+use Doctrine\ORM\Decorator\EntityManagerDecorator;
 
-class DummyEntityManagerDecorator extends EntityManagerDecorator
+final class DummyEntityManagerDecorator extends EntityManagerDecorator
 {
 
 }

@@ -2,7 +2,7 @@
 
 use Doctrine\ORM\Mapping\UnderscoreNamingStrategy;
 use Nette\DI\Compiler;
-use Ninjify\Nunjuck\Toolkit;
+use Contributte\Tester\Toolkit;
 use Tester\Assert;
 use Tests\Toolkit\Helpers;
 

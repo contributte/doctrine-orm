@@ -1,9 +1,9 @@
 <?php declare(strict_types = 1);
 
+use Contributte\Tester\Toolkit;
 use Nette\DI\CompilerExtension;
 use Nettrine\ORM\DI\Helpers\MappingHelper;
 use Nettrine\ORM\Exception\Logical\InvalidStateException;
-use Ninjify\Nunjuck\Toolkit;
 use Tester\Assert;
 
 require_once __DIR__ . '/../../../bootstrap.php';

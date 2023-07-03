@@ -20,10 +20,9 @@ class ContainerEntityListenerResolver implements EntityListenerResolver
 	}
 
 	/**
-	 * @phpcsSuppress SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingParameterTypeHint
-	 * @param string|NULL $className
+	 * {@inheritDoc}
 	 */
-	public function clear(?string $className = null): void
+	public function clear($className = null): void
 	{
 		if ($className === null) {
 			$this->instances = [];
@@ -36,6 +35,9 @@ class ContainerEntityListenerResolver implements EntityListenerResolver
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public function register(mixed $object): void
 	{
 		if (!is_object($object)) {
@@ -46,12 +48,10 @@ class ContainerEntityListenerResolver implements EntityListenerResolver
 	}
 
 	/**
-	 * @phpcsSuppress SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingParameterTypeHint
-	 * @phpcsSuppress SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingReturnTypeHint
+	 * {@inheritDoc}
 	 */
-	public function resolve(string $className): object
+	public function resolve($className): object
 	{
-		/** @var class-string $className */
 		$className = trim($className, '\\');
 
 		if (isset($this->instances[$className])) {

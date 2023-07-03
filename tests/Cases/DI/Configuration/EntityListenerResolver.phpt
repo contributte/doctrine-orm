@@ -3,7 +3,7 @@
 use Doctrine\ORM\Mapping\DefaultEntityListenerResolver;
 use Nette\DI\Compiler;
 use Nettrine\ORM\Mapping\ContainerEntityListenerResolver;
-use Ninjify\Nunjuck\Toolkit;
+use Contributte\Tester\Toolkit;
 use Tester\Assert;
 use Tests\Toolkit\Helpers;
 

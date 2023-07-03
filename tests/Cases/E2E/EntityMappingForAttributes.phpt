@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping\Driver\AttributeDriver;
 use Doctrine\Persistence\Mapping\Driver\MappingDriverChain;
 use Nette\DI\Compiler;
 use Nettrine\ORM\DI\OrmAttributesExtension;
-use Ninjify\Nunjuck\Toolkit;
+use Contributte\Tester\Toolkit;
 use Tester\Assert;
 use Tests\Fixtures\EntityMappingCompilerExtensionForAttributes;
 use Tests\Toolkit\Container;

@@ -3,7 +3,7 @@
 use Doctrine\ORM\Mapping\AnsiQuoteStrategy;
 use Doctrine\ORM\Mapping\DefaultQuoteStrategy;
 use Nette\DI\Compiler;
-use Ninjify\Nunjuck\Toolkit;
+use Contributte\Tester\Toolkit;
 use Tester\Assert;
 use Tests\Toolkit\Helpers;
 

@@ -7,7 +7,7 @@ use Nette\DI\InvalidConfigurationException;
 use Nette\DI\ServiceCreationException;
 use Nettrine\Annotations\DI\AnnotationsExtension;
 use Nettrine\ORM\DI\OrmAnnotationsExtension;
-use Ninjify\Nunjuck\Toolkit;
+use Contributte\Tester\Toolkit;
 use Tester\Assert;
 use Tests\Toolkit\Container;
 use Tests\Toolkit\Helpers;
