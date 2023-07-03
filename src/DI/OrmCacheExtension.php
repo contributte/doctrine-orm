@@ -18,18 +18,6 @@ use stdClass;
 class OrmCacheExtension extends AbstractExtension
 {
 
-	/** @var Definition|string|null */
-	private $defaultDriverDef;
-
-	private function getServiceSchema(): Schema
-	{
-		return Expect::anyOf(
-			Expect::string(),
-			Expect::array(),
-			Expect::type(Statement::class)
-		)->nullable();
-	}
-
 	public function getConfigSchema(): Schema
 	{
 		return Expect::structure([
@@ -54,13 +42,22 @@ class OrmCacheExtension extends AbstractExtension
 		$this->loadSecondLevelCacheConfiguration();
 	}
 
+	private function getServiceSchema(): Schema
+	{
+		return Expect::anyOf(
+			Expect::string(),
+			Expect::array(),
+			Expect::type(Statement::class)
+		)->nullable();
+	}
+
 	private function loadQueryCacheConfiguration(): void
 	{
 		$config = $this->config;
 		$configurationDef = $this->getConfigurationDef();
 
 		$configurationDef->addSetup('setQueryCacheImpl', [
-			$this->loadSpecificDriver($config->queryCache, 'queryCache'),
+			$this->buildCacheDriver($config->queryCache, 'queryCache'),
 		]);
 	}
 
@@ -70,7 +67,7 @@ class OrmCacheExtension extends AbstractExtension
 		$configurationDef = $this->getConfigurationDef();
 
 		$configurationDef->addSetup('setResultCacheImpl', [
-			$this->loadSpecificDriver($config->resultCache, 'resultCache'),
+			$this->buildCacheDriver($config->resultCache, 'resultCache'),
 		]);
 	}
 
@@ -80,7 +77,7 @@ class OrmCacheExtension extends AbstractExtension
 		$configurationDef = $this->getConfigurationDef();
 
 		$configurationDef->addSetup('setHydrationCacheImpl', [
-			$this->loadSpecificDriver($config->hydrationCache, 'hydrationCache'),
+			$this->buildCacheDriver($config->hydrationCache, 'hydrationCache'),
 		]);
 	}
 
@@ -90,7 +87,7 @@ class OrmCacheExtension extends AbstractExtension
 		$configurationDef = $this->getConfigurationDef();
 
 		$configurationDef->addSetup('setMetadataCacheImpl', [
-			$this->loadSpecificDriver($config->metadataCache, 'metadataCache'),
+			$this->buildCacheDriver($config->metadataCache, 'metadataCache'),
 		]);
 	}
 
@@ -101,7 +98,8 @@ class OrmCacheExtension extends AbstractExtension
 		$configurationDef = $this->getConfigurationDef();
 
 		if ($config->secondLevelCache !== null) {
-			$cacheConfigurationDef = $this->getHelper()->getDefinitionFromConfig($config->secondLevelCache, $this->prefix('cacheConfiguration'));
+			$cacheConfigurationDef = $builder->addDefinition($this->prefix('cacheConfiguration'))
+				->setFactory($config->secondLevelCache);
 		} else {
 			$regionsDef = $builder->addDefinition($this->prefix('regions'))
 				->setFactory(RegionsConfiguration::class)
@@ -111,7 +109,7 @@ class OrmCacheExtension extends AbstractExtension
 				->setFactory(DefaultCacheFactory::class)
 				->setArguments([
 					$regionsDef,
-					$this->loadSpecificDriver(null, 'secondLevelCache'),
+					$this->buildCacheDriver(null, 'secondLevelCache'),
 				])
 				->setAutowired(false);
 
@@ -129,49 +127,32 @@ class OrmCacheExtension extends AbstractExtension
 
 	/**
 	 * @param string|mixed[]|Statement|null $config
-	 * @return Definition|string
 	 */
-	private function loadSpecificDriver($config, string $prefix)
+	private function buildCacheDriver(string|array|Statement|null $config, string $prefix): Definition|string
 	{
+		$builder = $this->getContainerBuilder();
+
+		// Driver is defined
 		if ($config !== null && $config !== []) { // Nette converts explicit null to an empty array
-			$driverName = $this->prefix($prefix);
-			$driverDef = $this->getHelper()->getDefinitionFromConfig($config, $driverName);
-
-			// If service is extension specific, then disable autowiring
-			if ($driverDef instanceof Definition && $driverDef->getName() === $driverName) {
-				$driverDef->setAutowired(false);
-			}
-
-			return $driverDef;
+			return $builder->addDefinition($this->prefix($prefix))
+				->setFactory($config)
+				->setAutowired(false);
 		}
 
-		return $this->loadDefaultDriver();
-	}
-
-	/**
-	 * @return Definition|string
-	 */
-	private function loadDefaultDriver()
-	{
-		$config = $this->config;
-
-		if ($this->defaultDriverDef !== null) {
-			return $this->defaultDriverDef;
+		// If there is default cache, don't create it
+		if ($builder->hasDefinition($this->prefix('defaultCache'))) {
+			return $builder->getDefinition($this->prefix('defaultCache'));
 		}
 
-		if ($config->defaultDriver === null || $config->defaultDriver === []) { // Nette converts explicit null to an empty array
-			return $this->defaultDriverDef = '@' . Cache::class;
+		// Create default driver
+		if ($this->config->defaultDriver !== null && $this->config->defaultDriver !== []) { // Nette converts explicit null to an empty array
+			return $builder->addDefinition($this->prefix('defaultCache'))
+				->setFactory($this->config->defaultDriver)
+				->setAutowired(false);
 		}
 
-		$defaultDriverName = $this->prefix('defaultCache');
-		$this->defaultDriverDef = $defaultDriverDef = $this->getHelper()->getDefinitionFromConfig($config->defaultDriver, $defaultDriverName);
-
-		// If service is extension specific, then disable autowiring
-		if ($defaultDriverDef instanceof Definition && $defaultDriverDef->getName() === $defaultDriverName) {
-			$defaultDriverDef->setAutowired(false);
-		}
-
-		return $defaultDriverDef;
+		// No default driver provider, fallback to Cache::class
+		return '@' . Cache::class;
 	}
 
 }
