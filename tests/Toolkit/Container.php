@@ -12,11 +12,10 @@ use Nettrine\ORM\DI\OrmExtension;
 final class Container
 {
 
-	/** @var string */
-	private $key;
+	private string $key;
 
 	/** @var callable[] */
-	private $onCompile = [];
+	private array $onCompile = [];
 
 	public function __construct(string $key)
 	{

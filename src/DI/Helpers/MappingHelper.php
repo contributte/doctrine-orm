@@ -15,8 +15,7 @@ use Nettrine\ORM\Exception\Logical\InvalidStateException;
 class MappingHelper
 {
 
-	/** @var CompilerExtension */
-	private $extension;
+	private CompilerExtension $extension;
 
 	private function __construct(CompilerExtension $extension)
 	{

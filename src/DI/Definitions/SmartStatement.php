@@ -8,10 +8,7 @@ use Nettrine\ORM\Exception\Logical\InvalidArgumentException;
 final class SmartStatement
 {
 
-	/**
-	 * @param mixed $service
-	 */
-	public static function from($service): Statement
+	public static function from(mixed $service): Statement
 	{
 		if (is_string($service)) {
 			return new Statement($service);
