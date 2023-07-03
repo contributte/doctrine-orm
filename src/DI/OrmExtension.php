@@ -5,7 +5,6 @@ namespace Nettrine\ORM\DI;
 use Doctrine\Common\Proxy\AbstractProxyFactory;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\Configuration;
-use Doctrine\ORM\Decorator\EntityManagerDecorator;
 use Doctrine\ORM\EntityManager as DoctrineEntityManager;
 use Doctrine\ORM\Mapping\UnderscoreNamingStrategy;
 use Doctrine\Persistence\Mapping\Driver\MappingDriverChain;
@@ -13,6 +12,7 @@ use Nette\DI\Definitions\Statement;
 use Nette\DI\Helpers;
 use Nette\Schema\Expect;
 use Nette\Schema\Schema;
+use Nettrine\ORM\Decorator\SimpleEntityManagerDecorator;
 use Nettrine\ORM\DI\Definitions\SmartStatement;
 use Nettrine\ORM\Exception\Logical\InvalidArgumentException;
 use Nettrine\ORM\Exception\Logical\InvalidStateException;
@@ -35,7 +35,7 @@ final class OrmExtension extends AbstractExtension
 		$proxyDir = isset($parameters['tempDir']) ? $parameters['tempDir'] . '/proxies' : null;
 
 		return Expect::structure([
-			'entityManagerDecoratorClass' => Expect::string(EntityManagerDecorator::class),
+			'entityManagerDecoratorClass' => Expect::string(SimpleEntityManagerDecorator::class),
 			'configurationClass' => Expect::string(Configuration::class),
 			'configuration' => Expect::structure([
 				'proxyDir' => Expect::string($proxyDir)->nullable(),
@@ -193,15 +193,16 @@ final class OrmExtension extends AbstractExtension
 
 		// Manager Registry
 		$builder->addDefinition($this->prefix('managerRegistry'))
-			->setType(\Doctrine\Persistence\ManagerRegistry::class)
 			->setFactory(ManagerRegistry::class, [
-				$builder->getDefinitionByType(Connection::class),
+				'@' . Connection::class,
 				$this->prefix('@entityManagerDecorator'),
 			]);
 
 		// Manager Provider
 		$builder->addDefinition($this->prefix('managerProvider'))
-			->setFactory(ManagerProvider::class, [$this->prefix('@managerRegistry')]);
+			->setFactory(ManagerProvider::class, [
+				$this->prefix('@managerRegistry'),
+			]);
 	}
 
 	public function loadMappingConfiguration(): void
