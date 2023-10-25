@@ -12,6 +12,7 @@ use Tests\Fixtures\Dummy\DummyEntityManagerDecorator;
 use Tests\Fixtures\Dummy\DummyFilter;
 use Tests\Fixtures\Dummy\DummyIdentity;
 use Tests\Toolkit\Container;
+use Tests\Toolkit\Helpers;
 
 require_once __DIR__ . '/../../bootstrap.php';
 
