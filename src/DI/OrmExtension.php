@@ -43,6 +43,7 @@ final class OrmExtension extends AbstractExtension
 				'proxyNamespace' => Expect::string('Nettrine\Proxy')->nullable(),
 				'metadataDriverImpl' => Expect::string(),
 				'entityNamespaces' => Expect::array(),
+				'resolveTargetEntities' => Expect::array(),
 				'customStringFunctions' => Expect::array(),
 				'customNumericFunctions' => Expect::array(),
 				'customDatetimeFunctions' => Expect::array(),
@@ -188,6 +189,15 @@ final class OrmExtension extends AbstractExtension
 				if ($filter->enabled) {
 					$decorator->addSetup(new Statement('$service->getFilters()->enable(?)', [$filterName]));
 				}
+			}
+		}
+
+		if ($config->configuration->resolveTargetEntities !== []) {
+			$resolver = $builder->addDefinition($this->prefix('targetEntityResolver'))
+				->setType(ResolveTargetEntityListener::class);
+
+			foreach ($config->configuration->resolveTargetEntities as $name => $implementation) {
+				$resolver->addSetup('addResolveTargetEntity', [$name, $implementation, []]);
 			}
 		}
 
