@@ -2,14 +2,17 @@
 
 namespace Tests\Fixtures\Dummy;
 
-use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\Column;
+use Doctrine\ORM\Mapping\Entity;
+use Doctrine\ORM\Mapping\GeneratedValue;
+use Doctrine\ORM\Mapping\Id;
 
-#[ORM\Entity]
+#[Entity]
 class DummyEntity implements DummyIdentity
 {
-	#[ORM\Column(type: 'integer', unique: true, nullable: false)]
-	#[ORM\GeneratedValue(strategy: 'IDENTITY')]
-	#[ORM\Id]
+	#[Column(type: 'integer', unique: true, nullable: false)]
+	#[GeneratedValue(strategy: 'IDENTITY')]
+	#[Id]
 	private int $id;
 
 
