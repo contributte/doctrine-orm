@@ -85,7 +85,7 @@ Toolkit::test(function (): void {
 			$compiler->addConfig(Helpers::neon('
 				nettrine.orm.attributes:
 					mapping:
-						App\Model\Entity: %appDir%
+						Tests\Fixtures\Dummy: %appDir%
 				'));
 
 			$compiler->addConfig([

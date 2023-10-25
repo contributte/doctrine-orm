@@ -11,6 +11,7 @@ use Nette\DI\InvalidConfigurationException;
 use Nettrine\ORM\DI\OrmAttributesExtension;
 use Contributte\Tester\Toolkit;
 use Tester\Assert;
+use Tests\Fixtures\Dummy\DummyEntity;
 use Tests\Toolkit\Container;
 use Tests\Toolkit\Helpers;
 
@@ -25,7 +26,7 @@ Toolkit::test(function (): void {
 			$compiler->addConfig(Helpers::neon('
 				nettrine.orm.attributes:
 					mapping:
-						App\Model\Entity: %appDir%
+						Tests\Fixtures\Dummy: %appDir%
 				'));
 		})
 		->build();
@@ -37,7 +38,7 @@ Toolkit::test(function (): void {
 
 	/** @var AttributeDriver $attributeDriver */
 	$attributeDriver = current($driver->getDrivers());
-	Assert::equal([], $attributeDriver->getAllClassNames());
+	Assert::equal([DummyEntity::class], $attributeDriver->getAllClassNames());
 });
 
 // Error (missing mapping)
