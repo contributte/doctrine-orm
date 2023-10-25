@@ -10,14 +10,15 @@ use Doctrine\ORM\Mapping\Id;
 #[Entity]
 class DummyEntity implements DummyIdentity
 {
+
 	#[Column(type: 'integer', unique: true, nullable: false)]
 	#[GeneratedValue(strategy: 'IDENTITY')]
 	#[Id]
 	private int $id;
 
-
 	public function getId(): int
 	{
 		return $this->id;
 	}
+
 }
