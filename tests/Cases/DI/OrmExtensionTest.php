@@ -3,11 +3,14 @@
 use Contributte\Tester\Toolkit;
 use Doctrine\ORM\Decorator\EntityManagerDecorator;
 use Nette\DI\Compiler;
+use Nettrine\ORM\DI\OrmAttributesExtension;
 use Nettrine\ORM\Exception\Logical\InvalidArgumentException;
 use Tester\Assert;
 use Tests\Fixtures\Dummy\DummyConfiguration;
+use Tests\Fixtures\Dummy\DummyEntity;
 use Tests\Fixtures\Dummy\DummyEntityManagerDecorator;
 use Tests\Fixtures\Dummy\DummyFilter;
+use Tests\Fixtures\Dummy\DummyIdentity;
 use Tests\Toolkit\Container;
 
 require_once __DIR__ . '/../../bootstrap.php';
@@ -70,6 +73,37 @@ Toolkit::test(function (): void {
 
 	Assert::equal(true, $filters->has('autoDisabledFilter'));
 	Assert::equal(false, $filters->isEnabled('autoDisabledFilter'));
+});
+
+// ResolveTargetEntityListener
+Toolkit::test(function (): void {
+	$container = Container::of()
+		->withDefaults()
+		->withCompiler(static function (Compiler $compiler): void {
+			$compiler->addExtension('nettrine.orm.attributes', new OrmAttributesExtension());
+			$compiler->addConfig(Helpers::neon('
+				nettrine.orm.attributes:
+					mapping:
+						App\Model\Entity: %appDir%
+				'));
+
+			$compiler->addConfig([
+				'nettrine.orm' => [
+					'configuration' => [
+						'resolveTargetEntities' => [
+							DummyIdentity::class => DummyEntity::class,
+						],
+					],
+				],
+			]);
+		})
+		->build();
+
+	/** @var EntityManagerDecorator $em */
+	$em = $container->getService('nettrine.orm.entityManagerDecorator');
+	$cm = $em->getClassMetadata(DummyIdentity::class);
+
+	Assert::equal($cm->name, DummyEntity::class);
 });
 
 // Error (configuration subclass)
