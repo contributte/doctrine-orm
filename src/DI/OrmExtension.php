@@ -21,6 +21,7 @@ use Nettrine\ORM\ManagerProvider;
 use Nettrine\ORM\ManagerRegistry;
 use Nettrine\ORM\Mapping\ContainerEntityListenerResolver;
 use stdClass;
+use Tracy\Debugger;
 
 /**
  * @property-read stdClass $config
@@ -29,6 +30,13 @@ final class OrmExtension extends AbstractExtension
 {
 
 	public const MAPPING_DRIVER_TAG = 'nettrine.orm.mapping.driver';
+
+	public function __construct(private ?bool $debugMode = null)
+	{
+		if ($this->debugMode === null) {
+			$this->debugMode = class_exists(Debugger::class) && Debugger::$productionMode === false;
+		}
+	}
 
 	public function getConfigSchema(): Schema
 	{
@@ -40,7 +48,7 @@ final class OrmExtension extends AbstractExtension
 			'configurationClass' => Expect::string(Configuration::class),
 			'configuration' => Expect::structure([
 				'proxyDir' => Expect::string($proxyDir)->nullable(),
-				'autoGenerateProxyClasses' => Expect::anyOf(Expect::int(), Expect::bool(), Expect::type(Statement::class))->default(AbstractProxyFactory::AUTOGENERATE_FILE_NOT_EXISTS),
+				'autoGenerateProxyClasses' => Expect::anyOf(Expect::int(), Expect::bool(), Expect::type(Statement::class))->default(true),
 				'proxyNamespace' => Expect::string('Nettrine\Proxy')->nullable(),
 				'metadataDriverImpl' => Expect::string(),
 				'entityNamespaces' => Expect::array(),
@@ -94,8 +102,9 @@ final class OrmExtension extends AbstractExtension
 		}
 
 		if (is_bool($config->autoGenerateProxyClasses)) {
+			$defaultStrategy = $this->debugMode === true ? AbstractProxyFactory::AUTOGENERATE_FILE_NOT_EXISTS_OR_CHANGED : AbstractProxyFactory::AUTOGENERATE_FILE_NOT_EXISTS;
 			$configuration->addSetup('setAutoGenerateProxyClasses', [
-				$config->autoGenerateProxyClasses === true ? AbstractProxyFactory::AUTOGENERATE_FILE_NOT_EXISTS : AbstractProxyFactory::AUTOGENERATE_NEVER,
+				$config->autoGenerateProxyClasses === true ? $defaultStrategy : AbstractProxyFactory::AUTOGENERATE_NEVER,
 			]);
 		} elseif (is_int($config->autoGenerateProxyClasses)) {
 			$configuration->addSetup('setAutoGenerateProxyClasses', [$config->autoGenerateProxyClasses]);

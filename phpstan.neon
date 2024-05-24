@@ -14,3 +14,12 @@ parameters:
 	paths:
 		- src
 		- .docs
+
+	ignoreErrors:
+		-
+			message: """
+				#^Fetching class constant class of deprecated class Doctrine\\\\ORM\\\\Mapping\\\\Driver\\\\AnnotationDriver\\:
+				This class will be removed in 3\\.0 without replacement\\.$#
+			"""
+			count: 2
+			path: src/DI/OrmAnnotationsExtension.php
