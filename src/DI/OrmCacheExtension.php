@@ -2,15 +2,19 @@
 
 namespace Nettrine\ORM\DI;
 
-use Doctrine\Common\Cache\Cache;
+use Contributte\Psr6\CachePool;
+use Contributte\Psr6\CachePoolFactory;
 use Doctrine\ORM\Cache\CacheConfiguration;
 use Doctrine\ORM\Cache\DefaultCacheFactory;
 use Doctrine\ORM\Cache\RegionsConfiguration;
+use Nette\Caching\Cache;
+use Nette\Caching\Storage;
 use Nette\DI\Definitions\Definition;
 use Nette\DI\Definitions\Statement;
 use Nette\Schema\Expect;
 use Nette\Schema\Schema;
 use stdClass;
+use Throwable;
 
 /**
  * @property-read stdClass $config
@@ -30,7 +34,7 @@ class OrmCacheExtension extends AbstractExtension
 		]);
 	}
 
-	public function loadConfiguration(): void
+	public function beforeCompile(): void
 	{
 		// Validates needed extension
 		$this->validate();
@@ -56,7 +60,7 @@ class OrmCacheExtension extends AbstractExtension
 		$config = $this->config;
 		$configurationDef = $this->getConfigurationDef();
 
-		$configurationDef->addSetup('setQueryCacheImpl', [
+		$configurationDef->addSetup('setQueryCache', [
 			$this->buildCacheDriver($config->queryCache, 'queryCache'),
 		]);
 	}
@@ -66,7 +70,7 @@ class OrmCacheExtension extends AbstractExtension
 		$config = $this->config;
 		$configurationDef = $this->getConfigurationDef();
 
-		$configurationDef->addSetup('setResultCacheImpl', [
+		$configurationDef->addSetup('setResultCache', [
 			$this->buildCacheDriver($config->resultCache, 'resultCache'),
 		]);
 	}
@@ -76,7 +80,7 @@ class OrmCacheExtension extends AbstractExtension
 		$config = $this->config;
 		$configurationDef = $this->getConfigurationDef();
 
-		$configurationDef->addSetup('setHydrationCacheImpl', [
+		$configurationDef->addSetup('setHydrationCache', [
 			$this->buildCacheDriver($config->hydrationCache, 'hydrationCache'),
 		]);
 	}
@@ -86,7 +90,7 @@ class OrmCacheExtension extends AbstractExtension
 		$config = $this->config;
 		$configurationDef = $this->getConfigurationDef();
 
-		$configurationDef->addSetup('setMetadataCacheImpl', [
+		$configurationDef->addSetup('setMetadataCache', [
 			$this->buildCacheDriver($config->metadataCache, 'metadataCache'),
 		]);
 	}
@@ -133,15 +137,13 @@ class OrmCacheExtension extends AbstractExtension
 	/**
 	 * @param string|mixed[]|Statement|null $config
 	 */
-	private function buildCacheDriver(string|array|Statement|null $config, string $prefix): Definition|string
+	private function buildCacheDriver(string|array|Statement|null $config, string $prefix): Definition
 	{
 		$builder = $this->getContainerBuilder();
 
 		// Driver is defined
 		if ($config !== null && $config !== []) { // Nette converts explicit null to an empty array
-			return $builder->addDefinition($this->prefix($prefix))
-				->setFactory($config)
-				->setAutowired(false);
+			return $this->buildCacheDriverDefinition($config, $prefix);
 		}
 
 		// If there is default cache, don't create it
@@ -149,15 +151,107 @@ class OrmCacheExtension extends AbstractExtension
 			return $builder->getDefinition($this->prefix('defaultCache'));
 		}
 
-		// Create default driver
-		if ($this->config->defaultDriver !== null && $this->config->defaultDriver !== []) { // Nette converts explicit null to an empty array
-			return $builder->addDefinition($this->prefix('defaultCache'))
-				->setFactory($this->config->defaultDriver)
+		return $this->buildCacheDriverDefinition($this->config->defaultDriver, 'defaultCache');
+	}
+
+	/**
+	 * @param string|mixed[]|Statement|null $config
+	 */
+	private function buildCacheDriverDefinition(string|array|Statement|null $config, string $prefix): Definition
+	{
+		$builder = $this->getContainerBuilder();
+
+		// Driver is defined
+		if ($config !== null && $config !== []) { // Nette converts explicit null to an empty array
+			if (is_string($config)) {
+				$config = $this->resolveCacheDriverDefinitionString($config, $this->prefix($prefix));
+			}
+
+			if ($config instanceof Statement) {
+				$entity = $config->getEntity();
+
+				if (is_string($entity) && is_a($entity, Storage::class, true)) {
+					$entity = Cache::class;
+					$config = new Statement(
+						$entity,
+						[
+							'storage' => $config,
+							'namespace' => $this->prefix($prefix),
+						]
+					);
+				}
+
+				if (is_string($entity) && is_a($entity, Cache::class, true)) {
+					return $builder->addDefinition($this->prefix($prefix))
+						->setFactory(new Statement(CachePool::class, [$config]))
+						->setAutowired(false);
+				}
+			}
+
+			return $builder->addDefinition($this->prefix($prefix))
+				->setFactory($config)
 				->setAutowired(false);
 		}
 
-		// No default driver provider, fallback to Cache::class
-		return '@' . Cache::class;
+		// No default driver provided, create CacheItemPoolInterface with autowired Storage
+
+		// ICachePoolFactory doesn't have to be registered in DI container
+		if ($builder->hasDefinition($this->prefix('cachePoolFactory')) === false) {
+			$builder->addDefinition($this->prefix('cachePoolFactory'))
+				->setFactory(CachePoolFactory::class)
+				->setAutowired(false);
+		}
+
+		return $builder->addDefinition($this->prefix($prefix))
+			->setFactory('@' . $this->prefix('cachePoolFactory') . '::create', [$this->prefix($prefix)])
+			->setAutowired(false);
+	}
+
+	private function resolveCacheDriverDefinitionString(string $config, string $cacheNamespace): string|Statement
+	{
+		$builder = $this->getContainerBuilder();
+
+		if (str_starts_with($config, '@')) {
+			$service = substr($config, 1);
+
+			if ($builder->hasDefinition($service)) {
+				$definition = $builder->getDefinition($service);
+			} else {
+				try {
+					$definition = $builder->getDefinitionByType($service);
+				} catch (Throwable) {
+					$definition = null;
+				}
+			}
+
+			$type = $definition?->getType();
+
+			if ($type === null) {
+				return $config;
+			}
+
+			if (is_a($type, Storage::class, true)) {
+				return new Statement(
+					Cache::class,
+					[
+						'storage' => $config,
+						'namespace' => $cacheNamespace,
+					]
+				);
+			}
+
+			if (is_a($type, Cache::class, true)) {
+				return new Statement(CachePool::class, [$config]);
+			}
+
+			return $config;
+		}
+
+		if (is_a($config, Storage::class, true)) {
+			return new Statement($config);
+		}
+
+		return $config;
 	}
 
 }

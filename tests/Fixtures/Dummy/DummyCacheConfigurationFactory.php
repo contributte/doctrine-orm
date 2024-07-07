@@ -2,18 +2,20 @@
 
 namespace Tests\Fixtures\Dummy;
 
-use Doctrine\Common\Cache\ArrayCache;
+use Contributte\Psr6\CachePool;
 use Doctrine\ORM\Cache\CacheConfiguration;
 use Doctrine\ORM\Cache\DefaultCacheFactory;
 use Doctrine\ORM\Cache\RegionsConfiguration;
+use Nette\Caching\Cache;
+use Nette\Caching\Storage;
 
 final class DummyCacheConfigurationFactory
 {
 
-	public static function create(): CacheConfiguration
+	public static function create(Storage $cacheStorage): CacheConfiguration
 	{
 		$regionsConfiguration = new RegionsConfiguration();
-		$cache = new ArrayCache();
+		$cache = new CachePool(new Cache($cacheStorage, self::class));
 		$cacheFactory = new DefaultCacheFactory($regionsConfiguration, $cache);
 
 		$cacheConfiguration = new CacheConfiguration();

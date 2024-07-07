@@ -7,6 +7,7 @@
 - [Setup](#setup)
 - [Relying](#relying)
 - [Configuration](#configuration)
+  - [Caching](#caching)
 - [Mapping](#mapping)
   - [Attributes](#attributes)
   - [XML](#xml)
@@ -33,10 +34,9 @@ extensions:
 
 ## Relying
 
-Take advantage of enpowering this package with 3 extra packages:
+Take advantage of empowering this package with 2 extra packages:
 
 - `doctrine/dbal`
-- `doctrine/cache`
 - `symfony/console`
 
 
@@ -57,56 +57,6 @@ extensions:
 
 > Doctrine DBAL provides powerful database abstraction layer with many features for database schema introspection, schema management and PDO abstraction.
 
-
-### `doctrine/cache`
-
-This package relies on `doctrine/cache`, use prepared [nettrine/cache](https://github.com/contributte/doctrine-cache) integration.
-
-```bash
-composer require nettrine/cache
-```
-
-```neon
-extensions:
-  nettrine.cache: Nettrine\Cache\DI\CacheExtension
-```
-
-[Doctrine ORM](https://www.doctrine-project.org/projects/orm.html) needs [Doctrine Cache](https://www.doctrine-project.org/projects/cache.html) to be configured. If you register `nettrine/cache` extension it will detect it automatically.
-
-`CacheExtension` sets up cache for all important parts: `queryCache`, `resultCache`, `hydrationCache`, `metadataCache` and `secondLevelCache`.
-
-This is the default configuration, it uses the autowired driver.
-
-```neon
-extensions:
-  nettrine.orm: Nettrine\ORM\DI\OrmExtension
-  nettrine.orm.cache: Nettrine\ORM\DI\OrmCacheExtension
-```
-
-You can also specify a single driver or change the `nettrine.orm.cache.defaultDriver` for all of them.
-
-```neon
-nettrine.orm.cache:
-  defaultDriver: App\DefaultOrmCacheDriver
-  queryCache: App\SpecialDriver
-  resultCache: App\SpecialOtherDriver
-  hydrationCache: App\SpecialDriver('foo')
-  metadataCache: @cacheDriver
-```
-
-`secondLevelCache` uses autowired driver (or `defaultDriver`, if specified) for `CacheConfiguration` setup, but you can also replace it with custom `CacheConfiguration`.
-
-```neon
-nettrine.orm.cache:
-  secondLevelCache: @cacheConfigurationFactory::create('bar')
-```
-
-You can turn off `secondLevelCache` by setting it to `false`:
-
-```neon
-nettrine.orm.cache:
-  secondLevelCache: false
-```
 
 ### `symfony/console`
 
@@ -182,6 +132,53 @@ Take a look at real **Nettrine ORM** configuration example at [contributte/webap
 3. Are you looking for custom types? You can register custom types in DBAL, see [Nettrine DBAL](https://github.com/contributte/doctrine-dbal/blob/master/.docs/README.md#types).
 
 4. You have to configure entity mapping (see below), otherwise you will get `It's a requirement to specify a Metadata Driver` error.
+
+
+### Caching
+
+You can set up [caching](https://www.doctrine-project.org/projects/doctrine-orm/en/latest/reference/caching.html) by registering `Nettrine\ORM\DI\OrmCacheExtension`:
+
+```neon
+extensions:
+  nettrine.orm: Nettrine\ORM\DI\OrmExtension
+  nettrine.orm.cache: Nettrine\ORM\DI\OrmCacheExtension
+```
+
+By default, all caches are configured to use the autowired [cache storage](https://doc.nette.org/cs/caching#toc-sluzby-di). You can configure them to other [storage](https://doc.nette.org/cs/caching#toc-uloziste), [cache](https://api.nette.org/caching/master/Nette/Caching/Cache.html) or [cache pool](https://www.php-fig.org/psr/psr-6/#cacheitempoolinterface).
+
+You can use the `nettrine.orm.cache.defaultDriver` to set the caching driver for all caches that are not explicitly configured or configure the caches one by one.
+
+If you want to turn cache off, you can use `DevNullStorage` to do so.
+
+All options are demonstrated in following configuration example:
+
+```neon
+nettrine.orm.cache:
+  # use different storage
+  defaultDriver: Nette\Caching\Storages\MemoryStorage
+  # use cache object
+  queryCache: Nette\Caching\Cache(namespace: 'orm-query-cache')
+  # use cache pool object
+  resultCache: Contributte\Psr6\CachePool(Nette\Caching\Cache(namespace: 'orm-result-cache'))
+  # use registered service (must be of type `Nette\Caching\Storage`, `Nette\Caching\Cache` or `Psr\Cache\CacheItemPoolInterface`)
+  hydrationCache: @service
+  # turn off caching
+  metadataCache: Nette\Caching\Storages\DevNullStorage
+```
+
+`secondLevelCache` uses autowired driver (or `defaultDriver`, if specified) for `CacheConfiguration` setup, but you can also replace it with custom `CacheConfiguration`.
+
+```neon
+nettrine.orm.cache:
+  secondLevelCache: @cacheConfigurationFactory::create('bar')
+```
+
+You can turn off `secondLevelCache` by setting it to `false`:
+
+```neon
+nettrine.orm.cache:
+  secondLevelCache: false
+```
 
 
 ## Mapping
