@@ -2,11 +2,11 @@
 
 namespace Nettrine\ORM\DI;
 
-use Doctrine\Common\Proxy\AbstractProxyFactory;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\Configuration;
 use Doctrine\ORM\EntityManager as DoctrineEntityManager;
 use Doctrine\ORM\Mapping\UnderscoreNamingStrategy;
+use Doctrine\ORM\Proxy\ProxyFactory;
 use Doctrine\ORM\Tools\ResolveTargetEntityListener;
 use Doctrine\Persistence\Mapping\Driver\MappingDriverChain;
 use Nette\DI\Definitions\Statement;
@@ -103,9 +103,9 @@ final class OrmExtension extends AbstractExtension
 		}
 
 		if (is_bool($config->autoGenerateProxyClasses)) {
-			$defaultStrategy = $this->debugMode === true ? AbstractProxyFactory::AUTOGENERATE_FILE_NOT_EXISTS_OR_CHANGED : AbstractProxyFactory::AUTOGENERATE_FILE_NOT_EXISTS;
+			$defaultStrategy = $this->debugMode === true ? ProxyFactory::AUTOGENERATE_FILE_NOT_EXISTS_OR_CHANGED : ProxyFactory::AUTOGENERATE_FILE_NOT_EXISTS;
 			$configuration->addSetup('setAutoGenerateProxyClasses', [
-				$config->autoGenerateProxyClasses === true ? $defaultStrategy : AbstractProxyFactory::AUTOGENERATE_NEVER,
+				$config->autoGenerateProxyClasses === true ? $defaultStrategy : ProxyFactory::AUTOGENERATE_NEVER,
 			]);
 		} elseif (is_int($config->autoGenerateProxyClasses)) {
 			$configuration->addSetup('setAutoGenerateProxyClasses', [$config->autoGenerateProxyClasses]);
