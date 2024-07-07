@@ -43,6 +43,7 @@ class OrmAttributesExtension extends AbstractExtension
 			->setAutowired(false);
 
 		$mappingDriverDef = $this->getMappingDriverDef();
+
 		foreach ($config->mapping as $namespace => $path) {
 			if (!is_dir($path)) {
 				throw new InvalidStateException(sprintf('Given mapping path "%s" does not exist', $path));
