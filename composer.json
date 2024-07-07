@@ -29,6 +29,7 @@
     "tracy/tracy": "^2.10.3"
   },
   "conflict": {
+    "doctrine/persistence": "<3.0.0",
     "nette/di": "<3.0.6",
     "nette/schema": "<1.1.0"
   },
