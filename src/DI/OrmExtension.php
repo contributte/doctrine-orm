@@ -186,7 +186,7 @@ final class OrmExtension extends AbstractExtension
 		}
 
 		// Entity Manager
-		$original = new Statement(DoctrineEntityManager::class . '::create', [
+		$original = new Statement(DoctrineEntityManager::class, [
 			$builder->getDefinitionByType(Connection::class), // Nettrine/DBAL
 			$this->prefix('@configuration'),
 		]);
