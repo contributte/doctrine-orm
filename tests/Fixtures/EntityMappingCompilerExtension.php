@@ -11,7 +11,6 @@ class EntityMappingCompilerExtension extends CompilerExtension
 
 	public function beforeCompile(): void
 	{
-		MappingHelper::of($this)->addAnnotation('Tests1', Tests::FIXTURES_PATH);
 		MappingHelper::of($this)->addXml('Tests2', Tests::FIXTURES_PATH);
 	}
 
