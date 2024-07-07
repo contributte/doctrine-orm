@@ -37,7 +37,7 @@ class ContainerEntityListenerResolver implements EntityListenerResolver
 	/**
 	 * {@inheritDoc}
 	 */
-	public function register($object): void
+	public function register($object): void // @phpstan-ignore missingType.parameter
 	{
 		$this->instances[$object::class] = $object;
 	}
