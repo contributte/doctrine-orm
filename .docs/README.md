@@ -9,7 +9,6 @@
 - [Configuration](#configuration)
 - [Mapping](#mapping)
   - [Attributes](#attributes)
-  - [Annotations](#annotations)
   - [XML](#xml)
   - [Helpers](#helpers)
 - [Examples](#examples)
@@ -192,7 +191,6 @@ Doctrine ORM needs to know where your entities are located and how they are desc
 Additional metadata provider needs to be registered. We provide bridges for these drivers:
 
 - **attributes** (`Nettrine\ORM\DI\OrmAttributesExtension`)
-- **annotations** (`Nettrine\ORM\DI\OrmAnnotationsExtension`)
 - **xml** (`Nettrine\ORM\DI\OrmXmlExtension`)
 
 
@@ -239,76 +237,6 @@ Example configuration for entity located at `app/Model/Database` folder.
 
 ```neon
 nettrine.orm.attributes:
-  mapping:
-   App\Model\Database: %appDir%/Model/Database
-```
-
-
-### Annotations
-
-Are you using [@annotations](https://www.doctrine-project.org/projects/doctrine-orm/en/2.7/reference/annotations-reference.html) in your entities?
-
-```php
-<?php
-
-namespace App\Model\Database;
-
-use Doctrine\ORM\Mapping as ORM;
-
-/**
- * @ORM\Entity
- * @ORM\Table(name="customer")
- */
-class Customer
-{
-
-    /**
-     * @ORM\Column(length=32, unique=true, nullable=false)
-     */
-    protected string $username;
-
-    /**
-     * @ORM\Column(columnDefinition="CHAR(2) NOT NULL")
-     */
-    protected string $country;
-
-}
-```
-
-This feature relies on `doctrine/annotations`, use prepared [nettrine/annotations](https://github.com/contributte/doctrine-annotations) integration.
-
-```bash
-composer require nettrine/annotations
-```
-
-```neon
-extensions:
-  nettrine.annotations: Nettrine\Annotations\DI\AnnotationsExtension
-```
-
-You will also appreciate ORM => Annotations bridge, use `OrmAnnotationsExtension`. This is the default configuration, it uses an autowired cache driver.
-Please note that `OrmAnnotationsExtension` must be registered after `AnnotationsExtension`. Ordering is crucial!
-
-```neon
-extensions:
-  # Common
-  nettrine.annotations: Nettrine\Annotations\DI\AnnotationsExtension
-
-  # ORM
-  nettrine.orm: Nettrine\ORM\DI\OrmExtension
-  nettrine.orm.annotations: Nettrine\ORM\DI\OrmAnnotationsExtension
-
-nettrine.orm.annotations:
-  mapping: [
-    namespace: path
-  ]
-  excluded: []
-```
-
-Example configuration for entity located at `app/Model/Database` folder.
-
-```neon
-nettrine.orm.annotations:
   mapping:
    App\Model\Database: %appDir%/Model/Database
 ```
@@ -363,8 +291,8 @@ class CategoryExtension extends CompilerExtension
   public function beforeCompile(): void
   {
     MappingHelper::of($this)
-        ->addAnnotation('App\Model\Database', __DIR__ . '/../app/Model/Database')
-        ->addAnnotation('Forum\Modules\Database', __DIR__ . '/../../modules/Forum/Database')
+        ->addAttribute('App\Model\Database', __DIR__ . '/../app/Model/Database')
+        ->addAttribute('Forum\Modules\Database', __DIR__ . '/../../modules/Forum/Database')
         ->addXml('Gallery1\Modules\Database', __DIR__ . '/../../modules/Gallery1/Database')
         ->addXml('Gallery2\Modules\Database', __DIR__ . '/../../modules/Gallery2/Database', $simple = TRUE)
   }
@@ -378,7 +306,7 @@ class CategoryExtension extends CompilerExtension
 ### 1. Manual example
 
 ```sh
-composer require nettrine/annotations nettrine/cache nettrine/migrations nettrine/fixtures nettrine/dbal nettrine/orm
+composer require nettrine/cache nettrine/migrations nettrine/fixtures nettrine/dbal nettrine/orm
 ```
 
 ```neon
@@ -387,7 +315,6 @@ composer require nettrine/annotations nettrine/cache nettrine/migrations nettrin
 #
 extensions:
   # Common
-  nettrine.annotations: Nettrine\Annotations\DI\AnnotationsExtension
   nettrine.cache: Nettrine\Cache\DI\CacheExtension
   nettrine.migrations: Nettrine\Migrations\DI\MigrationsExtension
   nettrine.fixtures: Nettrine\Fixtures\DI\FixturesExtension
@@ -400,7 +327,6 @@ extensions:
   nettrine.orm: Nettrine\ORM\DI\OrmExtension
   nettrine.orm.cache: Nettrine\ORM\DI\OrmCacheExtension
   nettrine.orm.console: Nettrine\ORM\DI\OrmConsoleExtension
-  nettrine.orm.annotations: Nettrine\ORM\DI\OrmAnnotationsExtension
 ```
 
 ### 2. Example projects
