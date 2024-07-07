@@ -69,6 +69,7 @@ class MappingHelper
 
 		/** @var ServiceDefinition $xmlDriver */
 		$xmlDriver = $this->getService(OrmXmlExtension::DRIVER_TAG, 'XmlDriver');
+
 		if ($simple) {
 			$xmlDriver->addSetup(new Statement('$service->getLocator()->addNamespacePrefixes([? => ?])', [$path, $namespace]));
 		} else {
@@ -87,6 +88,7 @@ class MappingHelper
 		$builder = $this->extension->getContainerBuilder();
 
 		$service = $builder->findByTag($tag);
+
 		if ($service === []) {
 			throw new InvalidStateException(sprintf('Service "%s" not found by tag "%s"', $name, $tag));
 		}

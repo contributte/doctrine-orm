@@ -90,6 +90,7 @@ final class OrmExtension extends AbstractExtension
 		// @validate configuration class is subclass of origin one
 		$configurationClass = $globalConfig->configurationClass;
 		assert(is_string($configurationClass));
+
 		if (!is_a($configurationClass, Configuration::class, true)) {
 			throw new InvalidArgumentException('Configuration class must be subclass of ' . Configuration::class . ', ' . $configurationClass . ' given.');
 		}
@@ -179,6 +180,7 @@ final class OrmExtension extends AbstractExtension
 
 		// @validate entity manager decorator has a real class
 		$entityManagerDecoratorClass = $config->entityManagerDecoratorClass;
+
 		if (!class_exists($entityManagerDecoratorClass)) {
 			throw new InvalidStateException(sprintf('EntityManagerDecorator class "%s" not found', $entityManagerDecoratorClass));
 		}

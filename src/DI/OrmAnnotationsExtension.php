@@ -38,6 +38,7 @@ class OrmAnnotationsExtension extends AbstractExtension
 		$config = $this->config;
 
 		$reader = $builder->getByType(Reader::class);
+
 		if ($reader === null) {
 			throw new ServiceCreationException(sprintf('Missing "%s" service', Reader::class));
 		}
@@ -50,6 +51,7 @@ class OrmAnnotationsExtension extends AbstractExtension
 			->setAutowired(false);
 
 		$mappingDriverDef = $this->getMappingDriverDef();
+
 		foreach ($config->mapping as $namespace => $path) {
 			if (!is_dir($path)) {
 				throw new InvalidStateException(sprintf('Given mapping path "%s" does not exist', $path));
