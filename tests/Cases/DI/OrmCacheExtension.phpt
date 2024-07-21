@@ -8,6 +8,7 @@ use Nette\Caching\Storage;
 use Nette\Caching\Storages\MemoryStorage;
 use Nette\DI\Compiler;
 use Nette\DI\Definitions\Statement;
+use Nette\DI\ServiceCreationException;
 use Nettrine\ORM\DI\OrmCacheExtension;
 use Psr\Cache\CacheItemPoolInterface;
 use Tester\Assert;
@@ -152,4 +153,38 @@ Toolkit::test(function (): void {
 	Assert::type(CachePool::class, $em->getConfiguration()->getMetadataCache());
 	Assert::type(CachePool::class, $em->getConfiguration()->getQueryCache());
 	Assert::type(CachePool::class, $em->getConfiguration()->getResultCache());
+});
+
+// Provide non-existent service (for tests coverage)
+Toolkit::test(function (): void {
+	Assert::exception(function (): void {
+		$container = Container::of()
+			->withDefaults()
+			->withCompiler(function (Compiler $compiler): void {
+				$compiler->addExtension('nettrine.orm.cache', new OrmCacheExtension());
+				$compiler->addConfig([
+					'nettrine.orm.cache' => [
+						'hydrationCache' => '@nonExistentService',
+					]
+				]);
+			})
+			->build();
+	}, ServiceCreationException::class);
+});
+
+// Provide some nonsense string (for tests coverage)
+Toolkit::test(function (): void {
+	Assert::exception(function (): void {
+		$container = Container::of()
+			->withDefaults()
+			->withCompiler(function (Compiler $compiler): void {
+				$compiler->addExtension('nettrine.orm.cache', new OrmCacheExtension());
+				$compiler->addConfig([
+					'nettrine.orm.cache' => [
+						'hydrationCache' => 'nonsenseString',
+					]
+				]);
+			})
+			->build();
+	}, ServiceCreationException::class);
 });
