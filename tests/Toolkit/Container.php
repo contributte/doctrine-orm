@@ -2,6 +2,7 @@
 
 namespace Tests\Toolkit;
 
+use Nette\Bridges\CacheDI\CacheExtension as NetteCacheExtension;
 use Nette\DI\Compiler;
 use Nette\DI\Container as NetteContainer;
 use Nette\DI\ContainerLoader;
@@ -38,9 +39,13 @@ final class Container
 	public function withDefaultExtensions(): Container
 	{
 		$this->onCompile[] = function (Compiler $compiler): void {
+			$compiler->addExtension('cache', new NetteCacheExtension(Tests::TEMP_PATH));
 			$compiler->addExtension('nettrine.dbal', new DbalExtension());
-			$compiler->addExtension('nettrine.cache', new CacheExtension());
 			$compiler->addExtension('nettrine.orm', new OrmExtension());
+
+			if (class_exists(CacheExtension::class)) { // needed for tests with nettrine/dbal <0.9
+				$compiler->addExtension('nettrine.cache', new CacheExtension());
+			}
 		};
 
 		return $this;

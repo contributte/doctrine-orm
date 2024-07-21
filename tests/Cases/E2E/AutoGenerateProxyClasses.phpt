@@ -1,8 +1,8 @@
 <?php declare(strict_types = 1);
 
 use Contributte\Tester\Toolkit;
-use Doctrine\Common\Proxy\AbstractProxyFactory;
 use Doctrine\ORM\Configuration;
+use Doctrine\ORM\Proxy\ProxyFactory;
 use Nette\DI\Compiler;
 use Tester\Assert;
 use Tests\Toolkit\Container;
@@ -19,7 +19,7 @@ Toolkit::test(function (): void {
 	/** @var Configuration $configuration */
 	$configuration = $container->getByType(Configuration::class);
 
-	Assert::equal(AbstractProxyFactory::AUTOGENERATE_FILE_NOT_EXISTS, $configuration->getAutoGenerateProxyClasses());
+	Assert::equal(ProxyFactory::AUTOGENERATE_FILE_NOT_EXISTS, $configuration->getAutoGenerateProxyClasses());
 });
 
 // Override
@@ -38,7 +38,7 @@ Toolkit::test(function (): void {
 	/** @var Configuration $configuration */
 	$configuration = $container->getByType(Configuration::class);
 
-	Assert::equal(AbstractProxyFactory::AUTOGENERATE_EVAL, $configuration->getAutoGenerateProxyClasses());
+	Assert::equal(ProxyFactory::AUTOGENERATE_EVAL, $configuration->getAutoGenerateProxyClasses());
 });
 
 // Statement
@@ -49,7 +49,7 @@ Toolkit::test(function (): void {
 			$compiler->addConfig(Helpers::neon('
 					nettrine.orm:
 						configuration:
-							autoGenerateProxyClasses: ::constant(Doctrine\Common\Proxy\AbstractProxyFactory::AUTOGENERATE_NEVER)
+							autoGenerateProxyClasses: ::constant(Doctrine\ORM\Proxy\ProxyFactory::AUTOGENERATE_NEVER)
 				'));
 		})
 		->build();
@@ -57,5 +57,5 @@ Toolkit::test(function (): void {
 	/** @var Configuration $configuration */
 	$configuration = $container->getByType(Configuration::class);
 
-	Assert::equal(AbstractProxyFactory::AUTOGENERATE_NEVER, $configuration->getAutoGenerateProxyClasses());
+	Assert::equal(ProxyFactory::AUTOGENERATE_NEVER, $configuration->getAutoGenerateProxyClasses());
 });

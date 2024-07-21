@@ -4,7 +4,6 @@ namespace Nettrine\ORM;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Exception\ORMException;
 use Doctrine\Persistence\AbstractManagerRegistry;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Persistence\Proxy;
@@ -26,26 +25,6 @@ class ManagerRegistry extends AbstractManagerRegistry
 		parent::__construct('ORM', $connections, $managers, 'default', 'default', Proxy::class);
 
 		$this->container = $container;
-	}
-
-	/**
-	 * @throws ORMException
-	 * @phpcsSuppress SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingParameterTypeHint
-	 */
-	public function getAliasNamespace(string $alias): string
-	{
-		foreach (array_keys($this->getManagers()) as $name) {
-			try {
-				/** @var EntityManagerInterface $entityManager */
-				$entityManager = $this->getManager($name);
-
-				return $entityManager->getConfiguration()->getEntityNamespace($alias);
-			} catch (ORMException $e) {
-				// Ignore
-			}
-		}
-
-		throw new ORMException(sprintf('Unknown Entity namespace alias "%s"', $alias));
 	}
 
 	/**

@@ -1,11 +1,8 @@
 <?php declare(strict_types = 1);
 
-use Doctrine\ORM\Mapping\Driver\AnnotationDriver;
 use Doctrine\ORM\Mapping\Driver\XmlDriver;
 use Doctrine\Persistence\Mapping\Driver\MappingDriverChain;
 use Nette\DI\Compiler;
-use Nettrine\Annotations\DI\AnnotationsExtension;
-use Nettrine\ORM\DI\OrmAnnotationsExtension;
 use Nettrine\ORM\DI\OrmXmlExtension;
 use Contributte\Tester\Toolkit;
 use Tester\Assert;
@@ -20,28 +17,15 @@ Toolkit::test(function (): void {
 	$container = Container::of()
 		->withDefaults()
 		->withCompiler(function (Compiler $compiler): void {
-			$compiler->addExtension('annotations', new AnnotationsExtension());
-			$compiler->addExtension('nettrine.orm.annotations', new OrmAnnotationsExtension());
 			$compiler->addExtension('nettrine.orm.xml', new OrmXmlExtension());
 			$compiler->addExtension('tests.mapping', new EntityMappingCompilerExtension());
 			$compiler->addConfig(Helpers::neon('
-					nettrine.orm.annotations:
-						mapping:
-							App\Model\Entity1: %appDir%
 					nettrine.orm.xml:
 						mapping:
 							App\Model\Entity2: %appDir%
 				'));
 		})
 		->build();
-
-	/** @var AnnotationDriver $annotationDriver */
-	$annotationDriver = $container->getService(current(array_keys($container->findByTag(OrmAnnotationsExtension::DRIVER_TAG))));
-
-	Assert::equal([
-		Tests::APP_PATH,
-		Tests::FIXTURES_PATH,
-	], array_values($annotationDriver->getPaths()));
 
 	/** @var XmlDriver $xmlDriver */
 	$xmlDriver = $container->getService(current(array_keys($container->findByTag(OrmXmlExtension::DRIVER_TAG))));
@@ -53,5 +37,5 @@ Toolkit::test(function (): void {
 
 	/** @var MappingDriverChain $chainDriver */
 	$chainDriver = $container->getService('nettrine.orm.mappingDriver');
-	Assert::count(4, $chainDriver->getDrivers());
+	Assert::count(2, $chainDriver->getDrivers());
 });

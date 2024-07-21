@@ -6,7 +6,6 @@ use Nette\DI\CompilerExtension;
 use Nette\DI\Definitions\Definition;
 use Nette\DI\Definitions\ServiceDefinition;
 use Nette\DI\Definitions\Statement;
-use Nettrine\ORM\DI\OrmAnnotationsExtension;
 use Nettrine\ORM\DI\OrmAttributesExtension;
 use Nettrine\ORM\DI\OrmExtension;
 use Nettrine\ORM\DI\OrmXmlExtension;
@@ -25,23 +24,6 @@ class MappingHelper
 	public static function of(CompilerExtension $extension): self
 	{
 		return new self($extension);
-	}
-
-	public function addAnnotation(string $namespace, string $path): self
-	{
-		if (!is_dir($path)) {
-			throw new InvalidStateException(sprintf('Given mapping path "%s" does not exist', $path));
-		}
-
-		/** @var ServiceDefinition $annotationDriver */
-		$annotationDriver = $this->getService(OrmAnnotationsExtension::DRIVER_TAG, 'AnnotationDriver');
-		$annotationDriver->addSetup('addPaths', [[$path]]);
-
-		/** @var ServiceDefinition $chainDriver */
-		$chainDriver = $this->getService(OrmExtension::MAPPING_DRIVER_TAG, 'MappingDriverChain');
-		$chainDriver->addSetup('addDriver', [$annotationDriver, $namespace]);
-
-		return $this;
 	}
 
 	public function addAttribute(string $namespace, string $path): self
