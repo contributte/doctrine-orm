@@ -30,6 +30,8 @@ Toolkit::test(function (): void {
 	Assert::type(PhpFileCache::class, $em->getConfiguration()->getMetadataCacheImpl());
 	Assert::type(PhpFileCache::class, $em->getConfiguration()->getQueryCacheImpl());
 	Assert::type(PhpFileCache::class, $em->getConfiguration()->getResultCacheImpl());
+	Assert::true($em->getConfiguration()->isSecondLevelCacheEnabled());
+	Assert::notNull($em->getConfiguration()->getSecondLevelCacheConfiguration());
 });
 
 // Provide cache drivers
@@ -57,4 +59,31 @@ Toolkit::test(function (): void {
 	Assert::type(ArrayCache::class, $em->getConfiguration()->getMetadataCacheImpl());
 	Assert::type(ApcuCache::class, $em->getConfiguration()->getQueryCacheImpl());
 	Assert::type(ArrayCache::class, $em->getConfiguration()->getResultCacheImpl());
+	Assert::true($em->getConfiguration()->isSecondLevelCacheEnabled());
+	Assert::notNull($em->getConfiguration()->getSecondLevelCacheConfiguration());
+});
+
+// Turn off second level cache
+Toolkit::test(function (): void {
+	$container = Container::of()
+		->withDefaults()
+		->withCompiler(function (Compiler $compiler): void {
+			$compiler->addExtension('nettrine.orm.cache', new OrmCacheExtension());
+			$compiler->addConfig([
+				'nettrine.orm.cache' => [
+					'secondLevelCache' => false,
+				],
+			]);
+		})
+		->build();
+
+	/** @var EntityManagerDecorator $em */
+	$em = $container->getByType(EntityManagerDecorator::class);
+
+	Assert::false($em->getConfiguration()->isSecondLevelCacheEnabled());
+	Assert::null($em->getConfiguration()->getSecondLevelCacheConfiguration());
+	Assert::type(PhpFileCache::class, $em->getConfiguration()->getHydrationCacheImpl());
+	Assert::type(PhpFileCache::class, $em->getConfiguration()->getMetadataCacheImpl());
+	Assert::type(PhpFileCache::class, $em->getConfiguration()->getQueryCacheImpl());
+	Assert::type(PhpFileCache::class, $em->getConfiguration()->getResultCacheImpl());
 });

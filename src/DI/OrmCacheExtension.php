@@ -26,7 +26,7 @@ class OrmCacheExtension extends AbstractExtension
 			'hydrationCache' => $this->getServiceSchema(),
 			'metadataCache' => $this->getServiceSchema(),
 			'resultCache' => $this->getServiceSchema(),
-			'secondLevelCache' => $this->getServiceSchema(),
+			'secondLevelCache' => Expect::anyOf($this->getServiceSchema(), false),
 		]);
 	}
 
@@ -93,8 +93,13 @@ class OrmCacheExtension extends AbstractExtension
 
 	private function loadSecondLevelCacheConfiguration(): void
 	{
-		$builder = $this->getContainerBuilder();
 		$config = $this->config;
+
+		if ($config->secondLevelCache === false) {
+			return;
+		}
+
+		$builder = $this->getContainerBuilder();
 		$configurationDef = $this->getConfigurationDef();
 
 		if ($config->secondLevelCache !== null) {
