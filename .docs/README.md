@@ -102,6 +102,12 @@ nettrine.orm.cache:
   secondLevelCache: @cacheConfigurationFactory::create('bar')
 ```
 
+You can turn off `secondLevelCache` by setting it to `false`:
+
+```neon
+nettrine.orm.cache:
+  secondLevelCache: false
+```
 
 ### `symfony/console`
 
