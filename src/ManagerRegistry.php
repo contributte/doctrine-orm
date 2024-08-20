@@ -63,7 +63,10 @@ class ManagerRegistry extends AbstractManagerRegistry
 	 */
 	protected function resetService(string $name): void
 	{
-		$this->container->removeService($name);
+		/** @var EntityManagerDecorator $manager */
+		$manager = $this->container->getService($name);
+		$wrapped = $this->container->createInstance(\Doctrine\ORM\EntityManager::class);
+		$manager->__construct($wrapped);
 	}
 
 }
