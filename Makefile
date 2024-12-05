@@ -7,13 +7,13 @@ qa: phpstan cs
 
 cs:
 ifdef GITHUB_ACTION
-	vendor/bin/phpcs --standard=ruleset.xml --encoding=utf-8 --colors -nsp -q --report=checkstyle src tests | cs2pr
+	vendor/bin/phpcs --standard=ruleset.xml --encoding=utf-8 --colors -nsp --extensions=php,phpt -q --report=checkstyle src tests | cs2pr
 else
-	vendor/bin/phpcs --standard=ruleset.xml --encoding=utf-8 --colors -nsp src tests
+	vendor/bin/phpcs --standard=ruleset.xml --encoding=utf-8 --colors -nsp --extensions=php,phpt src tests
 endif
 
 csf:
-	vendor/bin/phpcbf --standard=ruleset.xml --encoding=utf-8 --colors -nsp src tests
+	vendor/bin/phpcbf --standard=ruleset.xml --encoding=utf-8 --colors -nsp --extensions=php,phpt src tests
 
 phpstan:
 	vendor/bin/phpstan analyse -c phpstan.neon
