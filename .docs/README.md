@@ -48,8 +48,8 @@ nettrine.orm:
       mapping:
         App:
           type: attributes
-          dir: %appDir%/Database
-          prefix: App/Database
+          dirs: [%appDir%/Database]
+          namespace: App/Database
 ```
 
 ### Advanced configuration
@@ -86,10 +86,10 @@ nettrine.orm:
           enabled: <boolean>
 
       mapping:
-          <name>:
-              type: <attributes|xml>
-              dirs: <string[]>
-              namespace: <string>
+        <name>:
+          type: <attributes|xml>
+          dirs: <string[]>
+          namespace: <string>
 
       defaultCache: <class-string|service>
       queryCache: <class-string|service>
@@ -275,8 +275,8 @@ nettrine.orm:
       mapping:
         App:
           type: attributes
-          dir: %appDir%/Database
-          prefix: App/Database
+          dirs: [%appDir%/Database]
+          namespace: App\Database
 ```
 
 ### XML
