@@ -1,6 +1,6 @@
 <?php declare(strict_types = 1);
 
-namespace Tests\Fixtures\Dummy;
+namespace Tests\Mocks;
 
 use Contributte\Psr6\CachePool;
 use Doctrine\ORM\Cache\CacheConfiguration;

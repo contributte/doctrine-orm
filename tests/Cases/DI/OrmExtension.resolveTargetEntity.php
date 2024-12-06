@@ -3,15 +3,18 @@
 use Contributte\Tester\Toolkit;
 use Contributte\Tester\Utils\ContainerBuilder;
 use Contributte\Tester\Utils\Neonkit;
-use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityManager;
 use Nette\DI\Compiler;
 use Nettrine\DBAL\DI\DbalExtension;
 use Nettrine\ORM\DI\OrmExtension;
 use Tester\Assert;
+use Tests\Mocks\DummyIdentity;
+use Tests\Mocks\Entity\DummyEntity;
 use Tests\Toolkit\Tests;
 
-require_once __DIR__ . '/../bootstrap.php';
+require_once __DIR__ . '/../../bootstrap.php';
 
+// ResolveTargetEntityListener
 Toolkit::test(function (): void {
 	$container = ContainerBuilder::of()
 		->withCompiler(function (Compiler $compiler): void {
@@ -20,6 +23,7 @@ Toolkit::test(function (): void {
 			$compiler->addConfig([
 				'parameters' => [
 					'tempDir' => Tests::TEMP_PATH,
+					'fixturesDir' => Tests::FIXTURES_PATH,
 				],
 			]);
 			$compiler->addConfig(Neonkit::load(
@@ -31,35 +35,25 @@ Toolkit::test(function (): void {
 							password: test
 							user: test
 							path: ":memory:"
-						second:
-							driver: pdo_sqlite
-							password: test
-							user: test
-							path: ":memory:"
 				nettrine.orm:
 					managers:
 						default:
 							connection: default
+							resolveTargetEntities:
+								Tests\Mocks\DummyIdentity: Tests\Mocks\DummyEntity
 							mapping:
 								App:
 									type: attributes
-									dirs: [app/Database]
-									namespace: App\Database
-						second:
-							connection: second
-							mapping:
-								App:
-									type: attributes
-									dirs: [app/Database]
-									namespace: App\Database
+									dirs: [%fixturesDir%/Entity]
+									namespace: Tests\Mocks\Entity
 				NEON
 			));
 		})
 		->build();
 
-	/** @var ManagerRegistry $registry */
-	$registry = $container->getByType(ManagerRegistry::class);
-	Assert::type(ManagerRegistry::class, $registry);
+	/** @var EntityManager $entityManager */
+	$entityManager = $container->getService('nettrine.orm.managers.default.entityManager');
 
-	Assert::count(2, $registry->getManagers());
+	$cm = $entityManager->getClassMetadata(DummyIdentity::class);
+	Assert::equal($cm->name, DummyEntity::class);
 });

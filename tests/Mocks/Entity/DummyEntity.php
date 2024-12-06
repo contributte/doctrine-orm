@@ -1,11 +1,12 @@
 <?php declare(strict_types = 1);
 
-namespace Tests\Fixtures\Dummy;
+namespace Tests\Mocks\Entity;
 
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\ORM\Mapping\Id;
+use Tests\Mocks\DummyIdentity;
 
 #[Entity]
 class DummyEntity implements DummyIdentity

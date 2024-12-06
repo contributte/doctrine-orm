@@ -1,6 +1,6 @@
 <?php declare(strict_types = 1);
 
-namespace Tests\Fixtures;
+namespace Tests\Mocks;
 
 use Nette\DI\CompilerExtension;
 use Nettrine\ORM\DI\Helpers\MappingHelper;

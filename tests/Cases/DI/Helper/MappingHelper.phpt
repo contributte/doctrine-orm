@@ -3,7 +3,7 @@
 use Contributte\Tester\Toolkit;
 use Nette\DI\CompilerExtension;
 use Nettrine\ORM\DI\Helpers\MappingHelper;
-use Nettrine\ORM\Exception\Logical\InvalidStateException;
+use Nettrine\ORM\Exception\LogicalException;
 use Tester\Assert;
 
 require_once __DIR__ . '/../../../bootstrap.php';
@@ -18,5 +18,5 @@ Toolkit::test(function (): void {
 		};
 
 		MappingHelper::of($extension)->addAttribute('fake', 'invalid');
-	}, InvalidStateException::class, 'Given mapping path "invalid" does not exist');
+	}, LogicalException::class, 'Given mapping path "invalid" does not exist');
 });
