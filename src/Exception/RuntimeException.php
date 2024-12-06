@@ -2,9 +2,7 @@
 
 namespace Nettrine\ORM\Exception;
 
-use LogicException;
-
-final class LogicalException extends LogicException
+final class RuntimeException extends \RuntimeException
 {
 
 }
