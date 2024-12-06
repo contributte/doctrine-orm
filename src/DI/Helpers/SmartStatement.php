@@ -1,9 +1,9 @@
 <?php declare(strict_types = 1);
 
-namespace Nettrine\ORM\DI\Definitions;
+namespace Nettrine\ORM\DI\Helpers;
 
 use Nette\DI\Definitions\Statement;
-use Nettrine\ORM\Exception\Logical\InvalidArgumentException;
+use Nettrine\ORM\Exception\LogicalException;
 
 final class SmartStatement
 {
@@ -15,7 +15,7 @@ final class SmartStatement
 		} elseif ($service instanceof Statement) {
 			return $service;
 		} else {
-			throw new InvalidArgumentException('Unsupported type of service');
+			throw new LogicalException('Unsupported type of service');
 		}
 	}
 

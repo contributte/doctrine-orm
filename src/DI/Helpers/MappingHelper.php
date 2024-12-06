@@ -6,10 +6,8 @@ use Nette\DI\CompilerExtension;
 use Nette\DI\Definitions\Definition;
 use Nette\DI\Definitions\ServiceDefinition;
 use Nette\DI\Definitions\Statement;
-use Nettrine\ORM\DI\OrmAttributesExtension;
 use Nettrine\ORM\DI\OrmExtension;
-use Nettrine\ORM\DI\OrmXmlExtension;
-use Nettrine\ORM\Exception\Logical\InvalidStateException;
+use Nettrine\ORM\Exception\LogicalException;
 
 class MappingHelper
 {
@@ -29,11 +27,11 @@ class MappingHelper
 	public function addAttribute(string $namespace, string $path): self
 	{
 		if (!is_dir($path)) {
-			throw new InvalidStateException(sprintf('Given mapping path "%s" does not exist', $path));
+			throw new LogicalException(sprintf('Given mapping path "%s" does not exist', $path));
 		}
 
 		/** @var ServiceDefinition $attributeDriver */
-		$attributeDriver = $this->getService(OrmAttributesExtension::DRIVER_TAG, 'AttributeDriver');
+		$attributeDriver = $this->getService(OrmExtension::MANAGER_TAG, 'AttributeDriver');
 		$attributeDriver->addSetup('addPaths', [[$path]]);
 
 		/** @var ServiceDefinition $chainDriver */
@@ -46,11 +44,11 @@ class MappingHelper
 	public function addXml(string $namespace, string $path, bool $simple = false): self
 	{
 		if (!is_dir($path)) {
-			throw new InvalidStateException(sprintf('Given mapping path "%s" does not exist', $path));
+			throw new LogicalException(sprintf('Given mapping path "%s" does not exist', $path));
 		}
 
 		/** @var ServiceDefinition $xmlDriver */
-		$xmlDriver = $this->getService(OrmXmlExtension::DRIVER_TAG, 'XmlDriver');
+		$xmlDriver = $this->getService(OrmExtension::MANAGER_TAG, 'XmlDriver');
 
 		if ($simple) {
 			$xmlDriver->addSetup(new Statement('$service->getLocator()->addNamespacePrefixes([? => ?])', [$path, $namespace]));
@@ -72,7 +70,7 @@ class MappingHelper
 		$service = $builder->findByTag($tag);
 
 		if ($service === []) {
-			throw new InvalidStateException(sprintf('Service "%s" not found by tag "%s"', $name, $tag));
+			throw new LogicalException(sprintf('Service "%s" not found by tag "%s"', $name, $tag));
 		}
 
 		return $builder->getDefinition(current(array_keys($service)));

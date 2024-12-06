@@ -2,239 +2,184 @@
 
 namespace Nettrine\ORM\DI;
 
-use Doctrine\DBAL\Connection;
 use Doctrine\ORM\Configuration;
-use Doctrine\ORM\EntityManager as DoctrineEntityManager;
+use Doctrine\ORM\Decorator\EntityManagerDecorator;
 use Doctrine\ORM\Mapping\UnderscoreNamingStrategy;
-use Doctrine\ORM\Proxy\ProxyFactory;
-use Doctrine\ORM\Tools\ResolveTargetEntityListener;
-use Doctrine\Persistence\Mapping\Driver\MappingDriverChain;
+use Nette\DI\CompilerExtension;
 use Nette\DI\Definitions\Statement;
-use Nette\DI\Helpers;
+use Nette\PhpGenerator\ClassType;
 use Nette\Schema\Expect;
 use Nette\Schema\Schema;
-use Nettrine\ORM\Decorator\SimpleEntityManagerDecorator;
-use Nettrine\ORM\DI\Definitions\SmartStatement;
-use Nettrine\ORM\Exception\Logical\InvalidArgumentException;
-use Nettrine\ORM\Exception\Logical\InvalidStateException;
-use Nettrine\ORM\ManagerProvider;
-use Nettrine\ORM\ManagerRegistry;
-use Nettrine\ORM\Mapping\ContainerEntityListenerResolver;
+use Nettrine\ORM\DI\Pass\AbstractPass;
+use Nettrine\ORM\DI\Pass\ConsolePass;
+use Nettrine\ORM\DI\Pass\DoctrinePass;
+use Nettrine\ORM\DI\Pass\EventPass;
+use Nettrine\ORM\DI\Pass\ManagerPass;
 use stdClass;
 use Tracy\Debugger;
 
 /**
  * @property-read stdClass $config
+ * @phpstan-type TManagerConfig object{
+ *     entityManagerDecoratorClass: string,
+ *     configurationClass: string,
+ *     proxyDir: string|null,
+ *     autoGenerateProxyClasses: int|bool|Statement,
+ *     proxyNamespace: string|null,
+ *     metadataDriverImpl: string,
+ *     entityNamespaces: array<string, string>,
+ *     resolveTargetEntities: array<string, string>,
+ *     customStringFunctions: array<string, string>,
+ *     customNumericFunctions: array<string, string>,
+ *     customDatetimeFunctions: array<string, string>,
+ *     customHydrationModes: array<string, string>,
+ *     classMetadataFactoryName: string,
+ *     defaultRepositoryClassName: string,
+ *     namingStrategy: string|Statement|null,
+ *     quoteStrategy: string|Statement|null,
+ *     entityListenerResolver: string|Statement|null,
+ *     repositoryFactory: string|Statement|null,
+ *     defaultQueryHints: array<string, mixed>,
+ *     filters: array<string, object{class: string, enabled: bool}>,
+ *     mapping: array<string, object{type: 'attributes'|'xml', dirs: string[], namespace: string}>,
+ *     defaultCache: string|Statement|null,
+ *     queryCache: string|Statement|null,
+ *     resultCache: string|Statement|null,
+ *     hydrationCache: string|Statement|null,
+ *     metadataCache: string|Statement|null,
+ *     connection: string,
+ *     secondLevelCache: object{
+ *      enabled: bool,
+ *      cache: string|Statement|null,
+ *      logger: string|Statement|null,
+ *      regions: array<string, object{lifetime: int, lockLifetime: int}>
+ *    }
+ *  }
  */
-final class OrmExtension extends AbstractExtension
+final class OrmExtension extends CompilerExtension
 {
 
-	public const MAPPING_DRIVER_TAG = 'nettrine.orm.mapping.driver';
+	public const MAPPING_DRIVER_TAG = 'nettrine.orm.mapping_driver';
+	public const MANAGER_TAG = 'nettrine.orm.manager';
+	public const MANAGER_DECORATOR_TAG = 'nettrine.orm.manager_decorator';
+	public const CONFIGURATION_TAG = 'nettrine.orm.configuration';
 
-	public function __construct(private ?bool $debugMode = null)
+	/** @var AbstractPass[] */
+	protected array $passes = [];
+
+	public function __construct(
+		private ?bool $debugMode = null
+	)
 	{
 		if ($this->debugMode === null) {
 			$this->debugMode = class_exists(Debugger::class) && Debugger::$productionMode === false;
 		}
+
+		$this->passes[] = new DoctrinePass($this);
+		$this->passes[] = new ConsolePass($this);
+		$this->passes[] = new EventPass($this);
+		$this->passes[] = new ManagerPass($this, $this->debugMode);
 	}
 
 	public function getConfigSchema(): Schema
 	{
 		$parameters = $this->getContainerBuilder()->parameters;
 		$proxyDir = isset($parameters['tempDir']) ? $parameters['tempDir'] . '/proxies' : null;
+		$autoGenerateProxy = boolval($parameters['debugMode'] ?? true);
+
+		$expectService = Expect::anyOf(
+			Expect::string()->required()->assert(fn ($input) => str_starts_with($input, '@') || class_exists($input) || interface_exists($input)),
+			Expect::type(Statement::class)->required(),
+		);
 
 		return Expect::structure([
-			'entityManagerDecoratorClass' => Expect::string(SimpleEntityManagerDecorator::class),
-			'configurationClass' => Expect::string(Configuration::class),
-			'configuration' => Expect::structure([
-				'proxyDir' => Expect::string($proxyDir)->nullable(),
-				'autoGenerateProxyClasses' => Expect::anyOf(Expect::int(), Expect::bool(), Expect::type(Statement::class))->default(true),
-				'proxyNamespace' => Expect::string('Nettrine\Proxy')->nullable(),
-				'metadataDriverImpl' => Expect::string(),
-				'entityNamespaces' => Expect::array(),
-				'resolveTargetEntities' => Expect::array(),
-				'customStringFunctions' => Expect::array(),
-				'customNumericFunctions' => Expect::array(),
-				'customDatetimeFunctions' => Expect::array(),
-				'customHydrationModes' => Expect::array(),
-				'classMetadataFactoryName' => Expect::string(),
-				'defaultRepositoryClassName' => Expect::string(),
-				'namingStrategy' => Expect::anyOf(Expect::string(), Expect::type(Statement::class))->default(UnderscoreNamingStrategy::class),
-				'quoteStrategy' => Expect::anyOf(Expect::string(), Expect::type(Statement::class)),
-				'entityListenerResolver' => Expect::anyOf(Expect::string(), Expect::type(Statement::class)),
-				'repositoryFactory' => Expect::anyOf(Expect::string(), Expect::type(Statement::class)),
-				'defaultQueryHints' => Expect::array(),
-				'filters' => Expect::arrayOf(
-					Expect::structure([
-						'class' => Expect::string()->required(),
-						'enabled' => Expect::bool(false),
-					])
-				),
-			]),
+			'managers' => Expect::arrayOf(
+				Expect::structure([
+					'connection' => Expect::string()->required(),
+					'entityManagerDecoratorClass' => Expect::string()->assert(fn ($input) => is_a($input, EntityManagerDecorator::class, true), 'EntityManager decorator class must be subclass of ' . EntityManagerDecorator::class),
+					'configurationClass' => Expect::string(Configuration::class)->assert(fn ($input) => is_a($input, Configuration::class, true), 'Configuration class must be subclass of ' . Configuration::class),
+					'proxyDir' => Expect::string()->default($proxyDir)->before(fn (mixed $v) => $v ?? $proxyDir)->assert(fn (mixed $v) => $v === null || $v === '', 'proxyDir must be filled'),
+					'autoGenerateProxyClasses' => Expect::anyOf(Expect::int(), Expect::bool(), Expect::type(Statement::class))->default($autoGenerateProxy),
+					'proxyNamespace' => Expect::string('Nettrine\Proxy')->nullable(),
+					'metadataDriverImpl' => Expect::string(),
+					'entityNamespaces' => Expect::array(),
+					'resolveTargetEntities' => Expect::array(),
+					'customStringFunctions' => Expect::array(),
+					'customNumericFunctions' => Expect::array(),
+					'customDatetimeFunctions' => Expect::array(),
+					'customHydrationModes' => Expect::array(),
+					'classMetadataFactoryName' => Expect::string(),
+					'defaultRepositoryClassName' => Expect::string(),
+					'namingStrategy' => (clone $expectService)->default(UnderscoreNamingStrategy::class),
+					'quoteStrategy' => (clone $expectService),
+					'entityListenerResolver' => (clone $expectService),
+					'repositoryFactory' => (clone $expectService),
+					'defaultQueryHints' => Expect::array(),
+					'filters' => Expect::arrayOf(
+						Expect::structure([
+							'class' => Expect::string()->required(),
+							'enabled' => Expect::bool(false),
+						])
+					),
+					'mapping' => Expect::arrayOf(
+						Expect::structure([
+							'type' => Expect::anyOf('attributes', 'xml')->required(),
+							'dirs' => Expect::listOf(Expect::string())->min(1)->required(),
+							'namespace' => Expect::string()->required(),
+						]),
+						Expect::string()
+					)->required()->assert(fn ($input) => count($input) > 0, 'At least one mapping must be defined'),
+					'defaultCache' => (clone $expectService),
+					'queryCache' => (clone $expectService),
+					'resultCache' => (clone $expectService),
+					'hydrationCache' => (clone $expectService),
+					'metadataCache' => (clone $expectService),
+					'secondLevelCache' => Expect::structure([
+						'enabled' => Expect::bool()->default(false),
+						'cache' => (clone $expectService),
+						'logger' => (clone $expectService),
+						'regions' => Expect::arrayOf(
+							Expect::structure([
+								'lifetime' => Expect::int()->required(),
+								'lockLifetime' => Expect::int()->required(),
+							]),
+							Expect::string()->required()
+						),
+					]),
+				])->required(),
+				Expect::string()->required()
+			),
 		]);
 	}
 
+	/**
+	 * Register services
+	 */
 	public function loadConfiguration(): void
 	{
-		$this->loadDoctrineConfiguration();
-		$this->loadEntityManagerConfiguration();
-		$this->loadMappingConfiguration();
-	}
-
-	public function loadDoctrineConfiguration(): void
-	{
-		$builder = $this->getContainerBuilder();
-		$globalConfig = $this->config;
-		$config = $globalConfig->configuration;
-
-		// @validate configuration class is subclass of origin one
-		$configurationClass = $globalConfig->configurationClass;
-		assert(is_string($configurationClass));
-
-		if (!is_a($configurationClass, Configuration::class, true)) {
-			throw new InvalidArgumentException('Configuration class must be subclass of ' . Configuration::class . ', ' . $configurationClass . ' given.');
-		}
-
-		$configuration = $builder->addDefinition($this->prefix('configuration'))
-			->setType($configurationClass);
-
-		if ($config->proxyDir !== null) {
-			$configuration->addSetup('setProxyDir', [Helpers::expand($config->proxyDir, $builder->parameters)]);
-		}
-
-		if (is_bool($config->autoGenerateProxyClasses)) {
-			$defaultStrategy = $this->debugMode === true ? ProxyFactory::AUTOGENERATE_FILE_NOT_EXISTS_OR_CHANGED : ProxyFactory::AUTOGENERATE_FILE_NOT_EXISTS;
-			$configuration->addSetup('setAutoGenerateProxyClasses', [
-				$config->autoGenerateProxyClasses === true ? $defaultStrategy : ProxyFactory::AUTOGENERATE_NEVER,
-			]);
-		} elseif (is_int($config->autoGenerateProxyClasses)) {
-			$configuration->addSetup('setAutoGenerateProxyClasses', [$config->autoGenerateProxyClasses]);
-		} elseif ($config->autoGenerateProxyClasses instanceof Statement) {
-			$configuration->addSetup('setAutoGenerateProxyClasses', [$config->autoGenerateProxyClasses]);
-		}
-
-		if ($config->proxyNamespace !== null) {
-			$configuration->addSetup('setProxyNamespace', [$config->proxyNamespace]);
-		}
-
-		if ($config->metadataDriverImpl !== null) {
-			$configuration->addSetup('setMetadataDriverImpl', [$config->metadataDriverImpl]);
-		} else {
-			$configuration->addSetup('setMetadataDriverImpl', [$this->prefix('@mappingDriver')]);
-		}
-
-		if ($config->entityNamespaces !== []) {
-			$configuration->addSetup('setEntityNamespaces', [$config->entityNamespaces]);
-		}
-
-		// Custom functions
-		$configuration
-			->addSetup('setCustomStringFunctions', [$config->customStringFunctions])
-			->addSetup('setCustomNumericFunctions', [$config->customNumericFunctions])
-			->addSetup('setCustomDatetimeFunctions', [$config->customDatetimeFunctions])
-			->addSetup('setCustomHydrationModes', [$config->customHydrationModes]);
-
-		if ($config->classMetadataFactoryName !== null) {
-			$configuration->addSetup('setClassMetadataFactoryName', [$config->classMetadataFactoryName]);
-		}
-
-		if ($config->defaultRepositoryClassName !== null) {
-			$configuration->addSetup('setDefaultRepositoryClassName', [$config->defaultRepositoryClassName]);
-		}
-
-		if ($config->namingStrategy !== null) {
-			$configuration->addSetup('setNamingStrategy', [SmartStatement::from($config->namingStrategy)]);
-		}
-
-		if ($config->quoteStrategy !== null) {
-			$configuration->addSetup('setQuoteStrategy', [SmartStatement::from($config->quoteStrategy)]);
-		}
-
-		if ($config->entityListenerResolver !== null) {
-			$configuration->addSetup('setEntityListenerResolver', [SmartStatement::from($config->entityListenerResolver)]);
-		} else {
-			$builder->addDefinition($this->prefix('entityListenerResolver'))
-				->setType(ContainerEntityListenerResolver::class);
-			$configuration->addSetup('setEntityListenerResolver', [$this->prefix('@entityListenerResolver')]);
-		}
-
-		if ($config->repositoryFactory !== null) {
-			$configuration->addSetup('setRepositoryFactory', [SmartStatement::from($config->repositoryFactory)]);
-		}
-
-		if ($config->defaultQueryHints !== []) {
-			$configuration->addSetup('setDefaultQueryHints', [$config->defaultQueryHints]);
-		}
-
-		if ($config->filters !== []) {
-			foreach ($config->filters as $filterName => $filter) {
-				$configuration->addSetup('addFilter', [$filterName, $filter->class]);
-			}
+		// Trigger passes
+		foreach ($this->passes as $pass) {
+			$pass->loadPassConfiguration();
 		}
 	}
 
-	public function loadEntityManagerConfiguration(): void
+	/**
+	 * Decorate services
+	 */
+	public function beforeCompile(): void
 	{
-		$builder = $this->getContainerBuilder();
-		$config = $this->config;
-
-		// @validate entity manager decorator has a real class
-		$entityManagerDecoratorClass = $config->entityManagerDecoratorClass;
-
-		if (!class_exists($entityManagerDecoratorClass)) {
-			throw new InvalidStateException(sprintf('EntityManagerDecorator class "%s" not found', $entityManagerDecoratorClass));
+		// Trigger passes
+		foreach ($this->passes as $pass) {
+			$pass->beforePassCompile();
 		}
-
-		// Entity Manager
-		$original = new Statement(DoctrineEntityManager::class, [
-			$builder->getDefinitionByType(Connection::class), // Nettrine/DBAL
-			$this->prefix('@configuration'),
-		]);
-
-		// Entity Manager Decorator
-		$decorator = $builder->addDefinition($this->prefix('entityManagerDecorator'))
-			->setFactory($entityManagerDecoratorClass, [$original]);
-
-		// Configuration filters
-		if ($config->configuration->filters !== []) {
-			foreach ($config->configuration->filters as $filterName => $filter) {
-				if ($filter->enabled) {
-					$decorator->addSetup(new Statement('$service->getFilters()->enable(?)', [$filterName]));
-				}
-			}
-		}
-
-		if ($config->configuration->resolveTargetEntities !== []) {
-			$resolver = $builder->addDefinition($this->prefix('targetEntityResolver'))
-				->setType(ResolveTargetEntityListener::class);
-
-			foreach ($config->configuration->resolveTargetEntities as $name => $implementation) {
-				$resolver->addSetup('addResolveTargetEntity', [$name, $implementation, []]);
-			}
-		}
-
-		// Manager Registry
-		$builder->addDefinition($this->prefix('managerRegistry'))
-			->setFactory(ManagerRegistry::class, [
-				'@' . Connection::class,
-				$this->prefix('@entityManagerDecorator'),
-			]);
-
-		// Manager Provider
-		$builder->addDefinition($this->prefix('managerProvider'))
-			->setFactory(ManagerProvider::class, [
-				$this->prefix('@managerRegistry'),
-			]);
 	}
 
-	public function loadMappingConfiguration(): void
+	public function afterCompile(ClassType $class): void
 	{
-		$builder = $this->getContainerBuilder();
-
-		// Driver Chain
-		$builder->addDefinition($this->prefix('mappingDriver'))
-			->setFactory(MappingDriverChain::class)
-			->addTag(self::MAPPING_DRIVER_TAG);
+		// Trigger passes
+		foreach ($this->passes as $pass) {
+			$pass->afterPassCompile($class);
+		}
 	}
 
 }
