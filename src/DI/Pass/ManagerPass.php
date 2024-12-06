@@ -260,7 +260,7 @@ class ManagerPass extends AbstractPass
 		// MappingDriver
 		$mappingDriver = $builder->addDefinition($this->prefix(sprintf('managers.%s.mappingDriver', $managerName)))
 			->setFactory(MappingDriverChain::class)
-			->addTag(OrmExtension::MAPPING_DRIVER_TAG)
+			->addTag(OrmExtension::MAPPING_DRIVER_TAG, ['name' => $managerName])
 			->setAutowired(false);
 
 		// Mapping

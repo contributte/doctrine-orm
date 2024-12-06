@@ -145,7 +145,7 @@ nettrine.orm:
 > - https://www.doctrine-project.org/projects/doctrine-orm/en/latest/reference/caching.html
 
 A Doctrine ORM can automatically cache query results and metadata. The feature is optional though, and by default, no cache is configured.
-You can enable the result cache by setting the `resultCache` configuration option to an instance of a cache driver.
+You can enable the result cache by setting the `defaultCache` configuration option to an instance of a cache driver or `metadataCache`, `queryCache`, `resultCache`, `hydrationCache` separately.
 
 > [!WARNING]
 > Cache adapter must implement `Psr\Cache\CacheItemPoolInterface` interface.
@@ -238,10 +238,7 @@ nettrine.orm:
 
 ### Mapping
 
-There are several ways how to map entities to Doctrine ORM. This library supports:
-
-- **attribute**
-- **xml**
+There are several ways how to map entities to Doctrine ORM. This library supports  **attributes** and **xml** out of the box.
 
 ### Attributes
 
@@ -277,7 +274,7 @@ nettrine.orm:
       connection: default
       mapping:
         App:
-          type: attribute
+          type: attributes
           dir: %appDir%/Database
           prefix: App/Database
 ```
@@ -330,8 +327,7 @@ It's a good practice if you have separated modules in your applications.
 
 namespace App\Model\DI;
 
-use Nette\DI\CompilerExtension;
-use Nettrine\ORM\DI\Helpers\MappingHelper;
+use Nette\DI\CompilerExtension;use Nettrine\ORM\DI\Helpers\MappingHelper;
 
 class DoctrineMappingExtension extends CompilerExtension
 {
@@ -339,10 +335,10 @@ class DoctrineMappingExtension extends CompilerExtension
   public function beforeCompile(): void
   {
     MappingHelper::of($this)
-        ->addAttribute('App\Model\Database', __DIR__ . '/../app/Model/Database')
-        ->addAttribute('Forum\Modules\Database', __DIR__ . '/../../modules/Forum/Database')
-        ->addXml('Gallery1\Modules\Database', __DIR__ . '/../../modules/Gallery1/Database')
-        ->addXml('Gallery2\Modules\Database', __DIR__ . '/../../modules/Gallery2/Database', $simple = TRUE)
+        ->addAttribute($connection = 'default', $namespace = 'App\Model\Database', $path = __DIR__ . '/../app/Model/Database')
+        ->addAttribute('default', 'Forum\Modules\Database', __DIR__ . '/../../modules/Forum/Database')
+        ->addXml('default', 'Gallery1\Modules\Database', __DIR__ . '/../../modules/Gallery1/Database')
+        ->addXml('default', 'Gallery2\Modules\Database', __DIR__ . '/../../modules/Gallery2/Database')
   }
 
 }

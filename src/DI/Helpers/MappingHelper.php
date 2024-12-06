@@ -2,8 +2,9 @@
 
 namespace Nettrine\ORM\DI\Helpers;
 
+use Doctrine\ORM\Mapping\Driver\AttributeDriver;
+use Doctrine\ORM\Mapping\Driver\SimplifiedXmlDriver;
 use Nette\DI\CompilerExtension;
-use Nette\DI\Definitions\Definition;
 use Nette\DI\Definitions\ServiceDefinition;
 use Nette\DI\Definitions\Statement;
 use Nettrine\ORM\DI\OrmExtension;
@@ -24,56 +25,57 @@ class MappingHelper
 		return new self($extension);
 	}
 
-	public function addAttribute(string $namespace, string $path): self
+	public function addAttribute(string $connection, string $namespace, string $path): self
 	{
 		if (!is_dir($path)) {
 			throw new LogicalException(sprintf('Given mapping path "%s" does not exist', $path));
 		}
 
-		/** @var ServiceDefinition $attributeDriver */
-		$attributeDriver = $this->getService(OrmExtension::MANAGER_TAG, 'AttributeDriver');
-		$attributeDriver->addSetup('addPaths', [[$path]]);
-
-		/** @var ServiceDefinition $chainDriver */
-		$chainDriver = $this->getService(OrmExtension::MAPPING_DRIVER_TAG, 'MappingDriverChain');
-		$chainDriver->addSetup('addDriver', [$attributeDriver, $namespace]);
+		$chainDriver = $this->getChainDriver($connection);
+		$chainDriver->addSetup('addDriver', [
+			new Statement(AttributeDriver::class, [[$path]]),
+			$namespace,
+		]);
 
 		return $this;
 	}
 
-	public function addXml(string $namespace, string $path, bool $simple = false): self
+	public function addXml(string $connection, string $namespace, string $path): self
 	{
 		if (!is_dir($path)) {
 			throw new LogicalException(sprintf('Given mapping path "%s" does not exist', $path));
 		}
 
-		/** @var ServiceDefinition $xmlDriver */
-		$xmlDriver = $this->getService(OrmExtension::MANAGER_TAG, 'XmlDriver');
-
-		if ($simple) {
-			$xmlDriver->addSetup(new Statement('$service->getLocator()->addNamespacePrefixes([? => ?])', [$path, $namespace]));
-		} else {
-			$xmlDriver->addSetup(new Statement('$service->getLocator()->addPaths([?])', [$path]));
-		}
-
-		/** @var ServiceDefinition $chainDriver */
-		$chainDriver = $this->getService(OrmExtension::MAPPING_DRIVER_TAG, 'MappingDriverChain');
-		$chainDriver->addSetup('addDriver', [$xmlDriver, $namespace]);
+		$chainDriver = $this->getChainDriver($connection);
+		$chainDriver->addSetup('addDriver', [
+			new Statement(SimplifiedXmlDriver::class, [[$path => $namespace]]),
+			$namespace,
+		]);
 
 		return $this;
 	}
 
-	private function getService(string $tag, string $name): Definition
+	private function getChainDriver(string $connection): ServiceDefinition
 	{
 		$builder = $this->extension->getContainerBuilder();
 
-		$service = $builder->findByTag($tag);
+		/** @var array<string, array{name: string}> $services */
+		$services = $builder->findByTag(OrmExtension::MAPPING_DRIVER_TAG);
 
-		if ($service === []) {
-			throw new LogicalException(sprintf('Service "%s" not found by tag "%s"', $name, $tag));
+		if ($services === []) {
+			throw new LogicalException('No mapping driver found');
 		}
 
-		return $builder->getDefinition(current(array_keys($service)));
+		foreach ($services as $serviceName => $tagValue) {
+			if ($tagValue['name'] === $connection) {
+				$serviceDef = $builder->getDefinition($serviceName);
+				assert($serviceDef instanceof ServiceDefinition);
+
+				return $serviceDef;
+			}
+		}
+
+		throw new LogicalException(sprintf('No mapping driver found for connection "%s"', $connection));
 	}
 
 }
