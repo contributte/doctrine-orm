@@ -15,6 +15,7 @@ Integration of [Doctrine ORM](https://www.doctrine-project.org/projects/orm.html
     - [Helper](#helper)
   - [DBAL](#dbal)
   - [Console](#console)
+- [Static analyses](#static-analyses)
 - [Troubleshooting](#troubleshooting)
 - [Examples](#examples)
 
@@ -385,6 +386,57 @@ extensions:
 Since this moment when you type `bin/console`, there'll be registered commands from Doctrine DBAL.
 
 ![Console Commands](https://raw.githubusercontent.com/nettrine/orm/master/.docs/assets/console.png)
+
+## Static analyses
+
+You can use [PHPStan](https://github.com/phpstan) to analyze your code.
+
+1. Install PHPStan and Doctrine extension.
+
+```bash
+composer require --dev phpstan/phpstan phpstan/phpstan-doctrine
+```
+
+2. Create ORM loader for PHPStan, e.q. `phpstan-doctrine.php`.
+
+```php
+<?php declare(strict_types = 1);
+
+require __DIR__ . '/../vendor/autoload.php';
+
+return App\Bootstrap::boot()
+	->createContainer()
+	->getByType(Doctrine\ORM\EntityManagerInterface::class);
+```
+
+3. Configure PHPStan in `phpstan.neon`.
+
+```neon
+includes:
+	- vendor/phpstan/phpstan-doctrine/extension.neon
+
+parameters:
+	level: 9
+	phpVersion: 80200
+
+	tmpDir: %currentWorkingDirectory%/var/tmp/phpstan
+
+	fileExtensions:
+		- php
+		- phpt
+
+	paths:
+		- app
+
+	doctrine:
+		objectManagerLoader: phpstan-doctrine.php
+```
+
+4. And run PHPStan.
+
+```bash
+vendor/bin/phpstan analyse -c phpstan.neon
+```
 
 ## Troubleshooting
 
