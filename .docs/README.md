@@ -9,6 +9,7 @@ Integration of [Doctrine ORM](https://www.doctrine-project.org/projects/orm.html
   - [Minimal configuration](#minimal-configuration)
   - [Advanced configuration](#advanced-configuration)
   - [Auto configuration](#auto-configuration)
+  - [EntityManager](#entitymanager)
   - [Caching](#caching)
   - [Mapping](#mapping)
     - [Attributes](#attributes)
@@ -151,6 +152,37 @@ By default, this extension will try to autoconfigure itself.
   - `2` means that the proxy classes are generated automatically when the proxy file does not exist.
   - `3` means that the proxy classes are generated automatically using `eval()` (useful for debugging).
   - `4` means that the proxy classes are generated automatically when the proxy file does not exist or when the proxied file changed.
+
+### EntityManager
+
+EntityManager is a central access point to ORM functionality. It is a wrapper around ObjectManager and holds the metadata and configuration of the ORM.
+
+**EntityManagerDecorator**
+
+You can use `entityManagerDecoratorClass` to decorate EntityManager.
+
+```neon
+nettrine.orm:
+  managers:
+    default:
+      connection: default
+      entityManagerDecoratorClass: App\MyEntityManagerDecorator
+```
+
+**Close & Reset**
+
+If you hit `The EntityManager is closed.` exception, you can use `reset` method to reopen it.
+
+```php
+$managerRegistry = $container->getByType(Doctrine\Persistence\ManagerRegistry::class);
+$managerRegistry->resetManager(); // default
+$managerRegistry->resetManager('second');
+```
+
+> [!WARNING]
+> Resetting the manager is a dangerous operation. It is also black magic, because you cannot just create a new EntityManager instance,
+> you have to reset the current one using internal methods (reflection & binding).
+> Class responsible for this operation is [`Nettrine\ORM\ManagerRegistry`](https://github.com/contributte/doctrine-orm/blob/master/src/ManagerRegistry.php).
 
 ### Caching
 
@@ -302,6 +334,7 @@ The XML mapping driver enables you to provide the ORM metadata in form of XML do
 > - https://www.doctrine-project.org/projects/doctrine-orm/en/latest/reference/xml-mapping.html
 
 ```xml
+
 <doctrine-mapping
   xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
   xmlns:xsi="https://www.w3.org/2001/XMLSchema-instance"

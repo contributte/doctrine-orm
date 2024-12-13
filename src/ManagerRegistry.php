@@ -2,9 +2,11 @@
 
 namespace Nettrine\ORM;
 
+use Doctrine\ORM\EntityManager;
 use Doctrine\Persistence\AbstractManagerRegistry;
 use Doctrine\Persistence\Proxy;
 use Nette\DI\Container;
+use Nettrine\ORM\Utils\Binder;
 
 class ManagerRegistry extends AbstractManagerRegistry
 {
@@ -40,6 +42,13 @@ class ManagerRegistry extends AbstractManagerRegistry
 
 	protected function resetService(string $name): void
 	{
+		$manager = $this->container->getService($name);
+
+		Binder::use($manager, function (): void {
+			/** @var EntityManager $this */
+			$this->closed = false; // @phpstan-ignore-line
+		});
+
 		$this->container->removeService($name);
 	}
 
