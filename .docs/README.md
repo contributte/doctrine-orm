@@ -8,6 +8,7 @@ Integration of [Doctrine ORM](https://www.doctrine-project.org/projects/orm.html
 - [Configuration](#configuration)
   - [Minimal configuration](#minimal-configuration)
   - [Advanced configuration](#advanced-configuration)
+  - [Auto configuration](#auto-configuration)
   - [Caching](#caching)
   - [Mapping](#mapping)
     - [Attributes](#attributes)
@@ -138,6 +139,18 @@ nettrine.orm:
 
 > [!TIP]
 > Take a look at real **Nettrine ORM** configuration example at [contributte/doctrine-project](https://github.com/contributte/doctrine-project/blob/f226bcf46b9bcce2f68961769a02e507936e4682/config/config.neon).
+
+### Auto configuration
+
+By default, this extension will try to autoconfigure itself.
+
+- **proxyDir**: `%tempDir%/proxies`, if `%tempDir%` is not defined,, you have to define it manually.
+- **autoGenerateProxyClasses**: `%debugMode%`, if `%debugMode%` is not defined, you have to define it manually.
+  - `0` means that the proxy classes must be generated manually.
+  - `1` means that the proxy classes are generated automatically.
+  - `2` means that the proxy classes are generated automatically when the proxy file does not exist.
+  - `3` means that the proxy classes are generated automatically using `eval()` (useful for debugging).
+  - `4` means that the proxy classes are generated automatically when the proxy file does not exist or when the proxied file changed.
 
 ### Caching
 
