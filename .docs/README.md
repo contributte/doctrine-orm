@@ -50,8 +50,7 @@ nettrine.orm:
       connection: default
       mapping:
         App:
-          type: attributes
-          dirs: [%appDir%/Database]
+          directories: [%appDir%/Database]
           namespace: App/Database
 ```
 
@@ -91,7 +90,7 @@ nettrine.orm:
       mapping:
         <name>:
           type: <attributes|xml>
-          dirs: <string[]>
+          directories: <string[]>
           namespace: <string>
 
       defaultCache: <class-string|service>
@@ -133,8 +132,7 @@ nettrine.orm:
       connection: default
       mapping:
         App:
-          type: attributes
-          dirs: [%appDir%/Database]
+          directories: [%appDir%/Database]
           namespace: App\Database
 ```
 
@@ -320,8 +318,7 @@ nettrine.orm:
       connection: default
       mapping:
         App:
-          type: attributes
-          dirs: [%appDir%/Database]
+          directories: [%appDir%/Database]
           namespace: App\Database
 ```
 
@@ -348,7 +345,7 @@ The XML mapping driver enables you to provide the ORM metadata in form of XML do
 </doctrine-mapping>
 ```
 
-Configuration for attribute mapping looks like this:
+Configuration for XML mapping looks like this:
 
 ```neon
 nettrine.orm:
@@ -358,7 +355,7 @@ nettrine.orm:
       mapping:
         App:
           type: xml
-          dirs: [%appDir%/Database]
+          directories: [%appDir%/Database]
           namespace: App\Database
 ```
 

@@ -44,7 +44,7 @@ Toolkit::test(function (): void {
 							mapping:
 								App:
 									type: attributes
-									dirs: [%fixturesDir%/Entity, %fixturesDir%/../Toolkit]
+									directories: [%fixturesDir%/Entity, %fixturesDir%/../Toolkit]
 									namespace: Tests\Fixtures\Dummy
 				NEON
 			));
@@ -91,7 +91,7 @@ Toolkit::test(function (): void {
 							mapping:
 								App:
 									type: xml
-									dirs: [%fixturesDir%/Entity, %fixturesDir%/../Toolkit]
+									directories: [%fixturesDir%/Entity, %fixturesDir%/../Toolkit]
 									namespace: Tests\Mocks\Dummy
 				NEON
 			));
@@ -138,11 +138,11 @@ Toolkit::test(function (): void {
 							mapping:
 								App:
 									type: attributes
-									dirs: [%fixturesDir%/Entity, %fixturesDir%/../Toolkit]
+									directories: [%fixturesDir%/Entity, %fixturesDir%/../Toolkit]
 									namespace: Tests\Mocks\Entity
 								AppModule:
 									type: xml
-									dirs: [%fixturesDir%/Entity, %fixturesDir%/../Toolkit]
+									directories: [%fixturesDir%/Entity, %fixturesDir%/../Toolkit]
 									namespace: App\Module
 				NEON
 			));

@@ -45,14 +45,14 @@ Toolkit::test(function (): void {
 							mapping:
 								App:
 									type: attributes
-									dirs: [app/Database]
+									directories: [app/Database]
 									namespace: App\Database
 						second:
 							connection: second
 							mapping:
 								App:
 									type: attributes
-									dirs: [app/Database]
+									directories: [app/Database]
 									namespace: App\Database
 				NEON
 			));
@@ -98,7 +98,7 @@ Toolkit::test(function (): void {
 							mapping:
 								App:
 									type: attributes
-									dirs: [app/Database]
+									directories: [app/Database]
 									namespace: App\Database
 						second:
 							connection: second
@@ -106,7 +106,7 @@ Toolkit::test(function (): void {
 							mapping:
 								App:
 									type: attributes
-									dirs: [app/Database]
+									directories: [app/Database]
 									namespace: App\Database
 				NEON
 			));

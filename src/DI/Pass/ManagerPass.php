@@ -267,12 +267,12 @@ class ManagerPass extends AbstractPass
 		foreach ($managerConfig->mapping as $mapping) {
 			if ($mapping->type === 'attributes') {
 				$mappingDriver->addSetup('addDriver', [
-					new Statement(AttributeDriver::class, [array_values($mapping->dirs)]),
+					new Statement(AttributeDriver::class, [array_values($mapping->directories)]),
 					$mapping->namespace,
 				]);
 			} elseif ($mapping->type === 'xml') {
 				$mappingDriver->addSetup('addDriver', [
-					new Statement(SimplifiedXmlDriver::class, [array_combine($mapping->dirs, array_fill(0, count($mapping->dirs), $mapping->namespace))]),
+					new Statement(SimplifiedXmlDriver::class, [array_combine($mapping->directories, array_fill(0, count($mapping->directories), $mapping->namespace))]),
 					$mapping->namespace,
 				]);
 			} else {

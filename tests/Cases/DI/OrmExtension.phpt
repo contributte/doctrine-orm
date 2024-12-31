@@ -39,7 +39,7 @@ Toolkit::test(function (): void {
 							mapping:
 								App:
 									type: attributes
-									dirs: [app/Database]
+									directories: [app/Database]
 									namespace: App\Database
 				NEON
 			));

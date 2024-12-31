@@ -44,7 +44,7 @@ Toolkit::test(function (): void {
 							mapping:
 								App:
 									type: attributes
-									dirs: [%fixturesDir%/Entity]
+									directories: [%fixturesDir%/Entity]
 									namespace: Tests\Mocks\Entity
 				NEON
 			));
