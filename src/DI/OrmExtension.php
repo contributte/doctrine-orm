@@ -41,7 +41,7 @@ use Tracy\Debugger;
  *     repositoryFactory: string|Statement|null,
  *     defaultQueryHints: array<string, mixed>,
  *     filters: array<string, object{class: string, enabled: bool}>,
- *     mapping: array<string, object{type: 'attributes'|'xml', dirs: string[], namespace: string}>,
+ *     mapping: array<string, object{type: 'attributes'|'xml', directories: string[], namespace: string}>,
  *     defaultCache: string|Statement|null,
  *     queryCache: string|Statement|null,
  *     resultCache: string|Statement|null,
@@ -123,8 +123,8 @@ final class OrmExtension extends CompilerExtension
 					),
 					'mapping' => Expect::arrayOf(
 						Expect::structure([
-							'type' => Expect::anyOf('attributes', 'xml')->required(),
-							'dirs' => Expect::listOf(Expect::string())->min(1)->required(),
+							'type' => Expect::anyOf('attributes', 'xml')->default('attributes'),
+							'directories' => Expect::listOf(Expect::string())->min(1)->required(),
 							'namespace' => Expect::string()->required(),
 						]),
 						Expect::string()
