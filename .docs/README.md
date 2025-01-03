@@ -37,7 +37,7 @@ extensions:
 ```
 
 > [!NOTE]
-> This is just **ORM**, for **DBAL** please use [nettrine/orm](https://github.com/contributte/doctrine-dbal).
+> This is just **ORM**, for **DBAL** please use [nettrine/dbal](https://github.com/contributte/doctrine-dbal).
 
 ## Configuration
 
