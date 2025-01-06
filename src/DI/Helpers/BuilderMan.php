@@ -84,7 +84,7 @@ final class BuilderMan
 		}
 
 		/** @var array{name: string} $tagValue */
-		foreach($builder->findByTag(OrmExtension::MANAGER_DECORATOR_TAG) as $serviceName => $tagValue) {
+		foreach ($builder->findByTag(OrmExtension::MANAGER_DECORATOR_TAG) as $serviceName => $tagValue) {
 			$definitions[$tagValue['name']] = $serviceName;
 		}
 
