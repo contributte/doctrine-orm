@@ -246,7 +246,7 @@ nettrine.orm:
     managers:
       default:
         # Use default cache
-        defaultCache: App\MyCachSymfony\Component\Cache\Adapter\FilesystemAdapter(namespace: doctrine-orm, defaultLifetime: 0, directory: %tempDir%/cache/orm)
+        defaultCache: Symfony\Component\Cache\Adapter\FilesystemAdapter(namespace: doctrine-orm, defaultLifetime: 0, directory: %tempDir%/cache/orm)
 
         # Or use separate caches
         queryCache: Symfony\Component\Cache\Adapter\FilesystemAdapter(namespace: doctrine-orm-query, defaultLifetime: 0, directory: %tempDir%/cache/orm-query)
