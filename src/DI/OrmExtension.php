@@ -84,7 +84,7 @@ final class OrmExtension extends CompilerExtension
 	public function getConfigSchema(): Schema
 	{
 		$parameters = $this->getContainerBuilder()->parameters;
-		$proxyDir = isset($parameters['tempDir']) ? $parameters['tempDir'] . '/proxies' : null;
+		$proxyDir = isset($parameters['tempDir']) ? $parameters['tempDir'] . '/cache/doctrine/orm/proxies' : null;
 		$autoGenerateProxy = boolval($parameters['debugMode'] ?? true);
 
 		$expectService = Expect::anyOf(
