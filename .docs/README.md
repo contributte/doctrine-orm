@@ -202,7 +202,7 @@ nettrine.orm:
   managers:
     default:
       # Create cache manually
-      defaultCache: App\CacheService(%tempDir%/cache/orm)
+      defaultCache: App\CacheService(%tempDir%/cache/doctrine/orm)
 
       # Use registered cache service
       defaultCache: @cacheService
@@ -214,10 +214,10 @@ Or you can define each cache separately.
 nettrine.orm:
   managers:
     default:
-      queryCache: App\CacheService(%tempDir%/cache/orm-query)
-      resultCache: App\CacheService(%tempDir%/cache/orm-result)
-      hydrationCache: App\CacheService(%tempDir%/cache/orm-hydration)
-      metadataCache: App\CacheService(%tempDir%/cache/orm-metadata)
+      queryCache: App\CacheService(%tempDir%/cache/doctrine/orm/query)
+      resultCache: App\CacheService(%tempDir%/cache/doctrine/orm/result)
+      hydrationCache: App\CacheService(%tempDir%/cache/doctrine/orm/hydration)
+      metadataCache: App\CacheService(%tempDir%/cache/doctrine/orm/metadata)
 ```
 
 Second level cache is a bit different. Be sure you know what you are doing, lear more in official [Doctrine documentation](https://www.doctrine-project.org/projects/doctrine-orm/en/3.3/reference/second-level-cache.html).
@@ -228,7 +228,7 @@ nettrine.orm:
     default:
         secondLevelCache:
           enable: true
-          cache: App\CacheService(%tempDir%/cache/orm-slc)
+          cache: App\CacheService(%tempDir%/cache/doctrine/orm/slc)
           logger: App\LoggerService()
           regions:
             region1:
@@ -246,13 +246,13 @@ nettrine.orm:
     managers:
       default:
         # Use default cache
-        defaultCache: Symfony\Component\Cache\Adapter\FilesystemAdapter(namespace: doctrine-orm, defaultLifetime: 0, directory: %tempDir%/cache/orm)
+        defaultCache: Symfony\Component\Cache\Adapter\FilesystemAdapter(namespace: orm, defaultLifetime: 0, directory: %tempDir%/cache/doctrine/orm)
 
         # Or use separate caches
-        queryCache: Symfony\Component\Cache\Adapter\FilesystemAdapter(namespace: doctrine-orm-query, defaultLifetime: 0, directory: %tempDir%/cache/orm-query)
-        resultCache: Symfony\Component\Cache\Adapter\FilesystemAdapter(namespace: doctrine-orm-result, defaultLifetime: 0, directory: %tempDir%/cache/orm-result)
-        hydrationCache: Symfony\Component\Cache\Adapter\FilesystemAdapter(namespace: doctrine-orm-hydration, defaultLifetime: 0, directory: %tempDir%/cache/orm-hydration)
-        metadataCache: Symfony\Component\Cache\Adapter\FilesystemAdapter(namespace: doctrine-orm-metadata, defaultLifetime: 0, directory: %tempDir%/cache/orm-metadata)
+        queryCache: Symfony\Component\Cache\Adapter\FilesystemAdapter(namespace: orm-query, defaultLifetime: 0, directory: %tempDir%/cache/doctrine/orm/query)
+        resultCache: Symfony\Component\Cache\Adapter\FilesystemAdapter(namespace: orm-result, defaultLifetime: 0, directory: %tempDir%/cache/doctrine/orm/result)
+        hydrationCache: Symfony\Component\Cache\Adapter\FilesystemAdapter(namespace: orm-hydration, defaultLifetime: 0, directory: %tempDir%/cache/doctrine/orm/hydration)
+        metadataCache: Symfony\Component\Cache\Adapter\FilesystemAdapter(namespace: orm-metadata, defaultLifetime: 0, directory: %tempDir%/cache/doctrine/orm/metadata)
 ```
 
 If you like [`nette/caching`](https://github.com/nette/caching) you can use it as well. Be aware that `nette/caching` is not PSR-6 + PSR-16 compatible, you need `contributte/psr16-caching`.
@@ -264,7 +264,7 @@ nettrine.orm:
         defaultCache: Contributte\Psr6\CachePool(
           Nette\Caching\Cache(
             Nette\Caching\Storages\FileStorage(%tempDir%/cache)
-            doctrine/dbal
+            doctrine/orm
           )
         )
 ```

@@ -17,9 +17,22 @@ class DummyEntity implements DummyIdentity
 	#[Id]
 	private int $id;
 
+	#[Column(type: 'text', nullable: false)]
+	private string $username;
+
+	public function __construct(string $username)
+	{
+		$this->username = $username;
+	}
+
 	public function getId(): int
 	{
 		return $this->id;
+	}
+
+	public function getUsername(): string
+	{
+		return $this->username;
 	}
 
 }
