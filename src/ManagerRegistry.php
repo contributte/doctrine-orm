@@ -36,6 +36,25 @@ class ManagerRegistry extends AbstractManagerRegistry
 		);
 	}
 
+	/**
+	 * @param ObjectManagerDecorator<EntityManager>|EntityManager $manager
+	 */
+	public static function reopen(ObjectManagerDecorator|EntityManager $manager): void
+	{
+		// @phpcs:disable
+		Binder::use($manager, function (): void {
+			if ($this instanceof EntityManager) {  // @phpstan-ignore-line
+				$this->closed = false; // @phpstan-ignore-line
+			} elseif ($this instanceof ObjectManagerDecorator) {
+				Binder::use($this->wrapped, function (): void { // @phpstan-ignore-line
+					if ($this instanceof EntityManager) { // @phpstan-ignore-line
+						$this->closed = false;
+					}
+				});
+			}
+		});
+	}
+
 	protected function getService(string $name): object
 	{
 		return $this->container->getService($name);
@@ -45,18 +64,7 @@ class ManagerRegistry extends AbstractManagerRegistry
 	{
 		$manager = $this->container->getService($name);
 
-		Binder::use($manager, function (): void {
-			if ($this instanceof EntityManager) { // @phpstan-ignore-line
-				$this->closed = false;
-			} elseif ($this instanceof ObjectManagerDecorator) { // @phpstan-ignore-line
-				Binder::use($this->wrapped, function (): void {
-					if ($this instanceof EntityManager) {// @phpstan-ignore-line
-						$this->closed = false;
-					}
-				});
-			}
-		});
-		//throw new \Exception($manager::class);
+		self::reopen($manager);
 
 		$this->container->removeService($name);
 	}
