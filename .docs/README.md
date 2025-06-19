@@ -51,7 +51,7 @@ nettrine.orm:
       mapping:
         App:
           directories: [%appDir%/Database]
-          namespace: App/Database
+          namespace: App\Database
 ```
 
 ### Advanced configuration
