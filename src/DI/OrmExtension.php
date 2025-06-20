@@ -85,7 +85,7 @@ final class OrmExtension extends CompilerExtension
 	{
 		$parameters = $this->getContainerBuilder()->parameters;
 		$proxyDir = isset($parameters['tempDir']) ? $parameters['tempDir'] . '/cache/doctrine/orm/proxies' : null;
-		$autoGenerateProxy = boolval($parameters['debugMode'] ?? true);
+		$autoGenerateProxy = Expect::anyOf(Expect::int(), Expect::bool(), Expect::type(Statement::class))->default(2); // 2 is Doctrine\Common\Proxy\AbstractProxyFactory::AUTOGENERATE_FILE_NOT_EXISTS
 
 		$expectService = Expect::anyOf(
 			Expect::string()->required()->assert(fn ($input) => str_starts_with($input, '@') || class_exists($input) || interface_exists($input)),
