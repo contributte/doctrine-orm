@@ -157,7 +157,9 @@ By default, this extension will try to autoconfigure itself.
 > [!WARNING]
 > Requires PHP >= 8.4 and doctrine/orm >= 3.4.0
 
-This setting will override any of the proxy settings and doctrine will use [native lazy objects](https://www.php.net/manual/en/language.oop5.lazy-objects.php) that were added to PHP in version 8.4. No proxies are generated and stored on the disk. This also works with new [property hooks](https://www.php.net/manual/en/language.oop5.property-hooks.php)
+This setting will override any of the proxy settings and doctrine will use [native lazy objects](https://www.php.net/manual/en/language.oop5.lazy-objects.php) that were added to PHP in version 8.4. No proxies are generated and stored on the disk. This also works with new [property hooks](https://www.php.net/manual/en/language.oop5.property-hooks.php).
+
+This will be required by default in version 4.0.0.
 
 > [!TIP]
 > Take a look at more information in official Doctrine documentation:
