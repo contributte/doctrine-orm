@@ -67,6 +67,11 @@ class ManagerPass extends AbstractPass
 			->addTag(OrmExtension::CONFIGURATION_TAG, ['name' => $managerName])
 			->setAutowired(false);
 
+		// Configuration: enabling lazy native objects
+		if ($managerConfig->lazyNativeObjects !== null && method_exists($managerConfig->configurationClass, 'enableNativeLazyObjects')) {
+			$configuration->addSetup('enableNativeLazyObjects', [$managerConfig->lazyNativeObjects]);
+		}
+
 		// Configuration: proxy dir
 		if ($managerConfig->proxyDir !== null) {
 			$configuration->addSetup('setProxyDir', [Helpers::expand($managerConfig->proxyDir, $builder->parameters)]);
