@@ -139,7 +139,7 @@ Toolkit::test(function (): void {
 // Native Objects
 Toolkit::test(function (): void {
 	// Skip on PHP < 8.4 OR doctrine/orm < v3.4.0
-	if (PHP_VERSION_ID < 80400 || !method_exists(Configuration::class, 'enableNativeLazyObjects') {
+	if (PHP_VERSION_ID < 80400 || !method_exists(Configuration::class, 'enableNativeLazyObjects')) {
 		Assert::true(true);
 		return;
 	}
