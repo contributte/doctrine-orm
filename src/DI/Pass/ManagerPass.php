@@ -68,7 +68,7 @@ class ManagerPass extends AbstractPass
 			->setAutowired(false);
 
 		// Configuration: enabling lazy native objects
-		if ($managerConfig->lazyNativeObjects !== null && method_exists($managerConfig->configurationClass, 'enableNativeLazyObjects') {
+		if ($managerConfig->lazyNativeObjects !== null && method_exists($managerConfig->configurationClass, 'enableNativeLazyObjects')) {
 			$configuration->addSetup('enableNativeLazyObjects', [$managerConfig->lazyNativeObjects]);
 		}
 
