@@ -23,6 +23,7 @@ use Tracy\Debugger;
  * @phpstan-type TManagerConfig object{
  *     entityManagerDecoratorClass: string,
  *     configurationClass: string,
+ *     lazyNativeObjects: bool|null,
  *     proxyDir: string|null,
  *     autoGenerateProxyClasses: int|bool|Statement,
  *     proxyNamespace: string|null,
@@ -98,6 +99,7 @@ final class OrmExtension extends CompilerExtension
 					'connection' => Expect::string()->required(),
 					'entityManagerDecoratorClass' => Expect::string()->assert(fn ($input) => is_a($input, EntityManagerDecorator::class, true), 'EntityManager decorator class must be subclass of ' . EntityManagerDecorator::class),
 					'configurationClass' => Expect::string(Configuration::class)->assert(fn ($input) => is_a($input, Configuration::class, true), 'Configuration class must be subclass of ' . Configuration::class),
+					'lazyNativeObjects' => Expect::bool(),
 					'proxyDir' => Expect::string()->default($proxyDir)->before(fn (mixed $v) => $v ?? $proxyDir)->assert(fn (mixed $v) => !($v === null || $v === ''), 'proxyDir must be filled'),
 					'autoGenerateProxyClasses' => Expect::anyOf(Expect::int(), Expect::bool(), Expect::type(Statement::class))->default($autoGenerateProxy),
 					'proxyNamespace' => Expect::string('Nettrine\Proxy')->nullable(),
