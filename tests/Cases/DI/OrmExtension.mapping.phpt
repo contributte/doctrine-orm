@@ -93,6 +93,9 @@ Toolkit::test(function (): void {
 									type: xml
 									directories: [%fixturesDir%/Entity, %fixturesDir%/../Toolkit]
 									namespace: Tests\Mocks\Dummy
+									options:
+										fileExtension: .custom.xml
+										xsdValidation: false
 				NEON
 			));
 		})
@@ -108,6 +111,10 @@ Toolkit::test(function (): void {
 	Assert::type(SimplifiedXmlDriver::class, $xmlDriver);
 	Assert::equal([], $xmlDriver->getAllClassNames());
 	Assert::count(2, $xmlDriver->getLocator()->getPaths());
+	Assert::equal('.custom.xml', $xmlDriver->getLocator()->getFileExtension());
+
+	$r = (new ReflectionClass($xmlDriver))->getParentClass();
+	Assert::false($r->getProperty('isXsdValidationEnabled')->getValue($xmlDriver));
 });
 
 // Driver: all

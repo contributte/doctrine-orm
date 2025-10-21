@@ -277,7 +277,7 @@ class ManagerPass extends AbstractPass
 				]);
 			} elseif ($mapping->type === 'xml') {
 				$mappingDriver->addSetup('addDriver', [
-					new Statement(SimplifiedXmlDriver::class, [array_combine($mapping->directories, array_fill(0, count($mapping->directories), $mapping->namespace))]),
+					new Statement(SimplifiedXmlDriver::class, [array_combine($mapping->directories, array_fill(0, count($mapping->directories), $mapping->namespace)), $mapping->options->fileExtension, $mapping->options->xsdValidation]),
 					$mapping->namespace,
 				]);
 			} else {
