@@ -141,10 +141,11 @@ Toolkit::test(function (): void {
 	// Skip on PHP < 8.4 OR doctrine/orm < v3.4.0
 	if (PHP_VERSION_ID < 80400 || !method_exists(Configuration::class, 'enableNativeLazyObjects')) {
 		Assert::true(true);
+
 		return;
 	}
 
-	$builder = ContainerBuilder::of()
+	$container = ContainerBuilder::of()
 		->withCompiler(function (Compiler $compiler): void {
 			$compiler->addExtension('nettrine.dbal', new DbalExtension());
 			$compiler->addExtension('nettrine.orm', new OrmExtension());
