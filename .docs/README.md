@@ -93,6 +93,9 @@ nettrine.orm:
           type: <attributes|xml>
           directories: <string[]>
           namespace: <string>
+          options:
+            fileExtension: <string>
+            xsdValidation: <boolean>
 
       defaultCache: <class-string|service>
       queryCache: <class-string|service>
@@ -371,7 +374,12 @@ nettrine.orm:
           type: xml
           directories: [%appDir%/Database]
           namespace: App\Database
+          options:
+            fileExtension: .orm.xml
+            xsdValidation: true
 ```
+
+Setting `xsdValidation` to `false` will allow using custom XML elements in mapping files, as used by some behavior extensions (e.g. gedmo:sortable-position).
 
 ### Helper
 
