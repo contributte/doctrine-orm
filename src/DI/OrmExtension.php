@@ -130,7 +130,7 @@ final class OrmExtension extends CompilerExtension
 							'namespace' => Expect::string()->required(),
 						]),
 						Expect::string()
-					)->required()->assert(fn ($input) => count($input) > 0, 'At least one mapping must be defined'),
+					)->default([]),
 					'defaultCache' => (clone $expectService),
 					'queryCache' => (clone $expectService),
 					'resultCache' => (clone $expectService),

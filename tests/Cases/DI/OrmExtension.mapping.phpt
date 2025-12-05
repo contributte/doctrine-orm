@@ -7,7 +7,6 @@ use Doctrine\ORM\Mapping\Driver\AttributeDriver;
 use Doctrine\ORM\Mapping\Driver\SimplifiedXmlDriver;
 use Doctrine\Persistence\Mapping\Driver\MappingDriverChain;
 use Nette\DI\Compiler;
-use Nette\DI\InvalidConfigurationException;
 use Nettrine\DBAL\DI\DbalExtension;
 use Nettrine\ORM\DI\OrmExtension;
 use Tester\Assert;
@@ -156,21 +155,20 @@ Toolkit::test(function (): void {
 	Assert::equal([DummyEntity::class], $driver->getAllClassNames());
 });
 
-// Empty mapping
+// Empty mapping (allowed for cases where mapping is defined in user's DI extension)
 Toolkit::test(function (): void {
-	Assert::exception(function (): void {
-		ContainerBuilder::of()
-			->withCompiler(function (Compiler $compiler): void {
-				$compiler->addExtension('nettrine.dbal', new DbalExtension());
-				$compiler->addExtension('nettrine.orm', new OrmExtension());
-				$compiler->addConfig([
-					'parameters' => [
-						'tempDir' => Tests::TEMP_PATH,
-						'fixturesDir' => Tests::FIXTURES_PATH,
-					],
-				]);
-				$compiler->addConfig(Neonkit::load(
-					<<<'NEON'
+	$container = ContainerBuilder::of()
+		->withCompiler(function (Compiler $compiler): void {
+			$compiler->addExtension('nettrine.dbal', new DbalExtension());
+			$compiler->addExtension('nettrine.orm', new OrmExtension());
+			$compiler->addConfig([
+				'parameters' => [
+					'tempDir' => Tests::TEMP_PATH,
+					'fixturesDir' => Tests::FIXTURES_PATH,
+				],
+			]);
+			$compiler->addConfig(Neonkit::load(
+				<<<'NEON'
 				nettrine.dbal:
 					connections:
 						default:
@@ -184,8 +182,46 @@ Toolkit::test(function (): void {
 							connection: default
 							mapping: []
 				NEON
-				));
-			})
-			->build();
-	}, InvalidConfigurationException::class, "Failed assertion 'At least one mapping must be defined' for item 'nettrine.orm › managers › default › mapping' with value array.");
+			));
+		})
+		->build();
+
+	/** @var MappingDriverChain $driver */
+	$driver = $container->getService('nettrine.orm.managers.default.mappingDriver');
+	Assert::count(0, $driver->getDrivers());
+});
+
+// No mapping key at all (uses default empty array)
+Toolkit::test(function (): void {
+	$container = ContainerBuilder::of()
+		->withCompiler(function (Compiler $compiler): void {
+			$compiler->addExtension('nettrine.dbal', new DbalExtension());
+			$compiler->addExtension('nettrine.orm', new OrmExtension());
+			$compiler->addConfig([
+				'parameters' => [
+					'tempDir' => Tests::TEMP_PATH,
+					'fixturesDir' => Tests::FIXTURES_PATH,
+				],
+			]);
+			$compiler->addConfig(Neonkit::load(
+				<<<'NEON'
+				nettrine.dbal:
+					connections:
+						default:
+							driver: pdo_sqlite
+							password: test
+							user: test
+							path: ":memory:"
+				nettrine.orm:
+					managers:
+						default:
+							connection: default
+				NEON
+			));
+		})
+		->build();
+
+	/** @var MappingDriverChain $driver */
+	$driver = $container->getService('nettrine.orm.managers.default.mappingDriver');
+	Assert::count(0, $driver->getDrivers());
 });
