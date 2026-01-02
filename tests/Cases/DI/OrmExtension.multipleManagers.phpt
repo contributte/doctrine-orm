@@ -3,21 +3,75 @@
 use Contributte\Tester\Toolkit;
 use Contributte\Tester\Utils\ContainerBuilder;
 use Contributte\Tester\Utils\Neonkit;
-use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Nette\DI\Compiler;
 use Nettrine\DBAL\DI\DbalExtension;
 use Nettrine\ORM\DI\OrmExtension;
-use Nettrine\ORM\ManagerRegistry as NettrineManagerRegistry;
+use Symfony\Component\Cache\Adapter\ArrayAdapter;
+use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Tester\Assert;
-use Tests\Mocks\Entity\DummyEntity;
 use Tests\Toolkit\Tests;
 
-require_once __DIR__ . '/../bootstrap.php';
+require_once __DIR__ . '/../../bootstrap.php';
 
-// Multiple managers
+// Only default manager is autowired
+Toolkit::test(function (): void {
+	$container = ContainerBuilder::of()
+		->withCompiler(function (Compiler $compiler): void {
+			$compiler->addExtension('nettrine.dbal', new DbalExtension());
+			$compiler->addExtension('nettrine.orm', new OrmExtension());
+			$compiler->addConfig([
+				'parameters' => [
+					'tempDir' => Tests::TEMP_PATH,
+				],
+			]);
+			$compiler->addConfig(Neonkit::load(
+				<<<'NEON'
+				nettrine.dbal:
+					connections:
+						default:
+							driver: pdo_sqlite
+							password: test
+							user: test
+							path: ":memory:"
+						second:
+							driver: pdo_sqlite
+							password: test
+							user: test
+							path: ":memory:"
+				nettrine.orm:
+					managers:
+						default:
+							connection: default
+							mapping:
+								App:
+									type: attributes
+									directories: [app/Database]
+									namespace: App\Database
+						second:
+							connection: second
+							mapping:
+								App:
+									type: attributes
+									directories: [app/Database]
+									namespace: App\Database
+				NEON
+			));
+		})
+		->build();
+
+	// Autowiring should return the default manager
+	$autowired = $container->getByType(EntityManagerInterface::class);
+	$defaultManager = $container->getService('nettrine.orm.managers.default.entityManager');
+	$secondManager = $container->getService('nettrine.orm.managers.second.entityManager');
+
+	Assert::same($autowired, $defaultManager);
+	Assert::notSame($autowired, $secondManager);
+});
+
+// Access non-default managers by name via registry
 Toolkit::test(function (): void {
 	$container = ContainerBuilder::of()
 		->withCompiler(function (Compiler $compiler): void {
@@ -65,12 +119,16 @@ Toolkit::test(function (): void {
 
 	/** @var ManagerRegistry $registry */
 	$registry = $container->getByType(ManagerRegistry::class);
-	Assert::type(ManagerRegistry::class, $registry);
 
-	Assert::count(2, $registry->getManagers());
+	$defaultManager = $registry->getManager('default');
+	$secondManager = $registry->getManager('second');
+
+	Assert::type(EntityManager::class, $defaultManager);
+	Assert::type(EntityManager::class, $secondManager);
+	Assert::notSame($defaultManager, $secondManager);
 });
 
-// Reset manager
+// Different connections per manager
 Toolkit::test(function (): void {
 	$container = ContainerBuilder::of()
 		->withCompiler(function (Compiler $compiler): void {
@@ -106,7 +164,129 @@ Toolkit::test(function (): void {
 									namespace: App\Database
 						second:
 							connection: second
-							entityManagerDecoratorClass: Tests\Mocks\DummyEntityManagerDecorator
+							mapping:
+								App:
+									type: attributes
+									directories: [app/Database]
+									namespace: App\Database
+				NEON
+			));
+		})
+		->build();
+
+	/** @var EntityManager $defaultManager */
+	$defaultManager = $container->getService('nettrine.orm.managers.default.entityManager');
+	/** @var EntityManager $secondManager */
+	$secondManager = $container->getService('nettrine.orm.managers.second.entityManager');
+
+	Assert::notSame($defaultManager->getConnection(), $secondManager->getConnection());
+});
+
+// Different caches per manager
+Toolkit::test(function (): void {
+	$container = ContainerBuilder::of()
+		->withCompiler(function (Compiler $compiler): void {
+			$compiler->addExtension('nettrine.dbal', new DbalExtension());
+			$compiler->addExtension('nettrine.orm', new OrmExtension());
+			$compiler->addConfig([
+				'parameters' => [
+					'tempDir' => Tests::TEMP_PATH,
+				],
+			]);
+			$compiler->addConfig(Neonkit::load(
+				<<<'NEON'
+				nettrine.dbal:
+					connections:
+						default:
+							driver: pdo_sqlite
+							password: test
+							user: test
+							path: ":memory:"
+						second:
+							driver: pdo_sqlite
+							password: test
+							user: test
+							path: ":memory:"
+				nettrine.orm:
+					managers:
+						default:
+							connection: default
+							defaultCache: Symfony\Component\Cache\Adapter\ArrayAdapter()
+							mapping:
+								App:
+									type: attributes
+									directories: [app/Database]
+									namespace: App\Database
+						second:
+							connection: second
+							defaultCache: Symfony\Component\Cache\Adapter\FilesystemAdapter(namespace: second, defaultLifetime: 0, directory: %tempDir%/cache/second)
+							mapping:
+								App:
+									type: attributes
+									directories: [app/Database]
+									namespace: App\Database
+				NEON
+			));
+		})
+		->build();
+
+	/** @var EntityManager $defaultManager */
+	$defaultManager = $container->getService('nettrine.orm.managers.default.entityManager');
+	/** @var EntityManager $secondManager */
+	$secondManager = $container->getService('nettrine.orm.managers.second.entityManager');
+
+	Assert::type(ArrayAdapter::class, $defaultManager->getConfiguration()->getMetadataCache());
+	Assert::type(FilesystemAdapter::class, $secondManager->getConfiguration()->getMetadataCache());
+});
+
+// Manager count in registry
+Toolkit::test(function (): void {
+	$container = ContainerBuilder::of()
+		->withCompiler(function (Compiler $compiler): void {
+			$compiler->addExtension('nettrine.dbal', new DbalExtension());
+			$compiler->addExtension('nettrine.orm', new OrmExtension());
+			$compiler->addConfig([
+				'parameters' => [
+					'tempDir' => Tests::TEMP_PATH,
+				],
+			]);
+			$compiler->addConfig(Neonkit::load(
+				<<<'NEON'
+				nettrine.dbal:
+					connections:
+						default:
+							driver: pdo_sqlite
+							password: test
+							user: test
+							path: ":memory:"
+						second:
+							driver: pdo_sqlite
+							password: test
+							user: test
+							path: ":memory:"
+						third:
+							driver: pdo_sqlite
+							password: test
+							user: test
+							path: ":memory:"
+				nettrine.orm:
+					managers:
+						default:
+							connection: default
+							mapping:
+								App:
+									type: attributes
+									directories: [app/Database]
+									namespace: App\Database
+						second:
+							connection: second
+							mapping:
+								App:
+									type: attributes
+									directories: [app/Database]
+									namespace: App\Database
+						third:
+							connection: third
 							mapping:
 								App:
 									type: attributes
@@ -120,27 +300,11 @@ Toolkit::test(function (): void {
 	/** @var ManagerRegistry $registry */
 	$registry = $container->getByType(ManagerRegistry::class);
 
-	foreach (['default', 'second'] as $managerName) {
-		/** @var EntityManagerInterface $em1 */
-		$em1 = $registry->getManager($managerName);
-
-		Assert::true($em1->isOpen());
-		$em1->close();
-		Assert::false($em1->isOpen());
-
-		// Reset manager
-		$registry->resetManager($managerName);
-
-		/** @var EntityManagerInterface $em2 */
-		$em2 = $registry->getManager();
-		Assert::notSame($em1, $em2);
-
-		Assert::true($em1->isOpen());
-		Assert::true($em2->isOpen());
-	}
+	Assert::count(3, $registry->getManagers());
+	Assert::equal(['default', 'second', 'third'], array_keys($registry->getManagerNames()));
 });
 
-// Get default manager name
+// Default manager name
 Toolkit::test(function (): void {
 	$container = ContainerBuilder::of()
 		->withCompiler(function (Compiler $compiler): void {
@@ -178,315 +342,4 @@ Toolkit::test(function (): void {
 	$registry = $container->getByType(ManagerRegistry::class);
 
 	Assert::equal('default', $registry->getDefaultManagerName());
-});
-
-// Get default connection name
-Toolkit::test(function (): void {
-	$container = ContainerBuilder::of()
-		->withCompiler(function (Compiler $compiler): void {
-			$compiler->addExtension('nettrine.dbal', new DbalExtension());
-			$compiler->addExtension('nettrine.orm', new OrmExtension());
-			$compiler->addConfig([
-				'parameters' => [
-					'tempDir' => Tests::TEMP_PATH,
-				],
-			]);
-			$compiler->addConfig(Neonkit::load(
-				<<<'NEON'
-				nettrine.dbal:
-					connections:
-						default:
-							driver: pdo_sqlite
-							password: test
-							user: test
-							path: ":memory:"
-				nettrine.orm:
-					managers:
-						default:
-							connection: default
-							mapping:
-								App:
-									type: attributes
-									directories: [app/Database]
-									namespace: App\Database
-				NEON
-			));
-		})
-		->build();
-
-	/** @var ManagerRegistry $registry */
-	$registry = $container->getByType(ManagerRegistry::class);
-
-	Assert::equal('default', $registry->getDefaultConnectionName());
-});
-
-// Get connection
-Toolkit::test(function (): void {
-	$container = ContainerBuilder::of()
-		->withCompiler(function (Compiler $compiler): void {
-			$compiler->addExtension('nettrine.dbal', new DbalExtension());
-			$compiler->addExtension('nettrine.orm', new OrmExtension());
-			$compiler->addConfig([
-				'parameters' => [
-					'tempDir' => Tests::TEMP_PATH,
-				],
-			]);
-			$compiler->addConfig(Neonkit::load(
-				<<<'NEON'
-				nettrine.dbal:
-					connections:
-						default:
-							driver: pdo_sqlite
-							password: test
-							user: test
-							path: ":memory:"
-				nettrine.orm:
-					managers:
-						default:
-							connection: default
-							mapping:
-								App:
-									type: attributes
-									directories: [app/Database]
-									namespace: App\Database
-				NEON
-			));
-		})
-		->build();
-
-	/** @var ManagerRegistry $registry */
-	$registry = $container->getByType(ManagerRegistry::class);
-
-	Assert::type(Connection::class, $registry->getConnection());
-	Assert::type(Connection::class, $registry->getConnection('default'));
-});
-
-// Get connections
-Toolkit::test(function (): void {
-	$container = ContainerBuilder::of()
-		->withCompiler(function (Compiler $compiler): void {
-			$compiler->addExtension('nettrine.dbal', new DbalExtension());
-			$compiler->addExtension('nettrine.orm', new OrmExtension());
-			$compiler->addConfig([
-				'parameters' => [
-					'tempDir' => Tests::TEMP_PATH,
-				],
-			]);
-			$compiler->addConfig(Neonkit::load(
-				<<<'NEON'
-				nettrine.dbal:
-					connections:
-						default:
-							driver: pdo_sqlite
-							password: test
-							user: test
-							path: ":memory:"
-						second:
-							driver: pdo_sqlite
-							password: test
-							user: test
-							path: ":memory:"
-				nettrine.orm:
-					managers:
-						default:
-							connection: default
-							mapping:
-								App:
-									type: attributes
-									directories: [app/Database]
-									namespace: App\Database
-				NEON
-			));
-		})
-		->build();
-
-	/** @var ManagerRegistry $registry */
-	$registry = $container->getByType(ManagerRegistry::class);
-
-	Assert::count(2, $registry->getConnections());
-	Assert::equal(['default', 'second'], array_keys($registry->getConnectionNames()));
-});
-
-// Get manager names
-Toolkit::test(function (): void {
-	$container = ContainerBuilder::of()
-		->withCompiler(function (Compiler $compiler): void {
-			$compiler->addExtension('nettrine.dbal', new DbalExtension());
-			$compiler->addExtension('nettrine.orm', new OrmExtension());
-			$compiler->addConfig([
-				'parameters' => [
-					'tempDir' => Tests::TEMP_PATH,
-				],
-			]);
-			$compiler->addConfig(Neonkit::load(
-				<<<'NEON'
-				nettrine.dbal:
-					connections:
-						default:
-							driver: pdo_sqlite
-							password: test
-							user: test
-							path: ":memory:"
-						second:
-							driver: pdo_sqlite
-							password: test
-							user: test
-							path: ":memory:"
-				nettrine.orm:
-					managers:
-						default:
-							connection: default
-							mapping:
-								App:
-									type: attributes
-									directories: [app/Database]
-									namespace: App\Database
-						second:
-							connection: second
-							mapping:
-								App:
-									type: attributes
-									directories: [app/Database]
-									namespace: App\Database
-				NEON
-			));
-		})
-		->build();
-
-	/** @var ManagerRegistry $registry */
-	$registry = $container->getByType(ManagerRegistry::class);
-
-	Assert::equal(['default', 'second'], array_keys($registry->getManagerNames()));
-});
-
-// Reopen static method on EntityManager
-Toolkit::test(function (): void {
-	$container = ContainerBuilder::of()
-		->withCompiler(function (Compiler $compiler): void {
-			$compiler->addExtension('nettrine.dbal', new DbalExtension());
-			$compiler->addExtension('nettrine.orm', new OrmExtension());
-			$compiler->addConfig([
-				'parameters' => [
-					'tempDir' => Tests::TEMP_PATH,
-				],
-			]);
-			$compiler->addConfig(Neonkit::load(
-				<<<'NEON'
-				nettrine.dbal:
-					connections:
-						default:
-							driver: pdo_sqlite
-							password: test
-							user: test
-							path: ":memory:"
-				nettrine.orm:
-					managers:
-						default:
-							connection: default
-							mapping:
-								App:
-									type: attributes
-									directories: [app/Database]
-									namespace: App\Database
-				NEON
-			));
-		})
-		->build();
-
-	/** @var EntityManager $em */
-	$em = $container->getByType(EntityManagerInterface::class);
-
-	Assert::true($em->isOpen());
-	$em->close();
-	Assert::false($em->isOpen());
-
-	NettrineManagerRegistry::reopen($em);
-
-	Assert::true($em->isOpen());
-});
-
-// Get repository for manager
-Toolkit::test(function (): void {
-	$container = ContainerBuilder::of()
-		->withCompiler(function (Compiler $compiler): void {
-			$compiler->addExtension('nettrine.dbal', new DbalExtension());
-			$compiler->addExtension('nettrine.orm', new OrmExtension());
-			$compiler->addConfig([
-				'parameters' => [
-					'tempDir' => Tests::TEMP_PATH,
-					'fixturesDir' => Tests::FIXTURES_PATH,
-				],
-			]);
-			$compiler->addConfig(Neonkit::load(
-				<<<'NEON'
-				nettrine.dbal:
-					connections:
-						default:
-							driver: pdo_sqlite
-							password: test
-							user: test
-							path: ":memory:"
-				nettrine.orm:
-					managers:
-						default:
-							connection: default
-							mapping:
-								App:
-									type: attributes
-									directories: [%fixturesDir%/Entity]
-									namespace: Tests\Mocks\Entity
-				NEON
-			));
-		})
-		->build();
-
-	/** @var ManagerRegistry $registry */
-	$registry = $container->getByType(ManagerRegistry::class);
-
-	$repository = $registry->getRepository(DummyEntity::class);
-
-	Assert::type('Doctrine\ORM\EntityRepository', $repository);
-});
-
-// Get manager for class
-Toolkit::test(function (): void {
-	$container = ContainerBuilder::of()
-		->withCompiler(function (Compiler $compiler): void {
-			$compiler->addExtension('nettrine.dbal', new DbalExtension());
-			$compiler->addExtension('nettrine.orm', new OrmExtension());
-			$compiler->addConfig([
-				'parameters' => [
-					'tempDir' => Tests::TEMP_PATH,
-					'fixturesDir' => Tests::FIXTURES_PATH,
-				],
-			]);
-			$compiler->addConfig(Neonkit::load(
-				<<<'NEON'
-				nettrine.dbal:
-					connections:
-						default:
-							driver: pdo_sqlite
-							password: test
-							user: test
-							path: ":memory:"
-				nettrine.orm:
-					managers:
-						default:
-							connection: default
-							mapping:
-								App:
-									type: attributes
-									directories: [%fixturesDir%/Entity]
-									namespace: Tests\Mocks\Entity
-				NEON
-			));
-		})
-		->build();
-
-	/** @var ManagerRegistry $registry */
-	$registry = $container->getByType(ManagerRegistry::class);
-
-	$manager = $registry->getManagerForClass(DummyEntity::class);
-
-	Assert::type(EntityManagerInterface::class, $manager);
 });
