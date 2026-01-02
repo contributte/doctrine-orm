@@ -102,3 +102,135 @@ Toolkit::test(function (): void {
 	Assert::count(1, $eventManager->getAllListeners()[Events::onClear]); // one subscriber
 	Assert::type(DummyOnClearSubscriber::class, Arrays::first($eventManager->getAllListeners()[Events::onClear])); // one subscriber
 });
+
+// hasListeners - empty
+Toolkit::test(function (): void {
+	$container = new Container();
+	$eventManager = new ContainerEventManager($container);
+
+	Assert::false($eventManager->hasListeners(Events::onClear));
+});
+
+// hasListeners - with listeners
+Toolkit::test(function (): void {
+	$subscriber = new DummyOnClearSubscriber();
+
+	$container = new Container();
+	$eventManager = new ContainerEventManager($container);
+	$eventManager->addEventSubscriber($subscriber);
+
+	Assert::true($eventManager->hasListeners(Events::onClear));
+});
+
+// getListeners for specific event
+Toolkit::test(function (): void {
+	$subscriber = new DummyOnClearSubscriber();
+
+	$container = new Container();
+	$eventManager = new ContainerEventManager($container);
+	$eventManager->addEventSubscriber($subscriber);
+
+	$listeners = $eventManager->getListeners(Events::onClear);
+
+	Assert::count(1, $listeners);
+	Assert::type(DummyOnClearSubscriber::class, Arrays::first($listeners));
+});
+
+// dispatchEvent with null args - dispatches with empty EventArgs
+Toolkit::test(function (): void {
+	$container = new Container();
+	$eventManager = new ContainerEventManager($container);
+
+	// Add a generic listener that accepts EventArgs
+	$called = false;
+	$listener = new class ($called) {
+
+		public function __construct(private bool &$called)
+		{
+		}
+
+		public function onClear(\Doctrine\Common\EventArgs $args): void
+		{
+			$this->called = true;
+		}
+
+	};
+
+	$eventManager->addEventListener(Events::onClear, $listener);
+
+	// This should not throw - null args should be handled
+	$eventManager->dispatchEvent(Events::onClear, null);
+
+	Assert::true($called);
+});
+
+// addEventListener with multiple events
+Toolkit::test(function (): void {
+	$subscriber = new DummyOnClearSubscriber();
+
+	$container = new Container();
+	$eventManager = new ContainerEventManager($container);
+
+	$eventManager->addEventListener([Events::onClear, Events::prePersist], $subscriber);
+
+	Assert::true($eventManager->hasListeners(Events::onClear));
+	Assert::true($eventManager->hasListeners(Events::prePersist));
+});
+
+// addEventListener prevents duplicate same listener
+Toolkit::test(function (): void {
+	$subscriber = new DummyOnClearSubscriber();
+
+	$container = new Container();
+	$eventManager = new ContainerEventManager($container);
+
+	$eventManager->addEventListener(Events::onClear, $subscriber);
+	$eventManager->addEventListener(Events::onClear, $subscriber);
+
+	Assert::count(1, $eventManager->getListeners(Events::onClear));
+});
+
+// removeEventListener from multiple events
+Toolkit::test(function (): void {
+	$subscriber = new DummyOnClearSubscriber();
+
+	$container = new Container();
+	$eventManager = new ContainerEventManager($container);
+
+	$eventManager->addEventListener([Events::onClear, Events::prePersist], $subscriber);
+	$eventManager->removeEventListener([Events::onClear, Events::prePersist], $subscriber);
+
+	Assert::false($eventManager->hasListeners(Events::onClear));
+	Assert::false($eventManager->hasListeners(Events::prePersist));
+});
+
+// Lazy loading - service listeners only loaded on dispatch
+Toolkit::test(function (): void {
+	$subscriber = new DummyOnClearSubscriber();
+
+	$container = new Container();
+	$container->addService('lazySubscriber', $subscriber);
+	$eventManager = new ContainerEventManager($container);
+
+	$eventManager->addEventListener(Events::onClear, 'lazySubscriber');
+
+	// Before dispatch, getAllListeners should still return the service (lazy loaded)
+	$listeners = $eventManager->getAllListeners();
+	Assert::count(1, $listeners[Events::onClear]);
+
+	// After first access, the listener should be resolved
+	Assert::type(DummyOnClearSubscriber::class, Arrays::first($listeners[Events::onClear]));
+});
+
+// dispatchEvent does nothing when no listeners
+Toolkit::test(function (): void {
+	$entityManager = Mockery::mock(EntityManager::class);
+
+	$container = new Container();
+	$eventManager = new ContainerEventManager($container);
+
+	// Should not throw
+	$eventManager->dispatchEvent(Events::onClear, new OnClearEventArgs($entityManager));
+
+	Assert::true(true);
+});
