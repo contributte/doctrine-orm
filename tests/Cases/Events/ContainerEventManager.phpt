@@ -3,6 +3,7 @@
 namespace Tests\Cases\Events;
 
 use Contributte\Tester\Toolkit;
+use Doctrine\Common\EventArgs;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Event\OnClearEventArgs;
 use Doctrine\ORM\Events;
@@ -142,16 +143,17 @@ Toolkit::test(function (): void {
 	$eventManager = new ContainerEventManager($container);
 
 	// Add a generic listener that accepts EventArgs
-	$called = false;
-	$listener = new class ($called) {
+	$state = new \stdClass();
+	$state->called = false;
+	$listener = new class ($state) {
 
-		public function __construct(private bool &$called)
+		public function __construct(private \stdClass $state)
 		{
 		}
 
-		public function onClear(\Doctrine\Common\EventArgs $args): void
+		public function onClear(EventArgs $args): void
 		{
-			$this->called = true;
+			$this->state->called = true;
 		}
 
 	};
@@ -161,7 +163,7 @@ Toolkit::test(function (): void {
 	// This should not throw - null args should be handled
 	$eventManager->dispatchEvent(Events::onClear, null);
 
-	Assert::true($called);
+	Assert::true($state->called);
 });
 
 // addEventListener with multiple events

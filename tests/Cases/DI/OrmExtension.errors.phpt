@@ -48,7 +48,7 @@ Toolkit::test(function (): void {
 				));
 			})
 			->build();
-	}, InvalidConfigurationException::class, "~EntityManager decorator class must be subclass~");
+	}, InvalidConfigurationException::class, '~EntityManager decorator class must be subclass~');
 });
 
 // Error: Second level cache enabled without cache
@@ -161,7 +161,7 @@ Toolkit::test(function (): void {
 				));
 			})
 			->build();
-	}, InvalidConfigurationException::class, "~mapping.*App.*type~");
+	}, InvalidConfigurationException::class, '~mapping.*App.*type~');
 });
 
 // Error: Invalid service reference for cache
@@ -199,7 +199,7 @@ Toolkit::test(function (): void {
 				));
 			})
 			->build();
-	}, InvalidConfigurationException::class, "~defaultCache~");
+	}, InvalidConfigurationException::class, '~defaultCache~');
 });
 
 // Error: Empty proxyDir
@@ -237,7 +237,7 @@ Toolkit::test(function (): void {
 				));
 			})
 			->build();
-	}, InvalidConfigurationException::class, "~proxyDir~");
+	}, InvalidConfigurationException::class, '~proxyDir~');
 });
 
 // Error: Missing connection in manager
@@ -273,5 +273,5 @@ Toolkit::test(function (): void {
 				));
 			})
 			->build();
-	}, InvalidConfigurationException::class, "~connection~");
+	}, InvalidConfigurationException::class, '~connection~');
 });
