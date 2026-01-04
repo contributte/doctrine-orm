@@ -15,6 +15,18 @@ Integration of [Doctrine ORM](https://www.doctrine-project.org/projects/orm.html
     - [Attributes](#attributes)
     - [XML](#xml)
     - [Helper](#helper)
+  - [Resolve Target Entities](#resolve-target-entities)
+  - [Custom DQL Functions](#custom-dql-functions)
+  - [Custom Hydration Modes](#custom-hydration-modes)
+  - [Filters](#filters)
+  - [Events](#events)
+  - [Customization](#customization)
+    - [Naming Strategy](#naming-strategy)
+    - [Quote Strategy](#quote-strategy)
+    - [Repository Factory](#repository-factory)
+    - [Entity Listener Resolver](#entity-listener-resolver)
+  - [Default Query Hints](#default-query-hints)
+  - [Multiple Connections](#multiple-connections)
   - [DBAL](#dbal)
   - [Console](#console)
 - [Static analyses](#static-analyses)
@@ -72,6 +84,7 @@ nettrine.orm:
       proxyNamespace: <string>
       metadataDriverImpl: <service>
       entityNamespaces: <mixed[]>
+      resolveTargetEntities: <mixed[]>
       customStringFunctions: <mixed[]>
       customNumericFunctions: <mixed[]>
       customDatetimeFunctions: <mixed[]>
@@ -198,6 +211,24 @@ $managerRegistry->resetManager('second');
 > Resetting the manager is a dangerous operation. It is also black magic, because you cannot just create a new EntityManager instance,
 > you have to reset the current one using internal methods (reflection & binding).
 > Class responsible for this operation is [`Nettrine\ORM\ManagerRegistry`](https://github.com/contributte/doctrine-orm/blob/master/src/ManagerRegistry.php).
+
+**Reopen (Static Method)**
+
+If you need to reopen an EntityManager without resetting it (keeping the same instance), you can use the static `reopen` method directly.
+This is useful when you have a reference to a closed EntityManager and want to reopen it without going through the registry.
+
+```php
+use Nettrine\ORM\ManagerRegistry;
+
+// Reopen a closed EntityManager directly
+ManagerRegistry::reopen($entityManager);
+
+// Also works with EntityManagerDecorator
+ManagerRegistry::reopen($decoratedEntityManager);
+```
+
+This method uses internal binding to access the private `$closed` property of the EntityManager and sets it to `false`.
+It's particularly useful in testing scenarios or when you need to recover from an exception that closed the EntityManager.
 
 ### Caching
 
@@ -415,6 +446,511 @@ Do not forget to register your extension in `config.neon`.
 ```neon
 extensions:
   category: App\Model\DI\DoctrineMappingExtension
+```
+
+### Resolve Target Entities
+
+The `resolveTargetEntities` configuration allows you to map interfaces or abstract classes to concrete entity implementations.
+This is useful for creating reusable modules that depend on entity interfaces rather than concrete implementations.
+
+> [!TIP]
+> Take a look at more information in official Doctrine documentation:
+> - https://www.doctrine-project.org/projects/doctrine-orm/en/latest/cookbook/resolve-target-entity-listener.html
+
+```neon
+nettrine.orm:
+  managers:
+    default:
+      connection: default
+      resolveTargetEntities:
+        App\Model\UserInterface: App\Database\Entity\User
+        App\Model\OrderInterface: App\Database\Entity\Order
+      mapping:
+        App:
+          directories: [%appDir%/Database]
+          namespace: App\Database
+```
+
+Example usage in entity:
+
+```php
+<?php declare(strict_types=1);
+
+namespace App\Database\Entity;
+
+use App\Model\UserInterface;
+use Doctrine\ORM\Mapping as ORM;
+
+#[ORM\Entity]
+class Comment
+{
+    #[ORM\ManyToOne(targetEntity: UserInterface::class)]
+    private UserInterface $author;
+}
+```
+
+### Custom DQL Functions
+
+You can register custom DQL functions for string, numeric, and datetime operations.
+These functions extend Doctrine Query Language with custom SQL functions.
+
+> [!TIP]
+> Take a look at more information in official Doctrine documentation:
+> - https://www.doctrine-project.org/projects/doctrine-orm/en/latest/cookbook/dql-user-defined-functions.html
+
+```neon
+nettrine.orm:
+  managers:
+    default:
+      connection: default
+      customStringFunctions:
+        SOUNDEX: App\Doctrine\Functions\SoundexFunction
+        GROUP_CONCAT: App\Doctrine\Functions\GroupConcatFunction
+      customNumericFunctions:
+        FLOOR: App\Doctrine\Functions\FloorFunction
+        ROUND: App\Doctrine\Functions\RoundFunction
+      customDatetimeFunctions:
+        DATE_FORMAT: App\Doctrine\Functions\DateFormatFunction
+        DATEDIFF: App\Doctrine\Functions\DateDiffFunction
+      mapping:
+        App:
+          directories: [%appDir%/Database]
+          namespace: App\Database
+```
+
+Example custom function implementation:
+
+```php
+<?php declare(strict_types=1);
+
+namespace App\Doctrine\Functions;
+
+use Doctrine\ORM\Query\AST\Functions\FunctionNode;
+use Doctrine\ORM\Query\Parser;
+use Doctrine\ORM\Query\SqlWalker;
+use Doctrine\ORM\Query\TokenType;
+
+class SoundexFunction extends FunctionNode
+{
+    private $stringExpression;
+
+    public function getSql(SqlWalker $sqlWalker): string
+    {
+        return 'SOUNDEX(' . $this->stringExpression->dispatch($sqlWalker) . ')';
+    }
+
+    public function parse(Parser $parser): void
+    {
+        $parser->match(TokenType::T_IDENTIFIER);
+        $parser->match(TokenType::T_OPEN_PARENTHESIS);
+        $this->stringExpression = $parser->StringPrimary();
+        $parser->match(TokenType::T_CLOSE_PARENTHESIS);
+    }
+}
+```
+
+### Custom Hydration Modes
+
+Custom hydration modes allow you to define how query results are transformed into PHP objects or arrays.
+
+> [!TIP]
+> Take a look at more information in official Doctrine documentation:
+> - https://www.doctrine-project.org/projects/doctrine-orm/en/latest/reference/dql-doctrine-query-language.html#custom-hydration-modes
+
+```neon
+nettrine.orm:
+  managers:
+    default:
+      connection: default
+      customHydrationModes:
+        CustomArrayMode: App\Doctrine\Hydrators\CustomArrayHydrator
+      mapping:
+        App:
+          directories: [%appDir%/Database]
+          namespace: App\Database
+```
+
+Example custom hydrator:
+
+```php
+<?php declare(strict_types=1);
+
+namespace App\Doctrine\Hydrators;
+
+use Doctrine\ORM\Internal\Hydration\AbstractHydrator;
+
+class CustomArrayHydrator extends AbstractHydrator
+{
+    protected function hydrateAllData(): array
+    {
+        $result = [];
+        while ($row = $this->statement()->fetchAssociative()) {
+            $result[] = $this->processRow($row);
+        }
+        return $result;
+    }
+
+    private function processRow(array $row): array
+    {
+        // Custom transformation logic
+        return $row;
+    }
+}
+```
+
+Usage:
+
+```php
+$query = $entityManager->createQuery('SELECT u FROM App\Entity\User u');
+$results = $query->getResult('CustomArrayMode');
+```
+
+### Filters
+
+Filters provide a way to add SQL conditions to all queries for specific entities.
+This is useful for implementing soft deletes, multi-tenancy, or other global query constraints.
+
+> [!TIP]
+> Take a look at more information in official Doctrine documentation:
+> - https://www.doctrine-project.org/projects/doctrine-orm/en/latest/reference/filters.html
+
+```neon
+nettrine.orm:
+  managers:
+    default:
+      connection: default
+      filters:
+        softDelete:
+          class: App\Doctrine\Filters\SoftDeleteFilter
+          enabled: true
+        tenant:
+          class: App\Doctrine\Filters\TenantFilter
+          enabled: false
+      mapping:
+        App:
+          directories: [%appDir%/Database]
+          namespace: App\Database
+```
+
+- `class` - The filter class that extends `Doctrine\ORM\Query\Filter\SQLFilter`
+- `enabled` - Whether the filter is enabled by default (optional, defaults to `false`)
+
+Example filter implementation:
+
+```php
+<?php declare(strict_types=1);
+
+namespace App\Doctrine\Filters;
+
+use Doctrine\ORM\Mapping\ClassMetadata;
+use Doctrine\ORM\Query\Filter\SQLFilter;
+
+class SoftDeleteFilter extends SQLFilter
+{
+    public function addFilterConstraint(ClassMetadata $targetEntity, string $targetTableAlias): string
+    {
+        // Check if the entity has a deletedAt column
+        if (!$targetEntity->hasField('deletedAt')) {
+            return '';
+        }
+
+        return sprintf('%s.deleted_at IS NULL', $targetTableAlias);
+    }
+}
+```
+
+Managing filters at runtime:
+
+```php
+$filters = $entityManager->getFilters();
+
+// Enable a filter
+$filters->enable('tenant');
+$filter = $filters->getFilter('tenant');
+$filter->setParameter('tenantId', $currentTenantId);
+
+// Disable a filter
+$filters->disable('softDelete');
+
+// Check if filter is enabled
+$isEnabled = $filters->isEnabled('softDelete');
+```
+
+### Events
+
+Doctrine ORM provides an event system that allows you to hook into the persistence lifecycle.
+Event subscribers are automatically discovered and registered from the DI container.
+
+> [!TIP]
+> Take a look at more information in official Doctrine documentation:
+> - https://www.doctrine-project.org/projects/doctrine-orm/en/latest/reference/events.html
+
+**Event Subscribers**
+
+Simply register a service implementing `Doctrine\Common\EventSubscriber` and it will be automatically discovered:
+
+```neon
+services:
+  - App\Doctrine\Subscribers\TimestampSubscriber
+  - App\Doctrine\Subscribers\AuditSubscriber
+```
+
+Example event subscriber:
+
+```php
+<?php declare(strict_types=1);
+
+namespace App\Doctrine\Subscribers;
+
+use Doctrine\Common\EventSubscriber;
+use Doctrine\ORM\Event\PrePersistEventArgs;
+use Doctrine\ORM\Event\PreUpdateEventArgs;
+use Doctrine\ORM\Events;
+
+class TimestampSubscriber implements EventSubscriber
+{
+    public function getSubscribedEvents(): array
+    {
+        return [
+            Events::prePersist,
+            Events::preUpdate,
+        ];
+    }
+
+    public function prePersist(PrePersistEventArgs $args): void
+    {
+        $entity = $args->getObject();
+
+        if (method_exists($entity, 'setCreatedAt')) {
+            $entity->setCreatedAt(new \DateTimeImmutable());
+        }
+    }
+
+    public function preUpdate(PreUpdateEventArgs $args): void
+    {
+        $entity = $args->getObject();
+
+        if (method_exists($entity, 'setUpdatedAt')) {
+            $entity->setUpdatedAt(new \DateTimeImmutable());
+        }
+    }
+}
+```
+
+**Lazy Event Loading**
+
+The `ContainerEventManager` supports lazy-loading of event listeners from the DI container.
+Listeners are only instantiated when the event is actually dispatched, improving performance.
+
+### Customization
+
+#### Naming Strategy
+
+The naming strategy determines how entity class names and property names are converted to database table and column names.
+
+```neon
+nettrine.orm:
+  managers:
+    default:
+      connection: default
+      namingStrategy: Doctrine\ORM\Mapping\UnderscoreNamingStrategy
+      mapping:
+        App:
+          directories: [%appDir%/Database]
+          namespace: App\Database
+```
+
+Available built-in strategies:
+- `Doctrine\ORM\Mapping\DefaultNamingStrategy` - Uses entity/property names as-is
+- `Doctrine\ORM\Mapping\UnderscoreNamingStrategy` - Converts CamelCase to snake_case (default)
+
+You can also use a service reference:
+
+```neon
+services:
+  - App\Doctrine\CustomNamingStrategy
+
+nettrine.orm:
+  managers:
+    default:
+      namingStrategy: @App\Doctrine\CustomNamingStrategy
+```
+
+#### Quote Strategy
+
+The quote strategy determines how database identifiers (table names, column names) are quoted.
+
+```neon
+nettrine.orm:
+  managers:
+    default:
+      connection: default
+      quoteStrategy: Doctrine\ORM\Mapping\DefaultQuoteStrategy
+      mapping:
+        App:
+          directories: [%appDir%/Database]
+          namespace: App\Database
+```
+
+#### Repository Factory
+
+The repository factory creates repository instances. You can provide a custom factory to add dependency injection to your repositories.
+
+```neon
+nettrine.orm:
+  managers:
+    default:
+      connection: default
+      repositoryFactory: App\Doctrine\ContainerRepositoryFactory
+      mapping:
+        App:
+          directories: [%appDir%/Database]
+          namespace: App\Database
+```
+
+Example custom repository factory with DI container support:
+
+```php
+<?php declare(strict_types=1);
+
+namespace App\Doctrine;
+
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Repository\RepositoryFactory;
+use Doctrine\Persistence\ObjectRepository;
+use Nette\DI\Container;
+
+class ContainerRepositoryFactory implements RepositoryFactory
+{
+    private Container $container;
+    private array $repositoryList = [];
+
+    public function __construct(Container $container)
+    {
+        $this->container = $container;
+    }
+
+    public function getRepository(EntityManagerInterface $entityManager, string $entityName): ObjectRepository
+    {
+        $repositoryHash = $entityManager->getClassMetadata($entityName)->getName() . spl_object_hash($entityManager);
+
+        if (!isset($this->repositoryList[$repositoryHash])) {
+            $this->repositoryList[$repositoryHash] = $this->createRepository($entityManager, $entityName);
+        }
+
+        return $this->repositoryList[$repositoryHash];
+    }
+
+    private function createRepository(EntityManagerInterface $entityManager, string $entityName): ObjectRepository
+    {
+        $metadata = $entityManager->getClassMetadata($entityName);
+        $repositoryClassName = $metadata->customRepositoryClassName
+            ?? $entityManager->getConfiguration()->getDefaultRepositoryClassName();
+
+        // Try to get from container first (for DI support)
+        $type = $this->container->getByType($repositoryClassName, false);
+        if ($type !== null) {
+            return $type;
+        }
+
+        return new $repositoryClassName($entityManager, $metadata);
+    }
+}
+```
+
+#### Entity Listener Resolver
+
+The entity listener resolver is responsible for instantiating entity listener classes.
+This is useful when your entity listeners have dependencies that need to be injected.
+
+```neon
+nettrine.orm:
+  managers:
+    default:
+      connection: default
+      entityListenerResolver: App\Doctrine\ContainerEntityListenerResolver
+      mapping:
+        App:
+          directories: [%appDir%/Database]
+          namespace: App\Database
+```
+
+> [!NOTE]
+> By default, `Nettrine\ORM\Mapping\ContainerEntityListenerResolver` is used, which supports lazy-loading listeners from the DI container.
+
+### Default Query Hints
+
+You can configure default hints that will be applied to all queries.
+
+```neon
+nettrine.orm:
+  managers:
+    default:
+      connection: default
+      defaultQueryHints:
+        doctrine.customOutputWalker: App\Doctrine\Walkers\CustomOutputWalker
+      mapping:
+        App:
+          directories: [%appDir%/Database]
+          namespace: App\Database
+```
+
+### Multiple Connections
+
+You can configure multiple database connections and entity managers for different databases or schemas.
+
+```neon
+nettrine.dbal:
+  connections:
+    default:
+      driver: pdo_pgsql
+      host: localhost
+      dbname: main_db
+      user: root
+      password: secret
+
+    analytics:
+      driver: pdo_mysql
+      host: analytics.example.com
+      dbname: analytics_db
+      user: analytics
+      password: secret
+
+nettrine.orm:
+  managers:
+    default:
+      connection: default
+      mapping:
+        App:
+          directories: [%appDir%/Database/Main]
+          namespace: App\Database\Main
+
+    analytics:
+      connection: analytics
+      mapping:
+        Analytics:
+          directories: [%appDir%/Database/Analytics]
+          namespace: App\Database\Analytics
+```
+
+Using multiple managers:
+
+```php
+// Get the default manager
+$defaultManager = $managerRegistry->getManager();
+$defaultManager = $managerRegistry->getManager('default');
+
+// Get a specific manager
+$analyticsManager = $managerRegistry->getManager('analytics');
+
+// Get a repository from a specific manager
+$repository = $managerRegistry->getRepository(AnalyticsEvent::class);
+
+// Get all managers
+$managers = $managerRegistry->getManagers();
+
+// Get manager for a specific entity class
+$manager = $managerRegistry->getManagerForClass(User::class);
 ```
 
 ### DBAL
