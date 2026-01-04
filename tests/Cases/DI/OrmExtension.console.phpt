@@ -125,7 +125,7 @@ Toolkit::test(function (): void {
 	$taggedServices = $container->findByTag('console.command');
 
 	foreach ($expectedCommands as $commandName) {
-		Assert::true(in_array($commandName, $taggedServices, true), "Command '$commandName' should be tagged");
+		Assert::true(in_array($commandName, $taggedServices, true), sprintf('Command %s should be tagged', $commandName));
 	}
 });
 

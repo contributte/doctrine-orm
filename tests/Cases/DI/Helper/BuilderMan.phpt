@@ -27,6 +27,7 @@ Toolkit::test(function (): void {
 				public function beforeCompile(): void
 				{
 					$pass = new class ($this) extends AbstractPass {
+
 					};
 
 					$builderMan = BuilderMan::of($pass);
@@ -77,6 +78,7 @@ Toolkit::test(function (): void {
 					public function beforeCompile(): void
 					{
 						$pass = new class ($this) extends AbstractPass {
+
 						};
 
 						$builderMan = BuilderMan::of($pass);
@@ -125,6 +127,7 @@ Toolkit::test(function (): void {
 				public function beforeCompile(): void
 				{
 					$pass = new class ($this) extends AbstractPass {
+
 					};
 
 					$builderMan = BuilderMan::of($pass);
@@ -181,6 +184,7 @@ Toolkit::test(function (): void {
 				public function beforeCompile(): void
 				{
 					$pass = new class ($this) extends AbstractPass {
+
 					};
 
 					$builderMan = BuilderMan::of($pass);
@@ -244,6 +248,7 @@ Toolkit::test(function (): void {
 				public function beforeCompile(): void
 				{
 					$pass = new class ($this) extends AbstractPass {
+
 					};
 
 					$builderMan = BuilderMan::of($pass);
@@ -297,6 +302,7 @@ Toolkit::test(function (): void {
 				public function beforeCompile(): void
 				{
 					$pass = new class ($this) extends AbstractPass {
+
 					};
 
 					$builderMan = BuilderMan::of($pass);

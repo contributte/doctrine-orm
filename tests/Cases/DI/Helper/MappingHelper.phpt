@@ -149,7 +149,7 @@ Toolkit::test(function (): void {
 
 // Fluent interface - chaining
 Toolkit::test(function (): void {
-	$container = ContainerBuilder::of()
+	ContainerBuilder::of()
 		->withCompiler(function (Compiler $compiler): void {
 			$compiler->addExtension('nettrine.dbal', new DbalExtension());
 			$compiler->addExtension('nettrine.orm', new OrmExtension());

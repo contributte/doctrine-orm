@@ -1,5 +1,7 @@
 <?php declare(strict_types = 1);
 
+// phpcs:ignoreFile
+
 namespace Tests\Cases\Utils;
 
 use Contributte\Tester\Toolkit;
@@ -16,9 +18,7 @@ Toolkit::test(function (): void {
 
 	};
 
-	$result = Binder::use($obj, function (): string {
-		return $this->secret; // @phpstan-ignore-line
-	});
+	$result = Binder::use($obj, fn (): string => $this->secret);
 
 	Assert::equal('hidden', $result);
 });
@@ -45,9 +45,7 @@ Toolkit::test(function (): void {
 
 // Bind to class string - access static property
 Toolkit::test(function (): void {
-	$result = Binder::use(TestClassWithStatic::class, function (): string {
-		return self::$staticValue; // @phpstan-ignore-line
-	});
+	$result = Binder::use(TestClassWithStatic::class, fn (): string => self::$staticValue);
 
 	Assert::equal('static_secret', $result);
 });
@@ -60,9 +58,7 @@ Toolkit::test(function (): void {
 
 	};
 
-	$result = Binder::use($obj, function (): int {
-		return $this->value * 2; // @phpstan-ignore-line
-	});
+	$result = Binder::use($obj, fn (): int => $this->value * 2);
 
 	Assert::equal(84, $result);
 });
@@ -70,11 +66,10 @@ Toolkit::test(function (): void {
 // Return null from closure
 Toolkit::test(function (): void {
 	$obj = new class {
+
 	};
 
-	$result = Binder::use($obj, function (): mixed {
-		return null;
-	});
+	$result = Binder::use($obj, fn (): mixed => null);
 
 	Assert::null($result);
 });
