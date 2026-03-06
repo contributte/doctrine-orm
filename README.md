@@ -2,7 +2,7 @@
 
 <p align=center>
   <a href="https://github.com/contributte/doctrine-orm/actions"><img src="https://badgen.net/github/checks/contributte/doctrine-orm/master?cache=300"></a>
-  <a href="https://coveralls.io/r/contributte/doctrine-orm"><img src="https://badgen.net/coveralls/c/github/contributte/doctrine-orm?cache=300"></a>
+  <a href="https://codecov.io/gh/contributte/doctrine-orm"><img src="https://badgen.net/codecov/c/github/contributte/doctrine-orm?cache=300"></a>
   <a href="https://packagist.org/packages/nettrine/orm"><img src="https://badgen.net/packagist/dm/nettrine/orm"></a>
   <a href="https://packagist.org/packages/nettrine/orm"><img src="https://badgen.net/packagist/v/nettrine/orm"></a>
 </p>
