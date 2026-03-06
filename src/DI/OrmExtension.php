@@ -89,7 +89,7 @@ final class OrmExtension extends CompilerExtension
 		$autoGenerateProxy = boolval($parameters['debugMode'] ?? true);
 
 		$expectService = Expect::anyOf(
-			Expect::string()->required()->assert(fn ($input) => str_starts_with($input, '@') || class_exists($input) || interface_exists($input)),
+			Expect::string()->required()->assert(static fn (mixed $input): bool => is_string($input) && (str_starts_with($input, '@') || class_exists($input) || interface_exists($input))),
 			Expect::type(Statement::class)->required(),
 		);
 
@@ -97,8 +97,8 @@ final class OrmExtension extends CompilerExtension
 			'managers' => Expect::arrayOf(
 				Expect::structure([
 					'connection' => Expect::string()->required(),
-					'entityManagerDecoratorClass' => Expect::string()->assert(fn ($input) => is_a($input, EntityManagerDecorator::class, true), 'EntityManager decorator class must be subclass of ' . EntityManagerDecorator::class),
-					'configurationClass' => Expect::string(Configuration::class)->assert(fn ($input) => is_a($input, Configuration::class, true), 'Configuration class must be subclass of ' . Configuration::class),
+					'entityManagerDecoratorClass' => Expect::string()->assert(static fn (mixed $input): bool => is_string($input) && is_a($input, EntityManagerDecorator::class, true), 'EntityManager decorator class must be subclass of ' . EntityManagerDecorator::class),
+					'configurationClass' => Expect::string(Configuration::class)->assert(static fn (mixed $input): bool => is_string($input) && is_a($input, Configuration::class, true), 'Configuration class must be subclass of ' . Configuration::class),
 					'lazyNativeObjects' => Expect::bool(),
 					'proxyDir' => Expect::string()->default($proxyDir)->before(fn (mixed $v) => $v ?? $proxyDir)->assert(fn (mixed $v) => !($v === null || $v === ''), 'proxyDir must be filled'),
 					'autoGenerateProxyClasses' => Expect::anyOf(Expect::int(), Expect::bool(), Expect::type(Statement::class))->default($autoGenerateProxy),
