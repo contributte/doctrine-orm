@@ -5,7 +5,6 @@ Integration of [Doctrine ORM](https://www.doctrine-project.org/projects/orm.html
 ## Content
 
 - [Installation](#installation)
-- [Migration from legacy extensions](#migration-from-legacy-extensions)
 - [Configuration](#configuration)
   - [Minimal configuration](#minimal-configuration)
   - [Advanced configuration](#advanced-configuration)
@@ -51,44 +50,6 @@ extensions:
 
 > [!NOTE]
 > This is just **ORM**, for **DBAL** please use [nettrine/dbal](https://github.com/contributte/doctrine-dbal).
-
-### Migration from legacy extensions
-
-> [!IMPORTANT]
-> Since `v0.10`, `nettrine/orm` uses only `Nettrine\ORM\DI\OrmExtension`.
-> Legacy split extensions were removed:
->
-> - `nettrine.orm.cache`
-> - `nettrine.orm.attributes`
-> - `nettrine.orm.xml`
-> - `nettrine.orm.annotations`
-> - `nettrine.orm.console`
-
-Use `nettrine.orm.managers.<name>` for cache, mapping, and manager configuration.
-
-```neon
-# before (removed)
-extensions:
-  nettrine.orm: Nettrine\ORM\DI\OrmExtension
-  nettrine.orm.cache: Nettrine\ORM\DI\OrmCacheExtension
-
-nettrine.orm.cache:
-  defaultDriver: @cache
-
-# now
-extensions:
-  nettrine.orm: Nettrine\ORM\DI\OrmExtension
-
-nettrine.orm:
-  managers:
-    default:
-      connection: default
-      defaultCache: @cache
-      mapping:
-        App:
-          directories: [%appDir%/Database]
-          namespace: App\Database
-```
 
 ## Configuration
 
@@ -1084,8 +1045,6 @@ vendor/bin/phpstan analyse -c phpstan.neon
 1. Are you looking for custom types? You can register custom types in DBAL, see [Nettrine DBAL](https://github.com/contributte/doctrine-dbal/blob/master/.docs/README.md#types).
 
 2. You have to configure entity mapping (for example attributes), otherwise you will get `It's a requirement to specify a Metadata Driver` error.
-
-3. If you are using old docs and see `Nettrine\ORM\DI\OrmCacheExtension` (or similar) service errors, remove legacy split extensions and configure everything under `nettrine.orm.managers`.
 
 ## Examples
 
