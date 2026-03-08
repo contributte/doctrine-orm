@@ -117,7 +117,7 @@ nettrine.orm:
       metadataCache: <class-string|service>
 
       secondLevelCache:
-        enable: <boolean>
+        enabled: <boolean>
         cache: <class-string|service>
         logger: <class-string|service>
         regions:
@@ -160,7 +160,7 @@ nettrine.orm:
 
 By default, this extension will try to autoconfigure itself.
 
-- **proxyDir**: `%tempDir%/proxies`, if `%tempDir%` is not defined,, you have to define it manually.
+- **proxyDir**: `%tempDir%/cache/doctrine/orm/proxies`, if `%tempDir%` is not defined, you have to define it manually.
 - **autoGenerateProxyClasses**: `%debugMode%`, if `%debugMode%` is not defined, you have to define it manually.
   - `0` means that the proxy classes must be generated manually.
   - `1` means that the proxy classes are generated automatically.
@@ -268,23 +268,23 @@ nettrine.orm:
       metadataCache: App\CacheService(%tempDir%/cache/doctrine/orm/metadata)
 ```
 
-Second level cache is a bit different. Be sure you know what you are doing, lear more in official [Doctrine documentation](https://www.doctrine-project.org/projects/doctrine-orm/en/3.3/reference/second-level-cache.html).
+Second level cache is a bit different. Be sure you know what you are doing, learn more in official [Doctrine documentation](https://www.doctrine-project.org/projects/doctrine-orm/en/3.3/reference/second-level-cache.html).
 
 ```neon
 nettrine.orm:
   managers:
     default:
-        secondLevelCache:
-          enable: true
-          cache: App\CacheService(%tempDir%/cache/doctrine/orm/slc)
-          logger: App\LoggerService()
-          regions:
-            region1:
-              lifetime: 3600
-              lockLifetime: 60
-            region2:
-              lifetime: 86000
-              lockLifetime: 60
+      secondLevelCache:
+        enabled: true
+        cache: App\CacheService(%tempDir%/cache/doctrine/orm/slc)
+        logger: App\LoggerService()
+        regions:
+          region1:
+            lifetime: 3600
+            lockLifetime: 60
+          region2:
+            lifetime: 86000
+            lockLifetime: 60
 ```
 
 If you like [`symfony/cache`](https://github.com/symfony/cache) you can use it as well.
@@ -424,7 +424,8 @@ It's a good practice if you have separated modules in your applications.
 
 namespace App\Model\DI;
 
-use Nette\DI\CompilerExtension;use Nettrine\ORM\DI\Helpers\MappingHelper;
+use Nette\DI\CompilerExtension;
+use Nettrine\ORM\DI\Helpers\MappingHelper;
 
 class DoctrineMappingExtension extends CompilerExtension
 {
@@ -971,7 +972,7 @@ extensions:
 ### Console
 
 > [!TIP]
-> Doctrine DBAL needs Symfony Console to work. You can use `symfony/console` or [contributte/console](https://github.com/contributte/console).
+> Doctrine ORM console commands need Symfony Console. You can use `symfony/console` or [contributte/console](https://github.com/contributte/console).
 
 ```bash
 composer require contributte/console
@@ -984,7 +985,7 @@ extensions:
   nettrine.orm: Nettrine\ORM\DI\OrmExtension
 ```
 
-Since this moment when you type `bin/console`, there'll be registered commands from Doctrine DBAL.
+Since this moment when you type `bin/console`, there'll be registered commands from Doctrine ORM.
 
 ![Console Commands](https://raw.githubusercontent.com/nettrine/orm/master/.docs/assets/console.png)
 
