@@ -62,6 +62,55 @@ Toolkit::test(function (): void {
 	Assert::count(2, $attributeDriver->getPaths());
 });
 
+// Driver: attributes with inferNullabilityFromPHPType
+Toolkit::test(function (): void {
+	$container = ContainerBuilder::of()
+		->withCompiler(function (Compiler $compiler): void {
+			$compiler->addExtension('nettrine.dbal', new DbalExtension());
+			$compiler->addExtension('nettrine.orm', new OrmExtension());
+			$compiler->addConfig([
+				'parameters' => [
+					'tempDir' => Tests::TEMP_PATH,
+					'fixturesDir' => Tests::FIXTURES_PATH,
+				],
+			]);
+			$compiler->addConfig(Neonkit::load(
+				<<<'NEON'
+				nettrine.dbal:
+					connections:
+						default:
+							driver: pdo_sqlite
+							password: test
+							user: test
+							path: ":memory:"
+				nettrine.orm:
+					managers:
+						default:
+							connection: default
+							mapping:
+								App:
+									type: attributes
+									directories: [%fixturesDir%/Entity, %fixturesDir%/../Toolkit]
+									namespace: Tests\Fixtures\Dummy
+									inferNullabilityFromPHPType: true
+				NEON
+			));
+		})
+		->build();
+
+	/** @var MappingDriverChain $driver */
+	$driver = $container->getService('nettrine.orm.managers.default.mappingDriver');
+	Assert::count(1, $driver->getDrivers());
+
+	/** @var AttributeDriver $attributeDriver */
+	$attributeDriver = current($driver->getDrivers());
+
+	Assert::type(AttributeDriver::class, $attributeDriver);
+
+	$r = new ReflectionClass($attributeDriver);
+	Assert::true($r->getProperty('inferNullabilityFromPHPType')->getValue($attributeDriver));
+});
+
 // Driver: xml
 Toolkit::test(function (): void {
 	$container = ContainerBuilder::of()
