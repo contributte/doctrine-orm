@@ -42,7 +42,7 @@ use Tracy\Debugger;
  *     repositoryFactory: string|Statement|null,
  *     defaultQueryHints: array<string, mixed>,
  *     filters: array<string, object{class: string, enabled: bool}>,
- *     mapping: array<string, object{type: 'attributes'|'xml', directories: string[], namespace: string, options: object{fileExtension: string, xsdValidation: bool}}>,
+ *     mapping: array<string, object{type: 'attributes'|'xml', directories: string[], namespace: string, inferNullabilityFromPHPType: bool, options: object{fileExtension: string, xsdValidation: bool}}>,
  *     defaultCache: string|Statement|null,
  *     queryCache: string|Statement|null,
  *     resultCache: string|Statement|null,
@@ -128,6 +128,7 @@ final class OrmExtension extends CompilerExtension
 							'type' => Expect::anyOf('attributes', 'xml')->default('attributes'),
 							'directories' => Expect::listOf(Expect::string())->min(1)->required(),
 							'namespace' => Expect::string()->required(),
+							'inferNullabilityFromPHPType' => Expect::bool()->default(false),
 							'options' => Expect::structure([
 								'fileExtension' => Expect::string()->default('.orm.xml'),
 								'xsdValidation' => Expect::bool()->default(true),

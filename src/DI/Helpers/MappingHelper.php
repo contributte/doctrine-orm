@@ -25,7 +25,7 @@ class MappingHelper
 		return new self($extension);
 	}
 
-	public function addAttribute(string $connection, string $namespace, string $path): self
+	public function addAttribute(string $connection, string $namespace, string $path, bool $inferNullabilityFromPHPType = false): self
 	{
 		if (!is_dir($path)) {
 			throw new LogicalException(sprintf('Given mapping path "%s" does not exist', $path));
@@ -33,14 +33,17 @@ class MappingHelper
 
 		$chainDriver = $this->getChainDriver($connection);
 		$chainDriver->addSetup('addDriver', [
-			new Statement(AttributeDriver::class, [[$path]]),
+			new Statement(AttributeDriver::class, [
+				[$path],
+				'inferNullabilityFromPHPType' => $inferNullabilityFromPHPType,
+			]),
 			$namespace,
 		]);
 
 		return $this;
 	}
 
-	public function addXml(string $connection, string $namespace, string $path): self
+	public function addXml(string $connection, string $namespace, string $path, bool $inferNullabilityFromPHPType = false): self
 	{
 		if (!is_dir($path)) {
 			throw new LogicalException(sprintf('Given mapping path "%s" does not exist', $path));
@@ -48,7 +51,10 @@ class MappingHelper
 
 		$chainDriver = $this->getChainDriver($connection);
 		$chainDriver->addSetup('addDriver', [
-			new Statement(SimplifiedXmlDriver::class, [[$path => $namespace]]),
+			new Statement(SimplifiedXmlDriver::class, [
+				[$path => $namespace],
+				'inferNullabilityFromPHPType' => $inferNullabilityFromPHPType,
+			]),
 			$namespace,
 		]);
 
