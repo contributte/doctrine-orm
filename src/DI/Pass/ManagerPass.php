@@ -89,6 +89,11 @@ class ManagerPass extends AbstractPass
 			$configuration->addSetup('setAutoGenerateProxyClasses', [$managerConfig->autoGenerateProxyClasses]);
 		}
 
+		// configuration: schema ignore classes
+		if ($managerConfig->schemaIgnoreClasses !== null) {
+			$configuration->addSetup('setSchemaIgnoreClasses', [$managerConfig->schemaIgnoreClasses]);
+		}
+
 		// Configuration: proxy namespace
 		if ($managerConfig->proxyNamespace !== null) {
 			$configuration->addSetup('setProxyNamespace', [$managerConfig->proxyNamespace]);
