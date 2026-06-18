@@ -22,7 +22,7 @@ use Tracy\Debugger;
  * @property-read stdClass $config
  * @phpstan-type TManagerConfig object{
  *     entityManagerDecoratorClass: string|null,
- *     configurationClass: string,
+ *     configurationClass: class-string,
  *     lazyNativeObjects: bool|null,
  *     proxyDir: string|null,
  *     autoGenerateProxyClasses: int|bool|Statement,
@@ -86,7 +86,7 @@ final class OrmExtension extends CompilerExtension
 	public function getConfigSchema(): Schema
 	{
 		$parameters = $this->getContainerBuilder()->parameters;
-		$proxyDir = isset($parameters['tempDir']) ? $parameters['tempDir'] . '/cache/doctrine/orm/proxies' : null;
+		$proxyDir = isset($parameters['tempDir']) && is_string($parameters['tempDir']) ? $parameters['tempDir'] . '/cache/doctrine/orm/proxies' : null;
 		$autoGenerateProxy = boolval($parameters['debugMode'] ?? true);
 
 		$expectService = Expect::anyOf(
