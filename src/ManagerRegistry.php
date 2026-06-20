@@ -3,6 +3,8 @@
 namespace Nettrine\ORM;
 
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\UnitOfWork;
 use Doctrine\Persistence\AbstractManagerRegistry;
 use Doctrine\Persistence\ObjectManagerDecorator;
 use Doctrine\Persistence\Proxy;
@@ -36,19 +38,30 @@ class ManagerRegistry extends AbstractManagerRegistry
 		);
 	}
 
-	/**
-	 * @param ObjectManagerDecorator<EntityManager>|EntityManager $manager
-	 */
-	public static function reopen(ObjectManagerDecorator|EntityManager $manager): void
+	public static function reopen(EntityManagerInterface $manager): void
 	{
 		// @phpcs:disable
 		Binder::use($manager, function (): void {
 			if ($this instanceof EntityManager) {  // @phpstan-ignore-line
 				$this->closed = false; // @phpstan-ignore-line
+
+				$uow = $this->getUnitOfWork();
+				Binder::use($uow, function (): void {
+					if ($this instanceof UnitOfWork) { // @phpstan-ignore-line
+						$this->persisters = [];
+					}
+				});
 			} elseif ($this instanceof ObjectManagerDecorator) {
 				Binder::use($this->wrapped, function (): void { // @phpstan-ignore-line
 					if ($this instanceof EntityManager) { // @phpstan-ignore-line
 						$this->closed = false;
+
+						$uow = $this->getUnitOfWork();
+						Binder::use($uow, function (): void {
+							if ($this instanceof UnitOfWork) { // @phpstan-ignore-line
+								$this->persisters = [];
+							}
+						});
 					}
 				});
 			}

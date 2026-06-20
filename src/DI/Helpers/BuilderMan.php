@@ -99,8 +99,10 @@ final class BuilderMan
 		$builder = $this->pass->getContainerBuilder();
 		$definitions = [];
 
+		/** @var array{name: string}|string $tagValue */
 		foreach ($builder->findByTag($tag) as $serviceName => $tagValue) {
-			$definitions[(string) $tagValue] = $builder->getDefinition($serviceName);
+			$name = is_array($tagValue) ? $tagValue['name'] : $tagValue;
+			$definitions[$name] = $builder->getDefinition($serviceName);
 		}
 
 		return $definitions;
@@ -114,8 +116,10 @@ final class BuilderMan
 		$builder = $this->pass->getContainerBuilder();
 		$definitions = [];
 
+		/** @var array{name: string}|string $tagValue */
 		foreach ($builder->findByTag($tag) as $serviceName => $tagValue) {
-			$definitions[(string) $tagValue] = $serviceName;
+			$name = is_array($tagValue) ? $tagValue['name'] : $tagValue;
+			$definitions[$name] = $serviceName;
 		}
 
 		return $definitions;

@@ -4,7 +4,7 @@ use Contributte\Tester\Toolkit;
 use Contributte\Tester\Utils\ContainerBuilder;
 use Contributte\Tester\Utils\Neonkit;
 use Doctrine\DBAL\Connection;
-use Doctrine\ORM\EntityManager;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Nette\DI\Compiler;
@@ -368,6 +368,7 @@ Toolkit::test(function (): void {
 			$compiler->addConfig([
 				'parameters' => [
 					'tempDir' => Tests::TEMP_PATH,
+					'fixturesDir' => Tests::FIXTURES_PATH,
 				],
 			]);
 			$compiler->addConfig(Neonkit::load(
@@ -379,6 +380,11 @@ Toolkit::test(function (): void {
 							password: test
 							user: test
 							path: ":memory:"
+						second:
+							driver: pdo_sqlite
+							password: test
+							user: test
+							path: ":memory:"
 				nettrine.orm:
 					managers:
 						default:
@@ -386,23 +392,67 @@ Toolkit::test(function (): void {
 							mapping:
 								App:
 									type: attributes
-									directories: [app/Database]
-									namespace: App\Database
+									directories: [%fixturesDir%/Entity]
+									namespace: Tests\Mocks\Entity
+						second:
+							connection: second
+							entityManagerDecoratorClass: Tests\Mocks\DummyEntityManagerDecorator
+							mapping:
+								App:
+									type: attributes
+									directories: [%fixturesDir%/Entity]
+									namespace: Tests\Mocks\Entity
 				NEON
 			));
 		})
 		->build();
 
-	/** @var EntityManager $em */
-	$em = $container->getByType(EntityManagerInterface::class);
+	/** @var ManagerRegistry $registry */
+	$registry = $container->getByType(ManagerRegistry::class);
 
-	Assert::true($em->isOpen());
-	$em->close();
-	Assert::false($em->isOpen());
+	foreach (['default', 'second'] as $managerName) {
+		/** @var EntityManagerInterface $em */
+		$em = $registry->getManager($managerName);
+		Assert::true($em->isOpen());
 
-	NettrineManagerRegistry::reopen($em);
+		/** @var Connection $connection */
+		$connection = $registry->getConnection($managerName);
 
-	Assert::true($em->isOpen());
+		$connection->executeQuery('CREATE TABLE dummy_entity (id integer primary key autoincrement, username string unique not null)');
+
+		$persister1 = $em->getUnitOfWork()->getEntityPersister(DummyEntity::class);
+
+		$em->persist(new DummyEntity('test'));
+		$em->flush();
+
+		Assert::count(0, $persister1->getInserts(), 'Persister should have no inserts, have ' . count($persister1->getInserts()));
+
+		// try to create a new entity with the same username - not unique
+		$em->persist(new DummyEntity('test'));
+		try {
+			$em->flush();
+		} catch (UniqueConstraintViolationException) {
+			Assert::false($em->isOpen());
+		}
+
+		// after failing queue there is cached last insert
+		Assert::count(1, $persister1->getInserts(), 'Persister should have 1 insert, have ' . count($persister1->getInserts()));
+
+		NettrineManagerRegistry::reopen($em);
+
+		Assert::true($em->isOpen());
+
+		$persister2 = $em->getUnitOfWork()->getEntityPersister(DummyEntity::class);
+
+		// check if the persister is different after reopening
+		Assert::notSame($persister1, $persister2);
+
+		$dummy2 = new DummyEntity('test2');
+		$em->persist($dummy2);
+		$em->flush();
+
+		Assert::count(2, $em->getRepository(DummyEntity::class)->findAll());
+	}
 });
 
 // Get repository for manager
