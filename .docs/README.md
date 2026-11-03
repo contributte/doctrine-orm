@@ -741,7 +741,14 @@ class TimestampSubscriber implements EventSubscriber
 **Lazy Event Loading**
 
 The `ContainerEventManager` supports lazy-loading of event listeners from the DI container.
-Listeners are only instantiated when the event is actually dispatched, improving performance.
+Registering a service name or checking `hasListeners()` does not instantiate the service.
+Dispatching an event, calling `getListeners()` for that event, or calling `getAllListeners()` resolves its listeners.
+Listeners registered after an event has already been dispatched remain lazy until the next such access.
+
+Resolved listeners use object identity, as in Doctrine's event manager. Registering the same instance
+through a service name and as an object does not dispatch it twice. Objects returned by `getListeners()`
+can be passed to `removeEventListener()` and registered again without leaving duplicate registrations.
+Removal is limited to the specified events; subscriptions to other events remain intact.
 
 ### Customization
 
