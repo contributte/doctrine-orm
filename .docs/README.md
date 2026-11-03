@@ -741,7 +741,33 @@ class TimestampSubscriber implements EventSubscriber
 **Lazy Event Loading**
 
 The `ContainerEventManager` supports lazy-loading of event listeners from the DI container.
-Listeners are only instantiated when the event is actually dispatched, improving performance.
+Registering a service name or checking `hasListeners()` does not instantiate the service.
+Dispatching an event, calling `getListeners()` for that event, or calling `getAllListeners()` resolves its listeners.
+Listeners registered after an event has already been dispatched remain lazy until the next such access.
+
+Resolved listeners use object identity, as in Doctrine's event manager. Registering the same instance
+through a service name and as an object does not dispatch it twice. Objects returned by `getListeners()`
+can be passed to `removeEventListener()` and registered again without leaving duplicate registrations.
+Removal is limited to the specified events; subscriptions to other events remain intact.
+Returned listener arrays use object-hash keys; consume listener values instead of service-name keys.
+Subclasses must not rely on the former protected per-event `$initialized` cache.
+
+Removing an object cannot identify a service-name registration whose factory has not yet created
+that object. To suspend every listener for an event, first resolve the registrations with
+`getListeners($event)`, then remove each returned object for that event. Alternatively, remove a
+known service-name registration by its service name without constructing it.
+
+If a service factory changes registrations during initialization, the returned list reflects the
+current registrations after initialization. Removed listeners are not restored or dispatched, and
+new service-name registrations are resolved before the list is returned. Changes made by an event
+callback after dispatch starts apply to the next dispatch; they do not change its existing snapshot.
+
+If a lazy service factory throws during dispatch initialization, the error propagates before that
+dispatch invokes its listener callbacks. Factory side effects and nested dispatches are not rolled
+back. Previously resolved services remain available, and the failed service is retried on the next
+access. A `getListeners()` call whose initialization fails also propagates the error, so complete
+suspension by resolving and removing objects cannot finish until the factory succeeds or its
+service-name registration is removed.
 
 ### Customization
 
