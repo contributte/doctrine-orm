@@ -2,7 +2,9 @@
 
 namespace Tests\Cases\Events;
 
+use ArrayObject;
 use Contributte\Tester\Toolkit;
+use Doctrine\Common\EventSubscriber;
 use Doctrine\DBAL\DriverManager;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Events;
@@ -14,6 +16,86 @@ use Tester\Assert;
 use Tests\Mocks\LifecycleSubscriber;
 
 require_once __DIR__ . '/../../bootstrap.php';
+
+// A failed lazy factory aborts dispatch before callbacks and retries without rebuilding prior services.
+Toolkit::test(function (): void {
+	$calls = new ArrayObject();
+	$first = new class ($calls) implements EventSubscriber {
+
+		public string $name = 'first';
+
+		public int $clearCalls = 0;
+
+		/**
+		 * @param ArrayObject<int, string> $calls
+		 */
+		public function __construct(private ArrayObject $calls)
+		{
+		}
+
+		public function onClear(): void
+		{
+			$this->calls[] = $this->name;
+			$this->clearCalls++;
+		}
+
+		/**
+		 * @return string[]
+		 */
+		public function getSubscribedEvents(): array
+		{
+			return [Events::onClear];
+		}
+
+	};
+	$second = clone $first;
+	$second->name = 'second';
+	$third = clone $first;
+	$third->name = 'third';
+	$constructions = new ArrayObject([0, 0, 0]);
+	$failure = new RuntimeException('Factory failed');
+	$container = new Container();
+	$container->addService('first', function () use ($first, $constructions): EventSubscriber {
+		$constructions[0]++;
+
+		return $first;
+	});
+	$container->addService('second', function () use ($second, $failure, $constructions): EventSubscriber {
+		if (++$constructions[1] === 1) {
+			throw $failure;
+		}
+
+		return $second;
+	});
+	$container->addService('third', function () use ($third, $constructions): EventSubscriber {
+		$constructions[2]++;
+
+		return $third;
+	});
+	$events = new ContainerEventManager($container);
+	foreach (['first', 'second', 'third'] as $service) {
+		$events->addEventListener(Events::onClear, $service);
+		Assert::false($container->isCreated($service));
+	}
+
+	Assert::same($failure, Assert::exception(fn () => $events->dispatchEvent(Events::onClear), RuntimeException::class, 'Factory failed'));
+	Assert::same([], $calls->getArrayCopy());
+	Assert::same([0, 0, 0], [$first->clearCalls, $second->clearCalls, $third->clearCalls]);
+	Assert::same([1, 1, 0], $constructions->getArrayCopy());
+	Assert::true($container->isCreated('first'));
+	Assert::false($container->isCreated('second'));
+	Assert::false($container->isCreated('third'));
+
+	$events->dispatchEvent(Events::onClear);
+	Assert::same(['first', 'second', 'third'], $calls->getArrayCopy());
+	Assert::same([1, 1, 1], [$first->clearCalls, $second->clearCalls, $third->clearCalls]);
+	Assert::same([1, 2, 1], $constructions->getArrayCopy());
+	Assert::same([$first, $second, $third], array_values($events->getListeners(Events::onClear)));
+	$events->dispatchEvent(Events::onClear);
+	Assert::same(['first', 'second', 'third', 'first', 'second', 'third'], $calls->getArrayCopy());
+	Assert::same([2, 2, 2], [$first->clearCalls, $second->clearCalls, $third->clearCalls]);
+	Assert::same([1, 2, 1], $constructions->getArrayCopy());
+});
 
 // Lazy construction can remove a later object before the dispatch snapshot is ready.
 foreach ([false, true] as $dispatchFirst) {

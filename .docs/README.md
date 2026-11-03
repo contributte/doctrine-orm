@@ -752,10 +752,20 @@ Removal is limited to the specified events; subscriptions to other events remain
 Returned listener arrays use object-hash keys; consume listener values instead of service-name keys.
 Subclasses must not rely on the former protected per-event `$initialized` cache.
 
+Removing an object cannot identify a service-name registration whose factory has not yet created
+that object. To suspend every listener for an event, first resolve the registrations with
+`getListeners($event)`, then remove each returned object for that event. Alternatively, remove a
+known service-name registration by its service name without constructing it.
+
 If a service factory changes registrations during initialization, the returned list reflects the
 current registrations after initialization. Removed listeners are not restored or dispatched, and
 new service-name registrations are resolved before the list is returned. Changes made by an event
 callback after dispatch starts apply to the next dispatch; they do not change its existing snapshot.
+
+If a lazy service factory throws, the error propagates before any event callback runs. Previously
+resolved services remain available, and the failed service is retried on the next access. In that
+case `getListeners()` also fails, so complete suspension by resolving and removing objects cannot
+finish until the factory succeeds or its service-name registration is removed.
 
 ### Customization
 
