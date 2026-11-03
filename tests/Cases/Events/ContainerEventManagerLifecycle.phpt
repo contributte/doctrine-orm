@@ -15,6 +15,113 @@ use Tests\Mocks\LifecycleSubscriber;
 
 require_once __DIR__ . '/../../bootstrap.php';
 
+// Lazy construction can remove a later object before the dispatch snapshot is ready.
+foreach ([false, true] as $dispatchFirst) {
+	Toolkit::test(function () use ($dispatchFirst): void {
+		$container = new Container();
+		$events = new ContainerEventManager($container);
+		$first = new LifecycleSubscriber();
+		$removed = new LifecycleSubscriber();
+		$container->addService('first', function () use ($events, $first, $removed): LifecycleSubscriber {
+			$events->removeEventListener(Events::onClear, $removed);
+
+			return $first;
+		});
+		$events->addEventListener(Events::onClear, 'first');
+		$events->addEventListener(Events::onClear, $removed);
+		if ($dispatchFirst) {
+			$events->dispatchEvent(Events::onClear);
+			Assert::same(1, $first->clearCalls);
+			Assert::same(0, $removed->clearCalls);
+		}
+
+		Assert::same([$first], array_values($events->getListeners(Events::onClear)));
+		Assert::same([$first], array_values($events->getListeners(Events::onClear)));
+		$events->dispatchEvent(Events::onClear);
+		Assert::same($dispatchFirst ? 2 : 1, $first->clearCalls);
+		Assert::same(0, $removed->clearCalls);
+	});
+}
+
+// A removed pending service is neither constructed nor resurrected from the input snapshot.
+Toolkit::test(function (): void {
+	$container = new Container();
+	$events = new ContainerEventManager($container);
+	$first = new LifecycleSubscriber();
+	$container->addService('first', function () use ($events, $first): LifecycleSubscriber {
+		$events->removeEventListener(Events::onClear, 'removed');
+
+		return $first;
+	});
+	$container->addService('removed', fn (): LifecycleSubscriber => new LifecycleSubscriber());
+	$events->addEventListener(Events::onClear, 'first');
+	$events->addEventListener(Events::onClear, 'removed');
+	$events->dispatchEvent(Events::onClear);
+	Assert::false($container->isCreated('removed'));
+	Assert::same([$first], array_values($events->getListeners(Events::onClear)));
+	Assert::same(1, $first->clearCalls);
+});
+
+// A factory can remove its own registration without it being written back after construction.
+Toolkit::test(function (): void {
+	$container = new Container();
+	$events = new ContainerEventManager($container);
+	$removed = new LifecycleSubscriber();
+	$container->addService('selfRemoving', function () use ($events, $removed): LifecycleSubscriber {
+		$events->removeEventListener(Events::onClear, 'selfRemoving');
+
+		return $removed;
+	});
+	$events->addEventListener(Events::onClear, 'selfRemoving');
+	$events->dispatchEvent(Events::onClear);
+	Assert::same(0, $removed->clearCalls);
+	Assert::false($events->hasListeners(Events::onClear));
+	Assert::same([], $events->getListeners(Events::onClear));
+});
+
+// Return only the final registrations, including lazy services appended by another factory.
+Toolkit::test(function (): void {
+	$container = new Container();
+	$events = new ContainerEventManager($container);
+	$first = new LifecycleSubscriber();
+	$second = new LifecycleSubscriber();
+	$third = new LifecycleSubscriber();
+	$container->addService('first', function () use ($events, $first): LifecycleSubscriber {
+		$events->addEventListener(Events::onClear, 'third');
+
+		return $first;
+	});
+	$container->addService('third', fn (): LifecycleSubscriber => $third);
+	$events->addEventListener(Events::onClear, 'first');
+	$events->addEventListener(Events::onClear, $second);
+	Assert::false($container->isCreated('third'));
+	Assert::same([$first, $second, $third], array_values($events->getListeners(Events::onClear)));
+	$events->dispatchEvent(Events::onClear);
+	Assert::same(1, $first->clearCalls);
+	Assert::same(1, $second->clearCalls);
+	Assert::same(1, $third->clearCalls);
+});
+
+// A later factory can also remove an object that was already initialized in the same pass.
+Toolkit::test(function (): void {
+	$container = new Container();
+	$events = new ContainerEventManager($container);
+	$removed = new LifecycleSubscriber();
+	$second = new LifecycleSubscriber();
+	$container->addService('removed', fn (): LifecycleSubscriber => $removed);
+	$container->addService('second', function () use ($events, $removed, $second): LifecycleSubscriber {
+		$events->removeEventListener(Events::onClear, $removed);
+
+		return $second;
+	});
+	$events->addEventListener(Events::onClear, 'removed');
+	$events->addEventListener(Events::onClear, 'second');
+	$events->dispatchEvent(Events::onClear);
+	Assert::same(0, $removed->clearCalls);
+	Assert::same(1, $second->clearCalls);
+	Assert::same([$second], array_values($events->getListeners(Events::onClear)));
+});
+
 // Returned objects can be suspended and restored in order without changing other events.
 Toolkit::test(function (): void {
 	$first = new LifecycleSubscriber();

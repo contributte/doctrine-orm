@@ -749,6 +749,13 @@ Resolved listeners use object identity, as in Doctrine's event manager. Register
 through a service name and as an object does not dispatch it twice. Objects returned by `getListeners()`
 can be passed to `removeEventListener()` and registered again without leaving duplicate registrations.
 Removal is limited to the specified events; subscriptions to other events remain intact.
+Returned listener arrays use object-hash keys; consume listener values instead of service-name keys.
+Subclasses must not rely on the former protected per-event `$initialized` cache.
+
+If a service factory changes registrations during initialization, the returned list reflects the
+current registrations after initialization. Removed listeners are not restored or dispatched, and
+new service-name registrations are resolved before the list is returned. Changes made by an event
+callback after dispatch starts apply to the next dispatch; they do not change its existing snapshot.
 
 ### Customization
 

@@ -125,16 +125,33 @@ class ContainerEventManager extends EventManager
 	 */
 	private function getInitializedListeners(string $event): array
 	{
-		$result = [];
-		foreach ($this->listeners[$event] ?? [] as $hash => $listener) {
-			if (!is_object($listener)) {
-				$listener = $this->container->getService($listener);
-				$this->listeners[$event][$hash] = $listener;
+		do {
+			foreach (array_keys($this->listeners[$event] ?? []) as $hash) {
+				$listener = $this->listeners[$event][$hash] ?? null;
+				if (!is_string($listener)) {
+					continue;
+				}
+
+				$instance = $this->container->getService($listener);
+				// A factory may remove this registration while creating the service.
+				if (($this->listeners[$event][$hash] ?? null) === $listener) {
+					$this->listeners[$event][$hash] = $instance;
+				}
 			}
 
-			// Keep service-name registrations removable, but expose each object only once.
-			$result[spl_object_hash($listener)] = $listener;
-		}
+			$result = [];
+			$pending = false;
+			foreach ($this->listeners[$event] ?? [] as $listener) {
+				if (is_string($listener)) {
+					// Resolve registrations appended by a factory before exposing the list.
+					$pending = true;
+					break;
+				}
+
+				// Build from current registrations: a factory may have removed earlier objects.
+				$result[spl_object_hash($listener)] = $listener;
+			}
+		} while ($pending);
 
 		return $result;
 	}
