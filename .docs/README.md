@@ -762,10 +762,12 @@ current registrations after initialization. Removed listeners are not restored o
 new service-name registrations are resolved before the list is returned. Changes made by an event
 callback after dispatch starts apply to the next dispatch; they do not change its existing snapshot.
 
-If a lazy service factory throws, the error propagates before any event callback runs. Previously
-resolved services remain available, and the failed service is retried on the next access. In that
-case `getListeners()` also fails, so complete suspension by resolving and removing objects cannot
-finish until the factory succeeds or its service-name registration is removed.
+If a lazy service factory throws during dispatch initialization, the error propagates before that
+dispatch invokes its listener callbacks. Factory side effects and nested dispatches are not rolled
+back. Previously resolved services remain available, and the failed service is retried on the next
+access. A `getListeners()` call whose initialization fails also propagates the error, so complete
+suspension by resolving and removing objects cannot finish until the factory succeeds or its
+service-name registration is removed.
 
 ### Customization
 
