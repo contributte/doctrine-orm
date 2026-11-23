@@ -2,14 +2,15 @@
 
 namespace Nettrine\ORM;
 
+use Closure;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\UnitOfWork;
 use Doctrine\Persistence\AbstractManagerRegistry;
+use Doctrine\Persistence\ObjectManager;
 use Doctrine\Persistence\ObjectManagerDecorator;
 use Doctrine\Persistence\Proxy;
 use Nette\DI\Container;
-use Nettrine\ORM\Utils\Binder;
 
 class ManagerRegistry extends AbstractManagerRegistry
 {
@@ -40,32 +41,25 @@ class ManagerRegistry extends AbstractManagerRegistry
 
 	public static function reopen(EntityManagerInterface $manager): void
 	{
-		// @phpcs:disable
-		Binder::use($manager, function (): void {
-			if ($this instanceof EntityManager) {  // @phpstan-ignore-line
-				$this->closed = false; // @phpstan-ignore-line
+		if ($manager instanceof ObjectManagerDecorator) {
+			$manager = Closure::bind(
+				static fn (ObjectManagerDecorator $decorator): ObjectManager => $decorator->wrapped,
+				null,
+				ObjectManagerDecorator::class,
+			)($manager);
+		}
 
-				$uow = $this->getUnitOfWork();
-				Binder::use($uow, function (): void {
-					if ($this instanceof UnitOfWork) { // @phpstan-ignore-line
-						$this->persisters = [];
-					}
-				});
-			} elseif ($this instanceof ObjectManagerDecorator) {
-				Binder::use($this->wrapped, function (): void { // @phpstan-ignore-line
-					if ($this instanceof EntityManager) { // @phpstan-ignore-line
-						$this->closed = false;
+		if (!$manager instanceof EntityManager) {
+			return;
+		}
 
-						$uow = $this->getUnitOfWork();
-						Binder::use($uow, function (): void {
-							if ($this instanceof UnitOfWork) { // @phpstan-ignore-line
-								$this->persisters = [];
-							}
-						});
-					}
-				});
-			}
-		});
+		Closure::bind(static function (EntityManager $manager): void {
+			$manager->closed = false;
+		}, null, EntityManager::class)($manager);
+
+		Closure::bind(static function (UnitOfWork $unitOfWork): void {
+			$unitOfWork->persisters = [];
+		}, null, UnitOfWork::class)($manager->getUnitOfWork());
 	}
 
 	protected function getService(string $name): object
