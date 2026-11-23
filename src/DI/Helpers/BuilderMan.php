@@ -2,7 +2,7 @@
 
 namespace Nettrine\ORM\DI\Helpers;
 
-use Nette\DI\Definitions\Definition;
+use Nette\DI\Definition;
 use Nette\DI\Definitions\ServiceDefinition;
 use Nettrine\DBAL\DI\DbalExtension;
 use Nettrine\ORM\DI\OrmExtension;
