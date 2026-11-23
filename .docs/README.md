@@ -270,6 +270,12 @@ nettrine.orm:
 
 Second level cache is a bit different. Be sure you know what you are doing, learn more in official [Doctrine documentation](https://www.doctrine-project.org/projects/doctrine-orm/en/3.3/reference/second-level-cache.html).
 
+Since Doctrine ORM 3.8, the second level cache requires the [`doctrine/orm-plugin-second-level-cache`](https://github.com/doctrine/orm-plugin-second-level-cache) package.
+
+```bash
+composer require doctrine/orm-plugin-second-level-cache
+```
+
 ```neon
 nettrine.orm:
   managers:

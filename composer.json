@@ -23,6 +23,7 @@
     "contributte/phpstan": "^0.2.0",
     "contributte/qa": "^0.4",
     "contributte/tester": "^0.3.0",
+    "doctrine/orm-plugin-second-level-cache": "^1.0.0",
     "mockery/mockery": "^1.6.12",
     "monolog/monolog": "^3.8.0",
     "symfony/cache": "^7.1.9",
