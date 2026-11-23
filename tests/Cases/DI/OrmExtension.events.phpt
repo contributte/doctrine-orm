@@ -11,6 +11,7 @@ use Nette\DI\Compiler;
 use Nettrine\DBAL\DI\DbalExtension;
 use Nettrine\ORM\DI\OrmExtension;
 use Tester\Assert;
+use Tests\Mocks\LifecycleSubscriber;
 use Tests\Toolkit\Tests;
 
 require_once __DIR__ . '/../../bootstrap.php';
@@ -86,7 +87,7 @@ Toolkit::test(function (): void {
 									namespace: App\Database
 
 				services:
-					- Tests\Mocks\DummyOnClearSubscriber
+					listener: Tests\Mocks\LifecycleSubscriber
 				NEON
 			));
 		})
@@ -95,6 +96,21 @@ Toolkit::test(function (): void {
 	/** @var EntityManager $entityManager */
 	$entityManager = $container->getService('nettrine.orm.managers.default.entityManager');
 
-	Assert::count(1, $entityManager->getEventManager()->getAllListeners());
-	Assert::count(1, $entityManager->getEventManager()->getAllListeners()[Events::onClear]);
+	$events = $entityManager->getEventManager();
+	Assert::false($container->isCreated('listener'));
+	$listeners = $events->getAllListeners();
+	Assert::count(2, $listeners);
+	Assert::count(1, $listeners[Events::onClear]);
+	$listener = $container->getService('listener');
+	assert($listener instanceof LifecycleSubscriber);
+	Assert::same([$listener], array_values($listeners[Events::onClear]));
+	$events->removeEventSubscriber($listener);
+	Assert::false($events->hasListeners(Events::onClear));
+	Assert::false($events->hasListeners(Events::postFlush));
+	$events->addEventSubscriber($listener);
+	Assert::same($listeners, $events->getAllListeners());
+	$events->dispatchEvent(Events::onClear);
+	$events->dispatchEvent(Events::postFlush);
+	Assert::same(1, $listener->clearCalls);
+	Assert::same(1, $listener->flushCalls);
 });

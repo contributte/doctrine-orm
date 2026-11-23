@@ -11,9 +11,6 @@ class ContainerEventManager extends EventManager
 
 	protected Container $container;
 
-	/** @var array<string, bool> */
-	protected array $initialized = [];
-
 	/** @var array<string, array<string, string|object>> */
 	protected array $listeners = [];
 
@@ -79,6 +76,10 @@ class ContainerEventManager extends EventManager
 		$hash = $this->calculateHash($listener);
 
 		foreach ((array) $events as $event) {
+			if (is_object($listener) && in_array($listener, $this->listeners[$event] ?? [], true)) {
+				continue;
+			}
+
 			// Overrides listener if a previous one was associated already
 			// Prevents duplicate listeners on same event (same instance only)
 			$this->listeners[$event][$hash] = $listener;
@@ -94,7 +95,28 @@ class ContainerEventManager extends EventManager
 		$hash = $this->calculateHash($listener);
 
 		foreach ((array) $events as $event) {
+			$registered = $this->listeners[$event][$hash] ?? $listener;
 			unset($this->listeners[$event][$hash]);
+			if (is_string($registered) && $this->container->hasService($registered) && $this->container->isCreated($registered)) {
+				$registered = $this->container->getService($registered);
+			}
+
+			if (!is_object($registered)) {
+				continue;
+			}
+
+			foreach ($this->listeners[$event] ?? [] as $key => $candidate) {
+				// Match initialized services by identity, without constructing unrelated lazy services.
+				if (
+					$candidate === $registered
+					|| (is_string($candidate)
+						&& $this->container->hasService($candidate)
+						&& $this->container->isCreated($candidate)
+						&& $this->container->getService($candidate) === $registered)
+				) {
+					unset($this->listeners[$event][$key]);
+				}
+			}
 		}
 	}
 
@@ -103,21 +125,35 @@ class ContainerEventManager extends EventManager
 	 */
 	private function getInitializedListeners(string $event): array
 	{
-		$initialized = $this->initialized[$event] ?? false;
+		do {
+			foreach (array_keys($this->listeners[$event] ?? []) as $hash) {
+				$listener = $this->listeners[$event][$hash] ?? null;
+				if (!is_string($listener)) {
+					continue;
+				}
 
-		if ($initialized) {
-			return $this->listeners[$event] ?? []; // @phpstan-ignore-line
-		}
-
-		foreach ($this->listeners[$event] ?? [] as $hash => $listener) {
-			if (!is_object($listener)) {
-				$this->listeners[$event][$hash] = $this->container->getService($listener);
+				$instance = $this->container->getService($listener);
+				// A factory may remove this registration while creating the service.
+				if (($this->listeners[$event][$hash] ?? null) === $listener) {
+					$this->listeners[$event][$hash] = $instance;
+				}
 			}
-		}
 
-		$this->initialized[$event] = true;
+			$result = [];
+			$pending = false;
+			foreach ($this->listeners[$event] ?? [] as $listener) {
+				if (is_string($listener)) {
+					// Resolve registrations appended by a factory before exposing the list.
+					$pending = true;
+					break;
+				}
 
-		return $this->listeners[$event] ?? []; // @phpstan-ignore-line
+				// Build from current registrations: a factory may have removed earlier objects.
+				$result[spl_object_hash($listener)] = $listener;
+			}
+		} while ($pending);
+
+		return $result;
 	}
 
 	private function calculateHash(string|object $listener): string
