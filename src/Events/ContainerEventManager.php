@@ -122,7 +122,7 @@ class ContainerEventManager extends EventManager
 
 	private function calculateHash(string|object $listener): string
 	{
-		return is_object($listener) ? spl_object_hash($listener) : 'service@' . $listener;
+		return is_object($listener) ? 'object@' . spl_object_id($listener) : 'service@' . $listener;
 	}
 
 }
